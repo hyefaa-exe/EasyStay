@@ -5,17 +5,20 @@ use PHPMailer\PHPMailer\Exception;
 // Pastikan path autoload betul. 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
+// Muat fail konfigurasi rahsia
+require_once __DIR__ . '/email_config.php';
+
 function sendBookingStatusEmail($toEmail, $toName, $emailContent, $bookingId = null) {
     $mail = new PHPMailer(true);
     try {
-        // --- TETAPAN SERVER SMTP (GMAIL) ---
+        // --- TETAPAN SERVER SMTP (BREVO) ---
         $mail->isSMTP();
-        $mail->Host       = 'smtp.gmail.com'; 
+        $mail->Host       = SMTP_HOST; 
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'easystay.mpi@gmail.com'; 
-        $mail->Password   = 'zzfp ayfc buxf fsgk'; // App Password Gmail
+        $mail->Username   = SMTP_USER; 
+        $mail->Password   = SMTP_PASS; 
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = 587;
+        $mail->Port       = SMTP_PORT;
 
         // --- PENGHANTAR & PENERIMA ---
         $mail->setFrom('easystay.mpi@gmail.com', 'EasyStay Admin');

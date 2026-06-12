@@ -9,3 +9,6 @@ Thumbs.db
 
 # Log files
 *.log
+
+# Project secrets
+admin/email_config.php
