@@ -53,6 +53,42 @@ function sendBookingStatusEmail($toEmail, $toName, $emailContent, $bookingId = n
             $balanceFormatted = number_format($balance, 2);
             $mail->Subject = "Update on Booking #$bookingId | EasyStay";
 
+            // Tentukan URL Dashboard secara dinamik
+            $isLocalhost = false;
+            if (isset($_SERVER['HTTP_HOST'])) {
+                $host = $_SERVER['HTTP_HOST'];
+                if (strpos($host, 'localhost') !== false || strpos($host, '127.0.0.1') !== false) {
+                    $isLocalhost = true;
+                }
+            } else {
+                $isLocalhost = true; 
+            }
+
+            $ctaSection = '';
+            if ($isLocalhost) {
+                // Di localhost, kita elakkan meletakkan tag <a href="http://localhost..."> kerana penapis spam menyekatnya.
+                // Sebaliknya, letak butang rekaan visual yang membimbing pengguna secara teks.
+                $ctaSection = "
+                <div style=\"text-align: center; margin-top: 10px;\">
+                    <p style=\"font-size: 14px; color: #718096; margin-bottom: 15px;\">To view complete details or upload your receipt, please log in to your EasyStay Dashboard.</p>
+                    <div style=\"background-color: #C5A880; color: #ffffff; padding: 14px 35px; border-radius: 8px; font-weight: 700; font-size: 15px; display: inline-block; text-align: center; opacity: 0.9;\">
+                        Access Dashboard via EasyStay Website
+                    </div>
+                </div>";
+            } else {
+                // Di server pengeluaran (production), letak butang pautan aktif dengan pautan dinamik
+                $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
+                $dashboardUrl = $protocol . $_SERVER['HTTP_HOST'] . '/easystay/login.php';
+                
+                $ctaSection = "
+                <div style=\"text-align: center; margin-top: 10px;\">
+                    <p style=\"font-size: 14px; color: #718096; margin-bottom: 22px;\">To view complete details or upload your receipt, please visit your dashboard.</p>
+                    <a href=\"$dashboardUrl\" style=\"background-color: #C5A880; color: #ffffff; padding: 14px 35px; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 15px; display: inline-block; box-shadow: 0 4px 12px rgba(197, 168, 128, 0.35); text-align: center;\">
+                        Go to Dashboard
+                    </a>
+                </div>";
+            }
+
             $finalBody = "
             <div style=\"background-color: #f4f6f8; padding: 40px 20px; font-family: 'Plus Jakarta Sans', 'Inter', 'Helvetica Neue', Arial, sans-serif; min-height: 100%;\">
                 <div style=\"max-width: 580px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #eaeaea;\">
@@ -118,12 +154,7 @@ function sendBookingStatusEmail($toEmail, $toName, $emailContent, $bookingId = n
                         </div>
 
                         <!-- CTA Button -->
-                        <div style=\"text-align: center; margin-top: 10px;\">
-                            <p style=\"font-size: 14px; color: #718096; margin-bottom: 22px;\">To view complete details or upload your receipt, please visit your dashboard.</p>
-                            <a href=\"http://localhost/easystay/login.php\" style=\"background-color: #C5A880; color: #ffffff; padding: 14px 35px; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 15px; display: inline-block; box-shadow: 0 4px 12px rgba(197, 168, 128, 0.35); text-align: center;\">
-                                Go to Dashboard
-                            </a>
-                        </div>
+                        $ctaSection
                     </div>
 
                     <!-- Footer -->
