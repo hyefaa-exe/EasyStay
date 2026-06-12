@@ -7,19 +7,18 @@ require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 function sendBookingStatusEmail($toEmail, $toName, $emailContent, $bookingId = null) {
     $mail = new PHPMailer(true);
-
     try {
         // --- TETAPAN SERVER SMTP (GMAIL) ---
         $mail->isSMTP();
         $mail->Host       = 'smtp.gmail.com'; 
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'ulurgarden@gmail.com'; 
-        $mail->Password   = 'zjcp zpxj swio gtbl'; // App Password Gmail
+        $mail->Username   = 'easystay.mpi@gmail.com'; 
+        $mail->Password   = 'zzfp ayfc buxf fsgk'; // App Password Gmail
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
 
         // --- PENGHANTAR & PENERIMA ---
-        $mail->setFrom('ulurgarden@gmail.com', 'EasyStay Admin');
+        $mail->setFrom('easystay.mpi@gmail.com', 'EasyStay Admin');
         $mail->addAddress($toEmail, $toName);
 
         // --- PROSES KANDUNGAN & TEMPLATE ---
