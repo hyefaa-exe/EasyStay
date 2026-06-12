@@ -1,16 +1,12 @@
 <?php
-// Database connection
-$host = "localhost";
-$user = "root";
-$pass = "";
-$dbname = "ulugarden";
-
-$conn = new mysqli($host, $user, $pass, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+session_start();
+if (!isset($_SESSION['admin_id'])) {
+    header("Location: ../login.php");
+    exit();
 }
+
+// Database connection
+require_once 'db_connect.php';
 
 $success_message = "";
 $error_message = "";
@@ -19,9 +15,6 @@ $created_at = date('Y-m-d H:i:s');
 
 // Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-    // print_r($_POST);exit;
-
     $fullname = trim($_POST['fullname']);
     $email = trim($_POST['email']);
     $phone_no = trim($_POST['phone_no']);
@@ -32,20 +25,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ( empty($fullname) || empty($email) || empty($phone_no) || empty($username) || empty($password) ) {
         $error_message = "Please fill in all fields with valid values.";
     } else {
+        // Securely hash password
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        
         // Use prepared statement for security
         $sql = "INSERT INTO users (full_name, email, phone, password, created_at, username) VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssssss", $fullname, $email, $phone_no, $password, $created_at, $username);
+        $stmt->bind_param("ssssss", $fullname, $email, $phone_no, $hashed_password, $created_at, $username);
 
         if ($stmt->execute()) {
-            $success_message = "User added successfully!";
+            $success_message = "Customer added successfully!";
             // Clear form data
             $_POST = array();
             // Redirect after 2 seconds
             header("refresh:2;url=view_users.php");
         } else {
-            $error_message = "Error adding package: " . $conn->error;
+            $error_message = "Error adding customer: " . $conn->error;
         }
+        $stmt->close();
     }
 }
 ?>
@@ -55,158 +52,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add New Package - UluGarden Admin</title>
-    <link rel="shortcut icon" type="image/x-icon" href="../img/favicon.png">
+    <title>Add New Customer - EasyStay Admin</title>
+    <link rel="shortcut icon" type="image/x-icon" href="../img/favicon.png?v=2">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin_style.css">
+    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-       
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #ffffff;
-            color: #333333;
-            min-height: 100vh;
-            line-height: 1.6;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,77,0,0.05)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
-            z-index: -1;
-        }
-
-        .header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 20px 0;
-            border-bottom: 2px solid #FF4D00;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-        }
-
-        .header-content {
-            width: 90%;
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .logo i {
-            font-size: 2.5rem;
-            color: #FF4D00;
-        }
-
-        .logo h1 {
-            color: #333333;
-            font-size: 2rem;
-            font-weight: 300;
-            letter-spacing: 1px;
-        }
-
-        .nav-buttons {
-            display: flex;
-            gap: 15px;
-        }
-
-        .back-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: linear-gradient(135deg, #6c757d, #5a6268);
-            color: white;
-            font-weight: 600;
-            padding: 12px 24px;
-            border-radius: 25px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-size: 0.9rem;
-        }
-
-        .back-btn:hover {
-            background: linear-gradient(135deg, #5a6268, #6c757d);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
-        }
-
-        .container {
-            width: 90%;
-            max-width: 700px;
-            margin: 0 auto 40px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(15px);
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 0 30px rgba(255, 77, 0, 0.1);
-            border: 1px solid rgba(255, 77, 0, 0.2);
-        }
-
         .container-header {
-            background: linear-gradient(135deg, #FF4D00, #ff6b2d);
+            background: linear-gradient(135deg, var(--easy-gold), var(--easy-gold-dark));
             padding: 30px;
             text-align: center;
+            border-radius: 20px 20px 0 0;
             position: relative;
             overflow: hidden;
-        }
-
-        .container-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
-            opacity: 0.3;
+            box-shadow: 0 10px 25px rgba(197, 168, 128, 0.15);
         }
 
         .container-header h2 {
             color: #ffffff;
             font-size: 2.2rem;
-            font-weight: 300;
+            font-weight: 800;
             margin-bottom: 10px;
-            position: relative;
-            z-index: 1;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .container-header p {
             color: rgba(255, 255, 255, 0.9);
             font-size: 1rem;
-            position: relative;
-            z-index: 1;
+            font-weight: 500;
         }
 
         .content {
             padding: 40px;
+            background: #ffffff;
+            border-radius: 0 0 20px 20px;
+            box-shadow: var(--card-shadow);
         }
 
         .alert {
             padding: 15px 20px;
             border-radius: 12px;
             margin-bottom: 25px;
-            font-weight: 500;
+            font-weight: 600;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -226,16 +114,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         .form-section {
-            background: rgba(248, 248, 248, 0.5);
+            background: #fafafa;
             border-radius: 15px;
             padding: 30px;
-            border: 1px solid rgba(255, 77, 0, 0.1);
+            border: 1px solid #f0f0f0;
         }
 
         .form-section h3 {
-            color: #333333;
-            font-size: 1.4rem;
-            font-weight: 600;
+            color: var(--easy-charcoal);
+            font-size: 1.25rem;
+            font-weight: 700;
             margin-bottom: 25px;
             display: flex;
             align-items: center;
@@ -248,75 +136,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             gap: 20px;
         }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
-
         .form-group.full-width {
-            grid-column: 1 / -1;
+            grid-column: span 2;
         }
 
         .form-group label {
             display: block;
-            color: #333333;
+            color: var(--easy-charcoal);
             font-weight: 600;
             margin-bottom: 8px;
-            font-size: 1rem;
+            font-size: 0.9rem;
             display: flex;
             align-items: center;
             gap: 8px;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            font-size: 1rem;
-            background: white;
-            transition: all 0.3s ease;
-            color: #333333;
-            font-family: inherit;
-            resize: vertical;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: #FF4D00;
-            box-shadow: 0 0 20px rgba(255, 77, 0, 0.1);
-            transform: translateY(-2px);
-        }
-
-        textarea.form-control {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        .input-group {
-            position: relative;
-        }
-
-        .input-group .currency {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #FF4D00;
-            font-weight: bold;
-            pointer-events: none;
-        }
-
-        .input-group .form-control {
-            padding-left: 45px;
-        }
-
-        .form-help {
-            font-size: 0.85rem;
-            color: #666;
-            margin-top: 5px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
         }
 
         .action-buttons {
@@ -331,54 +163,48 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 15px 30px;
+            padding: 12px 30px;
             border: none;
-            border-radius: 25px;
-            font-size: 1rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
             font-weight: 600;
             text-decoration: none;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            min-width: 180px;
             justify-content: center;
         }
 
         .btn-add {
-            background: linear-gradient(135deg, #FF4D00, #ff6b2d);
+            background: var(--easy-gold);
             color: white;
-            box-shadow: 0 6px 20px rgba(255, 77, 0, 0.3);
         }
 
         .btn-add:hover:not(.loading) {
-            background: linear-gradient(135deg, #ff6b2d, #FF4D00);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(255, 77, 0, 0.4);
+            background: var(--easy-gold-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(197, 168, 128, 0.3);
         }
 
         .btn-cancel {
-            background: linear-gradient(135deg, #6c757d, #5a6268);
+            background: #6c757d;
             color: white;
-            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.3);
         }
 
         .btn-cancel:hover {
-            background: linear-gradient(135deg, #5a6268, #6c757d);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(108, 117, 125, 0.4);
+            background: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.2);
         }
 
         .btn-reset {
-            background: linear-gradient(135deg, #ffc107, #e0a800);
-            color: #333;
-            box-shadow: 0 6px 20px rgba(255, 193, 7, 0.3);
+            background: #f1f5f9;
+            color: #334155;
+            border: 1px solid #cbd5e1;
         }
 
         .btn-reset:hover {
-            background: linear-gradient(135deg, #e0a800, #ffc107);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(255, 193, 7, 0.4);
+            background: #e2e8f0;
+            transform: translateY(-2px);
         }
 
         /* Loading state */
@@ -408,14 +234,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* Form validation styles */
@@ -439,64 +259,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             color: #dc3545;
         }
 
-        .validation-message.success {
-            color: #28a745;
-        }
-
         @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .logo h1 {
-                font-size: 1.5rem;
-            }
-
-            .container-header h2 {
-                font-size: 1.8rem;
-            }
-
-            .content {
-                padding: 20px;
-            }
-
             .form-grid {
                 grid-template-columns: 1fr;
             }
-
+            .form-group.full-width {
+                grid-column: span 1;
+            }
             .action-buttons {
                 flex-direction: column;
                 align-items: center;
             }
-
             .btn {
                 width: 100%;
-                max-width: 300px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="header-content">
-            <div class="logo">
-                <i class="fas fa-home"></i>
-                <h1>UluGarden Admin</h1>
-            </div>
-            <div class="nav-buttons">
-                <a class="back-btn" href="view_users.php">
-                    <i class="fas fa-arrow-left"></i>
-                    Back to Users
-                </a>
-            </div>
+    <header class="header">
+        <div class="logo-area">
+            <a href="admin_dashboard.php" style="text-decoration: none;">
+                <h1><span class="logo-ulu">Easy</span><span class="logo-garden">Stay</span></h1>
+            </a>
+            <span class="brand-sub">Management Portal</span>
         </div>
-    </div>
+        <div class="nav-actions">
+            <a class="nav-btn btn-profile" href="view_users.php">
+                <i class="fas fa-arrow-left"></i> Back to Customers
+            </a>
+        </div>
+    </header>
 
-    <div class="container">
+    <div class="container" style="max-width: 800px;">
         <div class="container-header">
-            <h2><i class="fas fa-plus-circle"></i> Add New User</h2>
-            <p>Create a new user</p>
+            <h2><i class="fas fa-user-plus"></i> Add New Customer</h2>
+            <p>Register a new customer account in the system</p>
         </div>
 
         <div class="content">
@@ -504,7 +302,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="alert alert-success">
                     <i class="fas fa-check-circle"></i>
                     <?php echo htmlspecialchars($success_message); ?>
-                    <span style="margin-left: auto; font-size: 0.9rem;">Redirecting in 2 seconds...</span>
                 </div>
             <?php endif; ?>
 
@@ -518,7 +315,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="form-section">
                 <h3>
                     <i class="fas fa-edit"></i>
-                    User Information
+                    Customer Information
                 </h3>
                 
                 <form method="POST" action="" id="addUserForm">
@@ -531,8 +328,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                    id="fullname" 
                                    name="fullname" 
                                    class="form-control" 
-                                   value="<?php echo isset($_POST['package_name']) ? htmlspecialchars($_POST['package_name']) : ''; ?>" 
-                                   placeholder="Enter fullname"
+                                   value="<?php echo isset($_POST['fullname']) ? htmlspecialchars($_POST['fullname']) : ''; ?>" 
+                                   placeholder="Enter full name"
                                    required>
                         </div>
 
@@ -544,8 +341,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                    id="email" 
                                    name="email" 
                                    class="form-control" 
-                                   value="<?php echo isset($_POST['package_name']) ? htmlspecialchars($_POST['package_name']) : ''; ?>" 
-                                   placeholder="Enter email"
+                                   value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>" 
+                                   placeholder="Enter email address"
                                    required>
                         </div>
 
@@ -557,7 +354,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                    id="phone_no" 
                                    name="phone_no" 
                                    class="form-control" 
-                                   value="<?php echo isset($_POST['package_name']) ? htmlspecialchars($_POST['package_name']) : ''; ?>" 
+                                   value="<?php echo isset($_POST['phone_no']) ? htmlspecialchars($_POST['phone_no']) : ''; ?>" 
                                    placeholder="Enter phone number"
                                    required>
                         </div>
@@ -570,7 +367,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                    id="username" 
                                    name="username" 
                                    class="form-control" 
-                                   value="<?php echo isset($_POST['availability']) ? $_POST['availability'] : ''; ?>" 
+                                   value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : ''; ?>" 
                                    placeholder="Username"
                                    required>
                         </div>
@@ -583,7 +380,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                    id="password" 
                                    name="password" 
                                    class="form-control" 
-                                   value="<?php echo isset($_POST['availability']) ? $_POST['availability'] : ''; ?>" 
+                                   value="<?php echo isset($_POST['password']) ? htmlspecialchars($_POST['password']) : ''; ?>" 
                                    placeholder="Password"
                                    required>
                         </div>
@@ -592,7 +389,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class="action-buttons">
                         <button type="submit" class="btn btn-add" id="addBtn">
                             <i class="fas fa-plus"></i>
-                            Add User
+                            Add Customer
                         </button>
                         <button type="button" class="btn btn-reset" onclick="resetForm()">
                             <i class="fas fa-undo"></i>
@@ -613,18 +410,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         document.getElementById('addUserForm').addEventListener('submit', function() {
             const btn = document.getElementById('addBtn');
             btn.classList.add('loading');
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding Package...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding Customer...';
         });
 
-        // Auto-hide alerts after 5 seconds (except redirect message)
+        // Auto-hide alerts after 5 seconds
         setTimeout(function() {
             const alerts = document.querySelectorAll('.alert');
             alerts.forEach(alert => {
-                if (!alert.textContent.includes('Redirecting')) {
-                    alert.style.opacity = '0';
-                    alert.style.transform = 'translateY(-10px)';
-                    setTimeout(() => alert.remove(), 300);
-                }
+                alert.style.opacity = '0';
+                alert.style.transform = 'translateY(-10px)';
+                setTimeout(() => alert.remove(), 300);
             });
         }, 5000);
 
@@ -650,24 +445,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 existingMessage.remove();
             }
 
-            // Validate based on field type
-            switch(field.name) {
-                case 'password':
-                    isValid = value.length >= 6;
-                    message = isValid ? '' : 'Password must be at least 6 characters long';
-                    break;
-                // case 'fullname':
-                //     isValid = parseFloat(value) > 0;
-                //     message = isValid ? '' : 'Price must be greater than 0';
-                //     break;
-                // case 'availability':
-                //     isValid = parseInt(value) >= 0;
-                //     message = isValid ? '' : 'Availability cannot be negative';
-                //     break;
-                // case 'description':
-                //     isValid = value.length >= 10;
-                //     message = isValid ? '' : 'Description must be at least 10 characters long';
-                //     break;
+            // Validate password length
+            if (field.name === 'password') {
+                isValid = value.length >= 6;
+                message = isValid ? '' : 'Password must be at least 6 characters long';
             }
 
             // Apply validation styling
@@ -678,8 +459,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // Add validation message
                 if (message) {
                     const messageDiv = document.createElement('div');
-                    messageDiv.className = `validation-message ${isValid ? 'success' : 'error'}`;
-                    messageDiv.innerHTML = `<i class="fas fa-${isValid ? 'check' : 'exclamation'}-circle"></i> ${message}`;
+                    messageDiv.className = 'validation-message error';
+                    messageDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
                     field.parentNode.appendChild(messageDiv);
                 }
             } else {
@@ -699,32 +480,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 });
             }
         }
-
-        // Price input formatting
-        document.getElementById('price').addEventListener('blur', function() {
-            if (this.value && !isNaN(this.value)) {
-                this.value = parseFloat(this.value).toFixed(2);
-            }
-        });
-
-        // Character counter for description
-        const descriptionField = document.getElementById('description');
-        const maxLength = 1000;
-        
-        descriptionField.addEventListener('input', function() {
-            const remaining = maxLength - this.value.length;
-            let counter = this.parentNode.querySelector('.char-counter');
-            
-            if (!counter) {
-                counter = document.createElement('div');
-                counter.className = 'char-counter';
-                counter.style.cssText = 'font-size: 0.8rem; color: #666; text-align: right; margin-top: 5px;';
-                this.parentNode.appendChild(counter);
-            }
-            
-            counter.textContent = `${this.value.length}/${maxLength} characters`;
-            counter.style.color = remaining < 100 ? '#dc3545' : '#666';
-        });
     </script>
 </body>
 </html>

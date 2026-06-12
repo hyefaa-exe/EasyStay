@@ -11,6 +11,9 @@ $user_id = $_SESSION['user_id'];
 $package_id = $_GET['package_id'] ?? null;
 $current_page = basename($_SERVER['PHP_SELF']);
 
+$check_in_val = isset($_GET['check_in']) ? trim($_GET['check_in']) : '';
+$check_out_val = isset($_GET['check_out']) ? trim($_GET['check_out']) : '';
+
 // --- PEMBETULAN: DEFINISI VARIABLE INI ---
 $is_logged_in = true; // Wajib ada sebab kita guna di Header nanti
 // ----------------------------------------
@@ -33,7 +36,7 @@ if (!$package_rs) {
 }
 
 // Ambil tarikh yang telah ditempah untuk disable dalam kalendar
-$sqlBooked = "SELECT checkin_date, checkout_date FROM bookings WHERE package_id = $package_id AND status != 'Cancelled'";
+$sqlBooked = "SELECT checkin_date, checkout_date FROM bookings WHERE package_id = $package_id AND status NOT IN ('Cancelled', 'Rejected')";
 $result_cal = $conn->query($sqlBooked);
 $booked_ranges = [];
 while ($row = $result_cal->fetch_assoc()) {
@@ -46,14 +49,15 @@ while ($row = $result_cal->fetch_assoc()) {
 
 <head>
     <meta charset="utf-8">
-    <title>Reservation | Ulu Garden</title>
+    <title>Reservation | EasyStay</title>
+    <meta name="description" content="EasyStay - A Digital Platform for Fast and Efficient Homestay Reservation">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
+    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png?v=2">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=<?= time() ?>">
 </head>
 
 <body>
@@ -76,18 +80,18 @@ while ($row = $result_cal->fetch_assoc()) {
                     </nav>
                 </div>
                 <div class="col-xl-2 col-lg-2 text-center">
-                    <a href="index.php" class="logo-link"><img src="img/logo.png" alt="Logo" style="height: 50px;"></a>
+                    <a href="index.php" class="logo-link"><img src="img/logo.png?v=2" alt="Logo" style="height: 50px;"></a>
                 </div>
                 <div class="col-xl-5 col-lg-5">
                     <div class="header-right-part d-flex justify-content-end align-items-center">
                         <ul class="social-icons-head d-flex list-unstyled m-0 mr-4">
                             <li class="mr-3"><a href="https://www.facebook.com/profile.php?id=100092359781203" target="_blank" style="color:white;"><i class="fa-brands fa-facebook-f"></i></a></li>
-                            <li><a href="https://www.tiktok.com/@ulugardenhomestay" target="_blank" style="color:white;"><i class="fa-brands fa-tiktok"></i></a></li>
+                            <li><a href="https://www.tiktok.com/@easystayhomestay" target="_blank" style="color:white;"><i class="fa-brands fa-tiktok"></i></a></li>
                         </ul>
                         <?php if ($is_logged_in): ?>
-                            <a href="logout.php" class="auth-btn" style="background: #ff7b00; color: white; padding: 10px 20px; border-radius: 5px; font-weight: bold; text-decoration: none;">Logout</a>
+                            <a href="logout.php" class="auth-btn">Logout</a>
                         <?php else: ?>
-                            <a href="login.php" class="auth-btn" style="background: #ff7b00; color: white; padding: 10px 20px; border-radius: 5px; font-weight: bold; text-decoration: none;">Login / Register</a>
+                            <a href="login.php" class="auth-btn">Login / Register</a>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -107,14 +111,33 @@ while ($row = $result_cal->fetch_assoc()) {
                         $image_name = $package_rs['image'];
                         $image_path = "admin/uploads/" . $image_name;
                         ?>
-                        <img src="<?= $image_path ?>" alt="Package Poster" style="width: 100%; border-radius: 10px; object-fit: cover;">
+                        <img src="<?= $image_path ?>?v=<?= time() ?>" alt="Package Poster" style="width: 100%; border-radius: 10px; object-fit: cover;">
                     </div>
                     <div class="package-details-bottom">
                         <h2><?= htmlspecialchars($package_rs['package_name']) ?></h2>
-                        <p class="text-muted"><?= htmlspecialchars($package_rs['description']) ?></p>
-                        <div class="price-row">
+                        
+                        <?php 
+                        $pkg_features = get_package_features($package_id);
+                        ?>
+                        <div class="d-flex align-items-center mb-3" style="font-weight: 700; color: #333; font-size: 14px;">
+                            <i class="fa fa-user-group mr-2" style="color: #C5A880;"></i><?= htmlspecialchars($pkg_features['capacity']) ?>
+                        </div>
+
+                        <div class="price-row mb-4">
                             <span class="price-label">Price per night:</span>
                             <div class="price-tag-box">RM <?= number_format($package_rs['price'], 2) ?></div>
+                        </div>
+
+                        <div class="booking-features-list">
+                            <h5>Package Inclusions</h5>
+                            <ul class="list-unstyled">
+                                <?php foreach ($pkg_features['inclusions'] as $inc): ?>
+                                    <li>
+                                        <i class="fas fa-check-circle"></i>
+                                        <span><?= htmlspecialchars($inc) ?></span>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -131,11 +154,11 @@ while ($row = $result_cal->fetch_assoc()) {
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="font-weight-bold small">Check-in Date</label>
-                                <input type="text" id="checkin_date" name="checkin_date" class="form-control" placeholder="Select date" readonly required>
+                                <input type="text" id="checkin_date" name="checkin_date" class="form-control" placeholder="Select date" readonly required value="<?= htmlspecialchars($check_in_val) ?>">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="font-weight-bold small">Check-out Date</label>
-                                <input type="text" id="checkout_date" name="checkout_date" class="form-control" placeholder="Select date" readonly required>
+                                <input type="text" id="checkout_date" name="checkout_date" class="form-control" placeholder="Select date" readonly required value="<?= htmlspecialchars($check_out_val) ?>">
                             </div>
                         </div>
 
@@ -151,8 +174,23 @@ while ($row = $result_cal->fetch_assoc()) {
                         </div>
 
                         <div class="total-pay-box">
-                            <small>Total Payment Due</small>
-                            <h2 class="mb-0">RM <span id="display_total">0.00</span></h2>
+                            <small>Booking Deposit (Required Now)</small>
+                            <h2 class="mb-2">RM 50.00</h2>
+                            
+                            <div class="booking-breakdown-box">
+                                <div class="breakdown-row">
+                                    <span>Total Room Price:</span>
+                                    <strong>RM <span id="display_room_total">0.00</span></strong>
+                                </div>
+                                <div class="breakdown-row mt-1">
+                                    <span>Remaining Balance (Payable at Check-in):</span>
+                                    <strong>RM <span id="display_room_balance">0.00</span></strong>
+                                </div>
+                                <div class="breakdown-row mt-1">
+                                    <span>Security Deposit (Refunded after Check-out):</span>
+                                    <span class="text-success font-weight-bold">RM 50.00 (Included in Deposit above)</span>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="bank-info-section">
@@ -166,8 +204,20 @@ while ($row = $result_cal->fetch_assoc()) {
                                 <span class="font-weight-bold text-dark">8763780979</span>
                             </div>
 
-                            <div class="note-box">
-                                <strong>Note:</strong> A security deposit of <b>RM 50.00</b> is required upon check-in. This is refundable after room inspection.
+                            <div class="deposit-alert-box">
+                                <div class="d-flex align-items-start">
+                                    <div class="alert-icon-wrap mr-3">
+                                        <i class="fa-solid fa-triangle-exclamation"></i>
+                                    </div>
+                                    <div class="alert-body">
+                                        <h6 class="alert-title font-weight-bold">Booking Deposit & Balance Information</h6>
+                                        <p class="alert-text mb-0">
+                                            To confirm this booking, you only need to pay a deposit of <span class="highlight-deposit">RM 50.00</span> online now. 
+                                            The remaining room balance of <strong>RM <span id="display_room_balance_text">0.00</span></strong> must be paid during check-in. 
+                                            This RM 50.00 deposit will be <strong>fully refunded</strong> after check-out, subject to room inspection.
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
 
                             <label class="font-weight-bold small">Proof of Payment (Image/PDF)</label>
@@ -187,19 +237,19 @@ while ($row = $result_cal->fetch_assoc()) {
         <div class="container">
             <div class="row">
                 <div class="col-lg-3 col-md-6 mb-4">
-                    <h3>ULU GARDEN</h3>
+                    <h3>EASYSTAY</h3>
                     <p>Lot 8012, Kampung Binjai Kertas,</p>
                     <p>21700 Kuala Berang, Terengganu.</p>
                     <div class="footer-social-icons">
                         <a href="https://www.facebook.com/profile.php?id=100092359781203"><i class="fab fa-facebook"></i></a>
-                        <a href="https://www.tiktok.com/@ulugardenhomestay"><i class="fab fa-tiktok"></i></a>
+                        <a href="https://www.tiktok.com/@easystayhomestay"><i class="fab fa-tiktok"></i></a>
                     </div>
                 </div>
 
                 <div class="col-lg-3 col-md-6 mb-4">
                     <h3>CONTACT US</h3>
                     <p><i class="fas fa-phone-alt mr-2"></i> +60 19 211 9223</p>
-                    <p><i class="fas fa-envelope mr-2"></i> reservation@ulugarden.com</p>
+                    <p><i class="fas fa-envelope mr-2"></i> reservation@easystay.com</p>
                 </div>
 
                 <div class="col-lg-3 col-md-6 mb-4">
@@ -222,7 +272,7 @@ while ($row = $result_cal->fetch_assoc()) {
             </div>
 
             <div class="footer-bottom">
-                <p>Copyright Ulu Garden &copy; 2025. All rights reserved.</p>
+                <p>Copyright EasyStay &copy; 2025. All rights reserved.</p>
             </div>
         </div>
     </footer>
@@ -265,10 +315,14 @@ while ($row = $result_cal->fetch_assoc()) {
                 const nights = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
                 if (nights > 0) {
                     const totalAmount = (nights * price).toFixed(2);
-                    document.getElementById('display_total').innerText = totalAmount;
+                    document.getElementById('display_room_total').innerText = totalAmount;
+                    document.getElementById('display_room_balance').innerText = totalAmount;
+                    document.getElementById('display_room_balance_text').innerText = totalAmount;
                     totalPriceInput.value = totalAmount;
                 } else {
-                    document.getElementById('display_total').innerText = "0.00";
+                    document.getElementById('display_room_total').innerText = "0.00";
+                    document.getElementById('display_room_balance').innerText = "0.00";
+                    document.getElementById('display_room_balance_text').innerText = "0.00";
                     totalPriceInput.value = "0.00";
                 }
             }
@@ -285,6 +339,9 @@ while ($row = $result_cal->fetch_assoc()) {
         };
         flatpickr("#checkin_date", flatConfig);
         flatpickr("#checkout_date", flatConfig);
+        
+        // Trigger calc on load to set initial values if pre-filled
+        calc();
     </script>
 </body>
 

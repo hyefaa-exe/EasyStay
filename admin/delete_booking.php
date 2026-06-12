@@ -1,14 +1,12 @@
 <?php
-// Sambungan database
-$host = "localhost";
-$user = "root";
-$pass = "";
-$dbname = "ulugarden";
-
-$conn = new mysqli($host, $user, $pass, $dbname);
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+session_start();
+if (!isset($_SESSION['admin_id'])) {
+    header("Location: ../login.php");
+    exit();
 }
+
+// Sambungan database
+require_once 'db_connect.php';
 
 // Dapatkan booking_id dari URL
 if (!isset($_GET['id']) || empty($_GET['id'])) {

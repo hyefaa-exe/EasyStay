@@ -4,7 +4,7 @@ require 'db_connect.php';
 
 session_start();
 if (!isset($_SESSION['admin_id'])) {
-    header("Location: loginform.html");
+    header("Location: ../login.php");
     exit();
 }
 
@@ -61,56 +61,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_user'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit User | UluGarden Admin</title>
-    <link rel="shortcut icon" type="image/x-icon" href="../img/favicon.png">
+    <title>Edit User | EasyStay Admin</title>
+    <link rel="shortcut icon" type="image/x-icon" href="../img/favicon.png?v=2">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        :root {
-            --ulu-orange: #FF7F32;
-            --garden-black: #1A1A1A;
-            --soft-orange-bg: #FFF5E9;
-            --white: #ffffff;
-            --text-gray: #8E8E8E;
-            --danger: #e74c3c;
-            --success: #2ecc71;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background-color: var(--soft-orange-bg); color: var(--garden-black); }
-
-        /* --- HEADER --- */
-        .header {
-            background: var(--white);
-            padding: 15px 50px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 20px rgba(255, 127, 50, 0.08);
-            position: sticky; top: 0; z-index: 1000;
-        }
+/* --- HEADER --- */
+        
         .logo-area h1 { font-size: 1.7rem; font-weight: 800; }
-        .logo-ulu { color: var(--ulu-orange); }
-        .logo-garden { color: var(--garden-black); }
-        .brand-sub { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; display: block; margin-top: -3px; }
+        
+        
+        
 
-        .nav-btn {
-            text-decoration: none; padding: 10px 22px; border-radius: 12px;
-            font-weight: 600; font-size: 0.85rem; transition: 0.3s;
-            display: flex; align-items: center; gap: 8px;
-            border: 1.5px solid var(--ulu-orange); color: var(--ulu-orange);
-        }
+        
         .nav-btn:hover { background: var(--ulu-orange); color: white; transform: translateY(-2px); }
 
         /* --- CONTAINER --- */
-        .container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
+        
         
         .card {
             background: var(--white);
             border-radius: 25px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.04);
             overflow: hidden;
-            border: 1px solid rgba(255, 127, 50, 0.1);
+            border: 1px solid rgba(197, 168, 128, 0.1);
         }
 
         .card-header {
@@ -120,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_user'])) {
             text-align: center;
         }
 
-        .card-body { padding: 40px; }
+        .card-
 
         /* --- INFO GRID --- */
         .info-grid {
@@ -213,16 +187,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_user'])) {
 
         @media (max-width: 600px) {
             .info-grid { grid-template-columns: 1fr; }
-            .header { padding: 15px 20px; }
+            
         }
     </style>
+    <link rel="stylesheet" href="css/admin_style.css">
 </head>
 <body>
 
     <header class="header">
         <div class="logo-area">
             <a href="admin_dashboard.php" style="text-decoration: none;">
-                <h1><span class="logo-ulu">Ulu</span><span class="logo-garden">Garden</span></h1>
+                <h1><span class="logo-ulu">Easy</span><span class="logo-garden">Stay</span></h1>
             </a>
             <span class="brand-sub">Management Portal</span>
         </div>

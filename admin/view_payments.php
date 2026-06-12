@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['admin_id'])) { 
-    header("Location: login.php"); 
+    header("Location: ../login.php"); 
     exit(); 
 }
 require_once 'db_connect.php';
@@ -46,51 +46,27 @@ if (isset($_GET['book_id'])) {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Payment Verification #<?= $book_id ?> | UluGarden</title>
+        <title>Payment Verification #<?= $book_id ?> | EasyStay</title>
         <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
         <style>
-            :root { 
-                --ulu-orange: #FF7F32; 
-                --garden-black: #1A1A1A;
-                --bg: #FFF5EB; 
-                --white: #fff; 
-                --text: #2D3E4E; 
-            }
-            * { margin: 0; padding: 0; box-sizing: border-box; }
-            body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); }
+/* --- HEADER (SAMA SEPERTI MANAGE_BOOKINGS) --- */
             
-            /* --- HEADER (SAMA SEPERTI MANAGE_BOOKINGS) --- */
-            .header {
-                background: var(--white);
-                padding: 15px 50px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                box-shadow: 0 4px 20px rgba(255, 127, 50, 0.08);
-                position: sticky;
-                top: 0;
-                z-index: 1000;
-            }
             .logo-area h1 { font-size: 1.7rem; font-weight: 800; letter-spacing: -1px; }
             .logo-area a { text-decoration: none; }
-            .logo-ulu { color: var(--ulu-orange); }
-            .logo-garden { color: var(--garden-black); }
-            .brand-sub { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; display: block; margin-top: -3px; }
-            .nav-actions { display: flex; gap: 15px; align-items: center; }
-            .nav-btn {
-                text-decoration: none; padding: 10px 22px; border-radius: 12px;
-                font-weight: 600; font-size: 0.85rem; transition: all 0.3s ease;
-                display: flex; align-items: center; gap: 8px;
-            }
-            .btn-profile { background: transparent; color: var(--ulu-orange); border: 1.5px solid var(--ulu-orange); }
-            .btn-logout { background: var(--ulu-orange); color: var(--white); border: 1.5px solid var(--ulu-orange); }
+            
+            
+            
+            
+            
+            
+            
 
             /* --- DETAIL CONTENT --- */
-            .main-container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+            
             .content-card { background: var(--white); padding: 40px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-            .back-btn { text-decoration: none; color: #666; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 25px; font-size: 0.9rem; }
-            .back-btn:hover { color: var(--ulu-orange); }
+            
+            
             .info-box { background: #F9FAFB; padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #eee; }
             .proof-card { border: 1px solid #eee; border-radius: 15px; padding: 20px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; }
             .proof-card.deposit { border-left: 5px solid var(--ulu-orange); }
@@ -100,15 +76,16 @@ if (isset($_GET['book_id'])) {
             .update-box label { font-weight: 700; font-size: 0.85rem; text-transform: uppercase; color: #854D0E; display: block; margin-bottom: 5px; }
             select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; margin-bottom: 20px; font-family: inherit; }
             .btn-save { background: var(--ulu-orange); color: white; border: none; padding: 15px; border-radius: 12px; width: 100%; cursor: pointer; font-weight: 800; font-size: 1rem; transition: 0.3s; }
-            .btn-save:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255, 127, 50, 0.3); }
-        </style>
-    </head>
+            .btn-save:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(197, 168, 128, 0.3); }
+    </style>
+        <link rel="stylesheet" href="css/admin_style.css">
+</head>
     <body>
 
     <header class="header">
         <div class="logo-area">
             <a href="admin_dashboard.php">
-                <h1><span class="logo-ulu">Ulu</span><span class="logo-garden">Garden</span></h1>
+                <h1><span class="logo-ulu">Easy</span><span class="logo-garden">Stay</span></h1>
             </a>
             <span class="brand-sub">Management Portal</span>
         </div>
@@ -203,53 +180,30 @@ $result = $conn->query($sql);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Payments | UluGarden Admin</title>
+    <title>All Payments | EasyStay Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { 
-            --ulu-orange: #FF7F32; 
-            --garden-black: #1A1A1A;
-            --soft-orange-bg: #FFF5E9;
-            --white: #fff; 
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--soft-orange-bg); color: #2D3E4E; }
-
-        /* --- HEADER --- */
-        .header {
-            background: var(--white);
-            padding: 15px 50px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 20px rgba(255, 127, 50, 0.08);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
+/* --- HEADER --- */
+        
         .logo-area h1 { font-size: 1.7rem; font-weight: 800; letter-spacing: -1px; }
         .logo-area a { text-decoration: none; }
-        .logo-ulu { color: var(--ulu-orange); }
-        .logo-garden { color: var(--garden-black); }
-        .brand-sub { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; display: block; margin-top: -3px; }
         
-        .nav-actions { display: flex; gap: 15px; align-items: center; }
-        .nav-btn {
-            text-decoration: none; padding: 10px 22px; border-radius: 12px;
-            font-weight: 600; font-size: 0.85rem; transition: all 0.3s ease;
-            display: flex; align-items: center; gap: 8px;
-        }
-        .btn-profile { background: transparent; color: var(--ulu-orange); border: 1.5px solid var(--ulu-orange); }
-        .btn-logout { background: var(--ulu-orange); color: var(--white); border: 1.5px solid var(--ulu-orange); }
+        
+        
+        
+        
+        
+        
+        
 
         /* --- TABLE LAYOUT --- */
-        .container { max-width: 1250px; margin: 40px auto; padding: 0 20px; }
+        
         .table-card { background: var(--white); border-radius: 25px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.03); padding: 10px; }
         
-        table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; padding: 20px 15px; background: #fafafa; color: #888; font-size: 0.72rem; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }
-        td { padding: 20px 15px; border-bottom: 1px solid #f9f9f9; font-size: 0.9rem; }
+        
+        
+        
         
         .badge { padding: 6px 12px; border-radius: 8px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; display: inline-block; }
         .bg-Pending-Deposit { background: #ffebee; color: #c62828; }
@@ -263,13 +217,14 @@ $result = $conn->query($sql);
         .page-title { margin-bottom: 30px; }
         .page-title h2 { font-size: 2rem; font-weight: 800; color: var(--garden-black); }
     </style>
+    <link rel="stylesheet" href="css/admin_style.css">
 </head>
 <body>
 
 <header class="header">
     <div class="logo-area">
         <a href="admin_dashboard.php">
-            <h1><span class="logo-ulu">Ulu</span><span class="logo-garden">Garden</span></h1>
+            <h1><span class="logo-ulu">Easy</span><span class="logo-garden">Stay</span></h1>
         </a>
         <span class="brand-sub">Management Portal</span>
     </div>

@@ -2,7 +2,7 @@
 session_start();
 // Semak login admin
 if (!isset($_SESSION['admin_id'])) {
-    header("Location: login.php");
+    header("Location: ../login.php");
     exit();
 } else {
     $user_id = $_SESSION['admin_id'];
@@ -58,7 +58,7 @@ $resCal = $conn->query($sqlCal);
 
 while($row = $resCal->fetch_assoc()) {
     // Warna ikut status
-    $color = '#FF7F32'; // Default Orange (Accepted)
+    $color = '#C5A880'; // Default Gold (Accepted)
     if($row['status'] == 'Pending') $color = '#f1c40f'; // Kuning
     if($row['status'] == 'Rejected') $color = '#e74c3c'; // Merah
 
@@ -77,224 +77,30 @@ while($row = $resCal->fetch_assoc()) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard | UluGarden</title>
-    <link rel="shortcut icon" type="image/x-icon" href="../img/favicon.png">
+    <title>Admin Dashboard | EasyStay</title>
+    <link rel="shortcut icon" type="image/x-icon" href="../img/favicon.png?v=2">
     
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
-
-    <style>
-        :root {
-            --ulu-orange: #FF7F32;
-            --ulu-orange-dark: #e66a20;
-            --garden-black: #1A1A1A;
-            --soft-bg: #F8F9FA;
-            --white: #ffffff;
-            --text-grey: #64748b;
-            --card-shadow: 0 4px 20px rgba(0,0,0,0.05);
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--soft-bg);
-            color: var(--garden-black);
-            padding-bottom: 50px;
-        }
-
-        /* --- HEADER --- */
-        header {
-            background-color: var(--white);
-            padding: 1.5rem 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .logo h1 {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: var(--garden-black);
-            letter-spacing: -0.5px;
-        }
-        .logo span { color: var(--ulu-orange); }
-
-        .admin-profile {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .admin-info { text-align: right; }
-        .admin-info h4 { font-size: 0.9rem; font-weight: 700; }
-        .admin-info p { font-size: 0.8rem; color: var(--text-grey); }
-        
-        .logout-btn {
-            background: #FFF0E6;
-            color: var(--ulu-orange);
-            padding: 8px 15px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: 0.3s;
-        }
-        .logout-btn:hover { background: var(--ulu-orange); color: white; }
-
-        /* --- MAIN CONTAINER --- */
-        .container {
-            max-width: 1200px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .section-title i { color: var(--ulu-orange); }
-
-        /* --- STAT CARDS (NEW) --- */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: var(--white);
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: var(--card-shadow);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: transform 0.3s ease;
-        }
-        .stat-card:hover { transform: translateY(-5px); }
-
-        .stat-info h3 { font-size: 2rem; font-weight: 800; color: var(--garden-black); }
-        .stat-info p { color: var(--text-grey); font-size: 0.9rem; font-weight: 600; }
-        
-        .stat-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
-        .icon-orange { background: #FFF0E6; color: var(--ulu-orange); }
-        .icon-blue { background: #E6F3FF; color: #007BFF; }
-        .icon-red { background: #FFE6E6; color: #FF3B30; }
-
-        /* --- ANALYTICS & CALENDAR GRID --- */
-        .analytics-grid {
-            display: grid;
-            grid-template-columns: 1fr 2fr; /* Chart 1/3, Calendar 2/3 */
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-
-        .dashboard-card {
-            background: var(--white);
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: var(--card-shadow);
-        }
-
-        /* FullCalendar Customization */
-        #calendar { width: 100%; max-height: 600px; }
-        .fc-event { cursor: pointer; border: none; font-size: 0.85rem; }
-        .fc-toolbar-title { font-size: 1.2rem !important; font-weight: 700; }
-        .fc-button-primary { background-color: var(--garden-black) !important; border: none !important; }
-        .fc-button-primary:hover { background-color: var(--ulu-orange) !important; }
-
-        /* --- ORIGINAL MENU GRID --- */
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-        }
-
-        .menu-card {
-            background: var(--white);
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: var(--card-shadow);
-            transition: all 0.3s ease;
-            text-decoration: none;
-            color: inherit;
-            border: 1px solid transparent;
-            display: block;
-        }
-
-        .menu-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--ulu-orange);
-            box-shadow: 0 10px 30px rgba(255, 127, 50, 0.15);
-        }
-
-        .menu-icon {
-            width: 60px;
-            height: 60px;
-            background: var(--garden-black);
-            color: var(--white);
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            transition: 0.3s;
-        }
-
-        .menu-card:hover .menu-icon {
-            background: var(--ulu-orange);
-        }
-
-        .menu-card h3 { font-size: 1.2rem; margin-bottom: 10px; }
-        .menu-card p { color: var(--text-grey); font-size: 0.9rem; line-height: 1.5; margin-bottom: 20px; }
-        
-        .action-link {
-            font-weight: 700;
-            color: var(--ulu-orange);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* Responsive */
-        @media (max-width: 991px) {
-            .analytics-grid { grid-template-columns: 1fr; }
-        }
-    </style>
+    <link rel="stylesheet" href="css/admin_style.css">
 </head>
 <body>
 
     <header>
         <div class="logo">
-            <h1>Ulu<span>Garden</span> Admin</h1>
+            <a href="admin_dashboard.php" style="text-decoration: none;">
+                <h1>Easy<span>Stay</span> Admin</h1>
+            </a>
         </div>
         <div class="admin-profile">
             <div class="admin-info">
                 <h4>Hello, <?= htmlspecialchars($admin_name) ?></h4>
                 <p>Administrator</p>
             </div>
-            <a href="../logout.php" class="logout-btn"><i class="fas fa-sign-out-alt"></i></a>
+            <a href="../logout.php" class="logout-btn" onclick="return confirm('Confirm Logout?');"><i class="fas fa-sign-out-alt"></i></a>
         </div>
     </header>
 
@@ -363,7 +169,7 @@ while($row = $resCal->fetch_assoc()) {
             <a href="view_gallery.php" class="menu-card">
                 <div class="menu-icon"><i class="fas fa-images"></i></div>
                 <h3>Gallery Settings</h3>
-                <p>Update photos of the resort to showcase the best of UluGarden.</p>
+                <p>Update photos of the resort to showcase the best of EasyStay.</p>
                 <span class="action-link">Update Gallery <i class="fas fa-arrow-right"></i></span>
             </a>
 
@@ -394,7 +200,7 @@ while($row = $resCal->fetch_assoc()) {
                 datasets: [{
                     label: 'Revenue (RM)',
                     data: <?= json_encode($salesData) ?>,
-                    backgroundColor: '#FF7F32',
+                    backgroundColor: '#C5A880',
                     borderRadius: 5,
                 }]
             },
@@ -409,7 +215,7 @@ while($row = $resCal->fetch_assoc()) {
             }
         });
 
-        // --- 2. SETUP FULLCALENDAR (PEMBETULAN) ---
+        // --- 2. SETUP FULLCALENDAR ---
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -420,12 +226,7 @@ while($row = $resCal->fetch_assoc()) {
                     center: 'title',
                     right: 'dayGridMonth,listWeek'
                 },
-                
-                // --- PEMBETULAN DI SINI ---
-                height: 400, // Tetapkan tinggi tetap (pixel)
-                // JANGAN letak contentHeight: 'auto' (Ini punca ia memanjang)
-                // --------------------------
-                
+                height: 400,
                 eventClick: function(info) {
                     if (info.event.url) {
                         window.location.href = info.event.url;

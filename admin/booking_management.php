@@ -4,7 +4,7 @@ require 'db_connect.php';
 
 session_start();
 if (!isset($_SESSION['admin_id'])) {
-    header("Location: loginform.html");
+    header("Location: ../login.php");
     exit();
 }
 $user_id = $_SESSION['admin_id'];
@@ -53,53 +53,33 @@ $result = $conn->query($sql);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Booking Management | UluGarden</title>
-    <link rel="shortcut icon" type="image/x-icon" href="../img/favicon.png">
+    <title>Booking Management | EasyStay</title>
+    <link rel="shortcut icon" type="image/x-icon" href="../img/favicon.png?v=2">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        :root {
-            --ulu-orange: #FF7F32;
-            --garden-black: #1A1A1A;
-            --soft-orange-bg: #FFF5E9;
-            --white: #ffffff;
-            --text-main: #2D3E4E;
-            --success: #27ae60;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--soft-orange-bg); color: var(--text-main); min-height: 100vh; }
-
-        /* --- HEADER --- */
-        .header {
-            background: var(--white); padding: 15px 50px; display: flex;
-            justify-content: space-between; align-items: center;
-            box-shadow: 0 4px 20px rgba(255, 127, 50, 0.08); position: sticky; top: 0; z-index: 1000;
-        }
+/* --- HEADER --- */
+        
         .logo-area h1 { font-size: 1.7rem; font-weight: 800; }
-        .logo-ulu { color: var(--ulu-orange); }
-        .logo-garden { color: var(--garden-black); }
-        .brand-sub { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; display: block; margin-top: -3px; }
+        
+        
+        
 
-        .nav-actions { display: flex; gap: 15px; align-items: center; }
-        .nav-btn {
-            text-decoration: none; padding: 10px 22px; border-radius: 12px;
-            font-weight: 600; font-size: 0.85rem; transition: 0.3s;
-            display: flex; align-items: center; gap: 8px;
-        }
-        .btn-profile { background: transparent; color: var(--ulu-orange); border: 1.5px solid var(--ulu-orange); }
-        .btn-logout { background: var(--ulu-orange); color: white; border: 1.5px solid var(--ulu-orange); }
+        
+        
+        
+        
 
         /* --- CONTENT --- */
-        .container { max-width: 1300px; margin: 0 auto; padding: 40px 20px; }
+        
         .page-header-flex { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; }
         
         .table-card { background: var(--white); border-radius: 25px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.03); padding: 10px; }
-        table { width: 100%; border-collapse: collapse; table-layout: fixed; } /* Fixed layout untuk keselarasan */
+         /* Fixed layout untuk keselarasan */
         
-        th { padding: 20px 15px; background: #fafafa; color: #888; font-size: 0.72rem; text-transform: uppercase; font-weight: 700; text-align: left; border-bottom: 2px solid #f0f0f0; }
-        td { padding: 20px 15px; border-bottom: 1px solid #f9f9f9; vertical-align: middle; font-size: 0.88rem; word-wrap: break-word; }
+        
+        
 
         /* Penetapan lebar kolum supaya selari */
         .col-no { width: 50px; text-align: center; }
@@ -129,13 +109,14 @@ $result = $conn->query($sql);
         .page-link { text-decoration: none; padding: 10px 18px; border-radius: 12px; background: var(--white); color: var(--garden-black); font-weight: 700; font-size: 0.85rem; box-shadow: 0 4px 10px rgba(0,0,0,0.04); transition: 0.3s; }
         .page-link:hover, .page-link.active { background: var(--ulu-orange); color: white; }
     </style>
+    <link rel="stylesheet" href="css/admin_style.css">
 </head>
 <body>
 
     <header class="header">
         <div class="logo-area">
             <a href="admin_dashboard.php" style="text-decoration: none;">
-                <h1><span class="logo-ulu">Ulu</span><span class="logo-garden">Garden</span></h1>
+                <h1><span class="logo-ulu">Easy</span><span class="logo-garden">Stay</span></h1>
             </a>
             <span class="brand-sub">Management Portal</span>
         </div>

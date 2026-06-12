@@ -1,6 +1,6 @@
 <?php
 session_start();
-if (!isset($_SESSION['admin_id'])) { header("Location: login.php"); exit(); }
+if (!isset($_SESSION['admin_id'])) { header("Location: ../login.php"); exit(); }
 require_once 'db_connect.php';
 require_once 'email.php'; // Pastikan fail email.php wujud
 
@@ -83,13 +83,13 @@ $booking = $conn->query($sql)->fetch_assoc();
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Edit Booking | UluGarden Admin</title>
+    <title>Edit Booking | EasyStay Admin</title>
     <link rel="stylesheet" href="css/admin_style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <header>
-        <div class="logo"><h1>Ulu<span>Garden</span></h1></div>
+        <div class="logo"><h1>Easy<span>Stay</span></h1></div>
         <nav class="admin-nav"><a href="manage_bookings.php">Back</a></nav>
     </header>
 
@@ -121,7 +121,7 @@ $booking = $conn->query($sql)->fetch_assoc();
 
                 <div class="form-group">
                     <label class="form-label">Payment Status (Money)</label>
-                    <select name="payment_status" class="form-control" style="border: 2px solid #ff7b00;">
+                    <select name="payment_status" class="form-control" style="border: 2px solid #C5A880;">
                         <option value="Pending Deposit" <?= $booking['payment_status'] == 'Pending Deposit' ? 'selected' : '' ?>>Pending Deposit</option>
                         <option value="Deposit Paid" <?= $booking['payment_status'] == 'Deposit Paid' ? 'selected' : '' ?>>Deposit Paid (Confirm)</option>
                         <option value="Pending Balance" <?= $booking['payment_status'] == 'Pending Balance' ? 'selected' : '' ?>>Pending Balance (User Uploaded)</option>

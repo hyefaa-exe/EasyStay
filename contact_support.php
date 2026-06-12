@@ -11,7 +11,7 @@ $status_msg = "";
 $status_type = ""; // success or error
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $to = "ulugardensupport@gmail.com";
+    $to = "easystaysupport@gmail.com";
 
     $from     = $_POST['email'] ?? '';
     $name     = $_POST['name'] ?? '';
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $headers .= "MIME-Version: 1.0\r\n";
     $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
 
-    $email_subject = "Ulu Garden Support: " . $subject;
+    $email_subject = "EasyStay Support: " . $subject;
 
     $body = "
     <!DOCTYPE html>
@@ -63,12 +63,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <head>
     <meta charset="utf-8">
-    <title>Contact Support | Ulu Garden Homestay</title>
+    <title>Contact Support | EasyStay</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
+    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png?v=2">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=3">
 </head>
 
 <body>
@@ -91,18 +91,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </nav>
                 </div>
                 <div class="col-xl-2 col-lg-2 text-center">
-                    <a href="index.php" class="logo-link"><img src="img/logo.png" alt="Logo" style="height: 50px;"></a>
+                    <a href="index.php" class="logo-link"><img src="img/logo.png?v=2" alt="Logo" style="height: 50px;"></a>
                 </div>
                 <div class="col-xl-5 col-lg-5">
                     <div class="header-right-part d-flex justify-content-end align-items-center">
                         <ul class="social-icons-head d-flex list-unstyled m-0 mr-4">
                             <li class="mr-3"><a href="https://www.facebook.com/profile.php?id=100092359781203" target="_blank" style="color:white;"><i class="fa-brands fa-facebook-f"></i></a></li>
-                            <li><a href="https://www.tiktok.com/@ulugardenhomestay" target="_blank" style="color:white;"><i class="fa-brands fa-tiktok"></i></a></li>
+                            <li><a href="https://www.tiktok.com/@easystayhomestay" target="_blank" style="color:white;"><i class="fa-brands fa-tiktok"></i></a></li>
                         </ul>
                         <?php if ($is_logged_in): ?>
-                            <a href="logout.php" class="auth-btn" style="background: #ff7b00; color: white; padding: 10px 20px; border-radius: 5px; font-weight: bold; text-decoration: none;">Logout</a>
+                            <a href="logout.php" class="auth-btn">Logout</a>
                         <?php else: ?>
-                            <a href="login.php" class="auth-btn" style="background: #ff7b00; color: white; padding: 10px 20px; border-radius: 5px; font-weight: bold; text-decoration: none;">Login / Register</a>
+                            <a href="login.php" class="auth-btn">Login / Register</a>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -132,18 +132,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div class="container">
             <div class="row">
                 <div class="col-lg-3 col-md-6 mb-4">
-                    <h3>ULU GARDEN</h3>
+                    <h3>EASYSTAY</h3>
                     <p>Lot 8012, Kampung Binjai Kertas,</p>
                     <p>21700 Kuala Berang, Terengganu.</p>
                     <div class="footer-social-icons">
                         <a href="https://www.facebook.com/profile.php?id=100092359781203" target="_blank"><i class="fab fa-facebook"></i></a>
-                        <a href="https://www.tiktok.com/@ulugardenhomestay" target="_blank"><i class="fab fa-tiktok"></i></a>
+                        <a href="https://www.tiktok.com/@easystayhomestay" target="_blank"><i class="fab fa-tiktok"></i></a>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-4">
                     <h3>CONTACT US</h3>
                     <p><i class="fas fa-phone-alt mr-2"></i> +60 19 211 9223</p>
-                    <p><i class="fas fa-envelope mr-2"></i> reservation@ulugarden.com</p>
+                    <p><i class="fas fa-envelope mr-2"></i> reservation@easystay.com</p>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-4">
                     <h3>NAVIGATION</h3>
@@ -163,7 +163,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>Copyright Ulu Garden © 2025. All rights reserved.</p>
+                <p>Copyright EasyStay © 2025. All rights reserved.</p>
             </div>
         </div>
     </footer>

@@ -2,14 +2,17 @@
    1. GLOBAL RESET & iOS TYPOGRAPHY
    ========================================================================== */
 :root {
-    --primary-orange: #ff7b00;
-    --hover-orange: #e66e00;
-    --ios-black: #1d1d1f;   /* Warna hitam rasmi Apple */
-    --ios-gray: #f5f5f7;    /* Warna latar rasmi Apple */
-    --text-primary: #1d1d1f;
-    --text-secondary: #86868b;
+    --primary-orange: #C5A880; /* Premium Luxury Gold */
+    --hover-orange: #B3966F;   /* Darker Gold */
+    --gold-premium: #C5A880;   /* Premium Gold */
+    --ios-black: #121212;      /* Charcoal black */
+    --ios-gray: #FAF9F6;       /* Alabaster white */
+    --text-primary: #1c1c1c;   /* Soft off-black */
+    --text-secondary: #6e6e73; /* Muted gray */
     --white: #ffffff;
-    --glass-bg: rgba(29, 29, 31, 0.72); /* Effect kaca untuk header */
+    --glass-bg: rgba(18, 18, 18, 0.75); /* Dark translucent glassmorphism */
+    --text-dark: #1c1c1c;      /* Soft off-black */
+    --soft-white: #FAF9F6;     /* Alabaster white */
 }
 
 * {
@@ -111,12 +114,12 @@ body {
     text-decoration: none;
     border: none;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 10px rgba(255, 123, 0, 0.2);
+    box-shadow: 0 4px 10px rgba(197, 168, 128, 0.2);
 }
 .auth-btn:hover { 
     background: var(--hover-orange); 
     transform: translateY(-1px);
-    box-shadow: 0 6px 15px rgba(255, 123, 0, 0.3);
+    box-shadow: 0 6px 15px rgba(197, 168, 128, 0.3);
 }
 
 /* ==========================================================================
@@ -206,7 +209,7 @@ body.register-page {
 .form-control:focus {
     border-color: var(--primary-orange);
     background: #fff;
-    box-shadow: 0 0 0 3px rgba(255, 123, 0, 0.1);
+    box-shadow: 0 0 0 3px rgba(197, 168, 128, 0.1);
 }
 
 .btn-auth-action {
@@ -227,7 +230,7 @@ body.register-page {
 .btn-auth-action:hover {
     background: var(--hover-orange);
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(255, 123, 0, 0.3);
+    box-shadow: 0 5px 15px rgba(197, 168, 128, 0.3);
 }
 
 .auth-links { margin-top: 20px; font-size: 13px; color: #666; }
@@ -273,6 +276,33 @@ body.register-page {
 .package-poster img { width: 100%; height: auto; object-fit: cover; }
 .package-details-bottom { padding: 25px; }
 
+/* Senarai Kemudahan Pakej di Booking Page */
+.booking-features-list {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+.booking-features-list h5 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #121212;
+}
+.booking-features-list li {
+    font-size: 13px;
+    line-height: 1.6;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: flex-start;
+    color: #555;
+}
+.booking-features-list li i {
+    color: #C5A880 !important; /* Premium Gold */
+    margin-right: 10px;
+    margin-top: 4px;
+    font-size: 11px;
+}
+
 .price-tag-box {
     background: #fff5f0;
     color: var(--primary-orange);
@@ -311,13 +341,65 @@ body.register-page {
     padding: 20px;
     margin-bottom: 20px;
 }
-.note-box {
-    background: #fff9f0;
-    border-left: 4px solid #ff7b00;
-    padding: 10px 15px;
+.booking-breakdown-box {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    text-align: left;
     font-size: 13px;
-    margin-bottom: 20px;
-    color: #856404;
+    width: 100%;
+}
+.breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.85);
+}
+.breakdown-row span {
+    font-weight: 400;
+}
+.breakdown-row strong {
+    color: var(--primary-orange);
+    font-size: 14px;
+    font-weight: 700;
+}
+.deposit-alert-box {
+    background: #FFF9F6;
+    border-left: 5px solid #C5A880;
+    border-radius: 4px 12px 12px 4px;
+    padding: 15px 18px;
+    margin-bottom: 22px;
+    box-shadow: 0 4px 12px rgba(197, 168, 128, 0.08);
+    border-top: 1px solid rgba(197, 168, 128, 0.15);
+    border-right: 1px solid rgba(197, 168, 128, 0.15);
+    border-bottom: 1px solid rgba(197, 168, 128, 0.15);
+}
+.deposit-alert-box .alert-icon-wrap {
+    font-size: 18px;
+    color: #b8860b; /* Dark Goldenrod */
+    display: flex;
+    align-items: center;
+}
+.deposit-alert-box .alert-title {
+    color: #121212;
+    font-size: 14px;
+    margin-bottom: 4px;
+    letter-spacing: 0.3px;
+}
+.deposit-alert-box .alert-text {
+    color: #555;
+    font-size: 12.5px;
+    line-height: 1.5;
+}
+.deposit-alert-box .highlight-deposit {
+    background: #C5A880;
+    color: #121212;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 12px;
+    display: inline-block;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .btn-confirm {
@@ -437,30 +519,37 @@ body.register-page {
    7. CONTACT PAGE & ABOUT PAGE
    ========================================================================== */
 .welcome-section {
-    background: var(--white);
-    padding: 80px 0;
-    margin-bottom: 20px;
-    box-shadow: 0 1px 0 rgba(0,0,0,0.05);
+    background-image: linear-gradient(rgba(18, 18, 18, 0.75), rgba(18, 18, 18, 0.85)), url('../img/header2.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: scroll;
+    padding: 170px 0 120px;
+    margin-top: -110px;
+    margin-bottom: 0px;
+    position: relative;
+    color: var(--white);
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
 }
 
 .welcome-title { 
-    font-size: 42px; 
-    font-weight: 700; 
-    color: var(--ios-black); 
-    letter-spacing: -1px; /* Rapat sikit ala Apple */
+    font-size: 48px; 
+    font-weight: 800; 
+    color: var(--white); 
+    letter-spacing: -1px;
     margin-bottom: 10px;
 }
 
 .welcome-subtitle { 
-    font-size: 21px; 
+    font-size: 22px; 
     color: var(--primary-orange); 
     font-weight: 500;
     margin-bottom: 15px;
+    letter-spacing: 0.5px;
 }
 
 .welcome-description {
     font-size: 17px;
-    color: var(--text-secondary);
+    color: rgba(255, 255, 255, 0.7);
     max-width: 700px;
     margin: 0 auto 40px;
     line-height: 1.6;
@@ -498,7 +587,7 @@ body.register-page {
 .check-form .form-control:focus {
     background: #fff;
     border-color: var(--primary-orange);
-    box-shadow: 0 0 0 4px rgba(255, 123, 0, 0.1);
+    box-shadow: 0 0 0 4px rgba(197, 168, 128, 0.1);
 }
 
 .btn-check {
@@ -718,4 +807,193 @@ body.register-page {
     .header-area { padding: 0 15px; }
     .welcome-title { font-size: 32px; }
     #navigation { display: none; } /* Mobile menu perlu handling lain jika ada */
+}
+
+/* ==========================================================================
+   10. PREMIUM TESTIMONIALS, REVIEWS MODAL & CUSTOM BADGES
+   ========================================================================== */
+.testimonials-section {
+    background-color: var(--ios-gray);
+    padding: 80px 0;
+}
+.testimonial-card {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.testimonial-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(197, 168, 128, 0.15);
+    border-color: var(--gold-premium);
+}
+.testimonial-stars {
+    color: #FFC107;
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+.testimonial-text {
+    font-size: 15px;
+    color: #555;
+    line-height: 1.6;
+    font-style: italic;
+    margin-bottom: 20px;
+    flex-grow: 1;
+}
+.testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+}
+.author-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--gold-premium);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+}
+.author-info h5 {
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0;
+    color: var(--text-primary);
+}
+.author-info small {
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+/* Review Modal Styles */
+.review-item {
+    padding: 20px 0;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+}
+.review-item:last-child {
+    border-bottom: none;
+}
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.review-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.review-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 13px;
+}
+.review-rating {
+    color: #FFC107;
+    font-size: 13px;
+}
+.review-date {
+    font-size: 12px;
+    color: #999;
+}
+.review-comment {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.5;
+    padding-left: 45px;
+}
+
+/* Glassmorphism Form style */
+.check-form.glass-effect {
+    background: rgba(18, 18, 18, 0.7) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1.5px solid rgba(197, 168, 128, 0.35) !important;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+    border-radius: 24px;
+    padding: 35px;
+}
+
+.check-form.glass-effect label {
+    color: var(--primary-orange) !important; /* Luxury gold label text */
+    font-weight: 600;
+    text-shadow: none;
+}
+
+.check-form.glass-effect .form-control {
+    background: rgba(255, 255, 255, 0.07) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: var(--white) !important;
+    border-radius: 12px;
+    height: 50px;
+    transition: all 0.3s ease;
+}
+
+.check-form.glass-effect .form-control:focus {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: var(--primary-orange) !important;
+    box-shadow: 0 0 0 3px rgba(197, 168, 128, 0.25) !important;
+}
+
+.check-form.glass-effect .btn-check {
+    background: var(--primary-orange) !important;
+    color: var(--ios-black) !important;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    border-radius: 12px;
+}
+
+.check-form.glass-effect .btn-check:hover {
+    background: var(--hover-orange) !important;
+    color: var(--white) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(197, 168, 128, 0.4);
+}
+
+/* Translucent Status Badges */
+.badge-success-soft {
+    background: rgba(46, 125, 50, 0.1) !important;
+    color: #2E7D32 !important;
+    border: 1px solid rgba(46, 125, 50, 0.2);
+}
+.badge-danger-soft {
+    background: rgba(198, 40, 40, 0.1) !important;
+    color: #C62828 !important;
+    border: 1px solid rgba(198, 40, 40, 0.2);
+}
+.badge-warning-soft {
+    background: rgba(249, 168, 37, 0.1) !important;
+    color: #F9A825 !important;
+    border: 1px solid rgba(249, 168, 37, 0.2);
+}
+.badge-info-soft {
+    background: rgba(0, 104, 168, 0.1) !important;
+    color: #0068A8 !important;
+    border: 1px solid rgba(0, 104, 168, 0.2);
+}
+.badge-muted {
+    background: rgba(136, 136, 136, 0.1) !important;
+    color: #888888 !important;
+    border: 1px solid rgba(136, 136, 136, 0.2);
+    text-decoration: none !important;
 }

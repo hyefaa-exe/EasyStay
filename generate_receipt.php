@@ -125,9 +125,9 @@ if ($data['total_price'] > 0) {
     <div class="receipt-box">
         <div class="header">
             <div class="logo-container">
-                <img src="img/logo.png" alt="Logo">
+                <img src="img/logo.png?v=2" alt="Logo">
                 <div class="brand-info">
-                    <h2><span class="text-ulu">ULU</span><span class="text-garden">GARDEN</span></h2>
+                    <h2><span class="text-ulu">EASY</span><span class="text-garden">STAY</span></h2>
                     <small>Lot 8012, Kampung Binjai Kertas,<br>21700 Kuala Berang, Terengganu.</small>
                 </div>
             </div>

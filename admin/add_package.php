@@ -4,7 +4,7 @@ require 'db_connect.php';
 
 // Semak jika admin telah login
 if (!isset($_SESSION['admin_id'])) {
-    header("Location: loginform.html");
+    header("Location: ../login.php");
     exit();
 }
 
@@ -50,71 +50,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add New Package | UluGarden</title>
+    <title>Add New Package | EasyStay</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        :root {
-            --ulu-orange: #FF7F32;
-            --garden-black: #1A1A1A;
-            --bg-color: #FFF5E9;
-            --white: #ffffff;
-            --text-gray: #8E8E8E;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-
-        body { background-color: var(--bg-color); min-height: 100vh; }
-
-        /* --- HEADER SELARI DENGAN MANAGE_PACKAGE.PHP --- */
-        .header {
-            background: var(--white);
-            padding: 15px 80px; /* Samakan padding kiri/kanan dengan dashboard */
-            display: flex;
-            justify-content: space-between;
-            align-items: center; /* Memastikan logo & butang selari secara vertikal */
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-            height: 85px; /* Tetapkan height supaya konsisten antara page */
-            width: 100%;
-        }
-
-        .logo-box {
-            display: flex;
-            flex-direction: column;
-            text-decoration: none;
-            line-height: 1.1;
-        }
-
-        .logo-text { font-size: 1.8rem; font-weight: 800; }
-        .logo-ulu { color: var(--ulu-orange); }
-        .logo-garden { color: var(--garden-black); }
+/* --- HEADER SELARI DENGAN MANAGE_PACKAGE.PHP --- */
         
-        .portal-sub { 
-            font-size: 0.75rem; 
-            font-weight: 700; 
-            color: var(--text-gray); 
-            letter-spacing: 2px; 
-            text-transform: uppercase;
-        }
 
-        .back-btn {
-            text-decoration: none;
-            color: var(--ulu-orange);
-            border: 1.5px solid var(--ulu-orange);
-            padding: 10px 22px;
-            border-radius: 25px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: 0.3s;
-        }
-        .back-btn:hover { background: var(--ulu-orange); color: white; }
+        
+
+        
+        
+        
+        
+        
+
+        
+        
 
         /* --- FORM CONTAINER --- */
-        .container { max-width: 750px; margin: 40px auto; padding: 0 20px 60px 20px; }
+        
 
         .card {
             background: var(--white);
@@ -136,10 +92,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             gap: 12px;
         }
 
-        .card-body { padding: 40px; }
+        .card-
 
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .full-width { grid-column: span 2; }
+        .full-wid
 
         .form-group label {
             display: block;
@@ -192,21 +148,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         .btn-reset { background: #E9ECEF; color: #495057; }
         .btn-publish { background: var(--ulu-orange); color: white; }
-        .btn-publish:hover { background: #E66A20; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(255,127,50,0.25); }
+        .btn-publish:hover { background: #B3966F; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(255,127,50,0.25); }
 
         @media (max-width: 768px) {
-            .header { padding: 15px 30px; }
+            
             .form-grid { grid-template-columns: 1fr; }
-            .full-width { grid-column: span 1; }
+            .full-wid
         }
     </style>
+    <link rel="stylesheet" href="css/admin_style.css">
 </head>
 <body>
 
     <header class="header">
         <a href="admin_dashboard.php" class="logo-box">
             <div class="logo-text">
-                <span class="logo-ulu">Ulu</span><span class="logo-garden">Garden</span>
+                <span class="logo-ulu">Easy</span><span class="logo-garden">Stay</span>
             </div>
             <div class="portal-sub">Management Portal</div>
         </a>

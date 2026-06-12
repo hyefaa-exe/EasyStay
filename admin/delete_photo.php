@@ -1,17 +1,23 @@
 <?php
+session_start();
+if (!isset($_SESSION['admin_id'])) {
+    header("Location: ../login.php");
+    exit();
+}
+
 // Database connection
 require 'db_connect.php';
 
-// Pastikan user_id wujud
+// Pastikan photo_id wujud
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     die("Invalid photo ID.");
 }
 
-$user_id = intval($_GET['id']);
+$photo_id = intval($_GET['id']);
 
 // Get the photo path to delete the file from server
 $stmt = $conn->prepare("SELECT filename FROM gallery WHERE id = ?");
-$stmt->bind_param("i", $user_id);
+$stmt->bind_param("i", $photo_id);
 $stmt->execute();
 $result = $stmt->get_result();
 $photo = $result->fetch_assoc();
@@ -22,12 +28,11 @@ if ($photo) {
     }
 }
 
-// Delete package
+// Delete photo record
 $stmt = $conn->prepare("DELETE FROM gallery WHERE id = ?");
-$stmt->bind_param("i", $user_id);
+$stmt->bind_param("i", $photo_id);
 
 if ($stmt->execute()) {
-    // Redirect ke manage_package selepas berjaya delete
     echo "<script>alert('Photo deleted successfully!'); window.location.href='view_gallery.php';</script>";
 } else {
     echo "Error deleting photo: " . $conn->error;

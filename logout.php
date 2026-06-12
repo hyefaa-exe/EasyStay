@@ -11,17 +11,18 @@ session_destroy();
 
 <head>
     <meta charset="utf-8">
-    <title>Logout | Ulu Garden Homestay</title>
+    <title>Logout | EasyStay</title>
+    <meta name="description" content="EasyStay - A Digital Platform for Fast and Efficient Homestay Reservation">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
+    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png?v=2">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
         :root {
-            --primary-orange: #ff7b00;
-            --hover-orange: #e66e00;
+            --primary-orange: #C5A880;
+            --hover-orange: #B3966F;
             --soft-white: #ffffff;
             --deep-black: #0a0a0a;
         }
@@ -135,7 +136,7 @@ session_destroy();
         .btn-logout-primary:hover {
             background: var(--hover-orange);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 123, 0, 0.3);
+            box-shadow: 0 5px 15px rgba(197, 168, 128, 0.3);
         }
 
         .btn-back-link {
@@ -158,10 +159,10 @@ session_destroy();
 <body class="logout-page">
 
     <div class="logout-box">
-        <img src="img/favicon.png" alt="Logo"></a>
+        <img src="img/favicon.png?v=2" alt="Logo" class="logout-logo">
 
         <h2>Logged Out</h2>
-        <p>You have been safely signed out. Thank you for visiting <strong>Ulu Garden Homestay</strong>.</p>
+        <p>You have been safely signed out. Thank you for visiting <strong>EasyStay</strong>.</p>
 
         <div class="status-row">
             <span>Session Ended Safely</span>

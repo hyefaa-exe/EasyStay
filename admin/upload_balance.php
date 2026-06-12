@@ -4,7 +4,7 @@ require 'db_connect.php';
 
 // Check Admin Session
 if (!isset($_SESSION['admin_id'])) {
-    header("Location: loginform.html");
+    header("Location: ../login.php");
     exit();
 }
 
@@ -70,34 +70,15 @@ if (isset($_POST['submit_upload'])) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Upload Balance | UluGarden</title>
+    <title>Upload Balance | EasyStay</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --ulu-orange: #FF7F32;
-            --garden-black: #1A1A1A;
-            --soft-orange-bg: #FFF5E9;
-            --white: #ffffff;
-            --success: #2ecc71;
-            --completed: #065F46;
-        }
-
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--soft-orange-bg);
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        .upload-card {
+.upload-card {
             background: var(--white);
             padding: 40px;
             border-radius: 25px;
-            box-shadow: 0 15px 35px rgba(255, 127, 50, 0.1);
+            box-shadow: 0 15px 35px rgba(197, 168, 128, 0.1);
             width: 100%;
             max-width: 500px;
             text-align: center;
@@ -178,7 +159,7 @@ if (isset($_POST['submit_upload'])) {
             font-size: 1rem;
         }
 
-        .btn-submit:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(255, 127, 50, 0.2); }
+        .btn-submit:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(197, 168, 128, 0.2); }
         .btn-submit:disabled { background: #ccc; cursor: not-allowed; transform: none; }
 
         .btn-back {
@@ -206,6 +187,7 @@ if (isset($_POST['submit_upload'])) {
         .alert-success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
         .alert-danger { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
     </style>
+    <link rel="stylesheet" href="css/admin_style.css">
 </head>
 <body>
 

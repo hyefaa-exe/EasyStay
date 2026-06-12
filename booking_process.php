@@ -29,17 +29,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['process_booking'])) {
     $total_price = $_POST['total_price'];
 
     // 3. Semak Kekosongan (Double Check)
-    // Pastikan tarikh belum diambil oleh orang lain (Status 'Accepted')
-    $check_sql = "SELECT * FROM bookings 
+    // Pastikan tarikh belum diambil oleh orang lain (Status NOT IN 'Cancelled', 'Rejected')
+    $check_sql = "SELECT book_id FROM bookings 
                   WHERE package_id = ? 
-                  AND status = 'Accepted' 
-                  AND (
-                      (checkin_date <= ? AND checkout_date >= ?) OR
-                      (checkin_date <= ? AND checkout_date >= ?) OR
-                      (checkin_date >= ? AND checkout_date <= ?)
-                  )";
+                  AND status NOT IN ('Cancelled', 'Rejected') 
+                  AND (checkin_date < ? AND checkout_date > ?)";
     $stmt_check = $conn->prepare($check_sql);
-    $stmt_check->bind_param("issssss", $package_id, $checkin, $checkin, $checkout, $checkout, $checkin, $checkout);
+    $stmt_check->bind_param("iss", $package_id, $checkout, $checkin);
     $stmt_check->execute();
     
     if ($stmt_check->get_result()->num_rows > 0) {

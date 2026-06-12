@@ -29,20 +29,78 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
         $phone = trim($_POST['phone']);
         $password = $_POST['password'];
 
-        if (!empty($password)) {
-            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-            $stmt = $conn->prepare("UPDATE users SET full_name=?, email=?, phone=?, password=? WHERE user_id=?");
-            $stmt->bind_param("ssssi", $full_name, $email, $phone, $hashed_password, $user_id);
-        } else {
-            $stmt = $conn->prepare("UPDATE users SET full_name=?, email=?, phone=? WHERE user_id=?");
-            $stmt->bind_param("sssi", $full_name, $email, $phone, $user_id);
+        $profile_pic = null;
+        $upload_error = false;
+
+        // Handle profile picture upload if selected
+        if (isset($_FILES['profile_pic']) && $_FILES['profile_pic']['error'] == 0) {
+            $allowed = ['jpg', 'jpeg', 'png', 'webp'];
+            $filename = $_FILES['profile_pic']['name'];
+            $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+            $filesize = $_FILES['profile_pic']['size'];
+
+            if (!in_array($ext, $allowed)) {
+                $error_msg = "Invalid file type. Only JPG, JPEG, PNG, and WEBP files are allowed.";
+                $upload_error = true;
+            } elseif ($filesize > 2 * 1024 * 1024) {
+                $error_msg = "File size exceeds 2MB limit.";
+                $upload_error = true;
+            } else {
+                $target_dir = 'uploads/profile/';
+                if (!file_exists($target_dir)) {
+                    mkdir($target_dir, 0777, true);
+                }
+
+                $new_name = time() . '_profile_' . uniqid() . '.' . $ext;
+                $destination = $target_dir . $new_name;
+
+                if (move_uploaded_file($_FILES['profile_pic']['tmp_name'], $destination)) {
+                    $profile_pic = $new_name;
+
+                    // Delete the old profile picture if exists
+                    $stmt_old = $conn->prepare("SELECT profile_pic FROM users WHERE user_id = ?");
+                    $stmt_old->bind_param("i", $user_id);
+                    $stmt_old->execute();
+                    $res_old = $stmt_old->get_result()->fetch_assoc();
+                    if ($res_old && !empty($res_old['profile_pic'])) {
+                        $old_pic_path = $target_dir . $res_old['profile_pic'];
+                        if (file_exists($old_pic_path)) {
+                            @unlink($old_pic_path);
+                        }
+                    }
+                } else {
+                    $error_msg = "Failed to upload profile picture.";
+                    $upload_error = true;
+                }
+            }
         }
 
-        if ($stmt->execute()) {
-            $success_msg = "Profile updated successfully!";
-            $_SESSION['full_name'] = $full_name;
-        } else {
-            $error_msg = "Failed to update profile.";
+        if (!$upload_error) {
+            if (!empty($password)) {
+                $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+                if ($profile_pic !== null) {
+                    $stmt = $conn->prepare("UPDATE users SET full_name=?, email=?, phone=?, password=?, profile_pic=? WHERE user_id=?");
+                    $stmt->bind_param("sssssi", $full_name, $email, $phone, $hashed_password, $profile_pic, $user_id);
+                } else {
+                    $stmt = $conn->prepare("UPDATE users SET full_name=?, email=?, phone=?, password=? WHERE user_id=?");
+                    $stmt->bind_param("ssssi", $full_name, $email, $phone, $hashed_password, $user_id);
+                }
+            } else {
+                if ($profile_pic !== null) {
+                    $stmt = $conn->prepare("UPDATE users SET full_name=?, email=?, phone=?, profile_pic=? WHERE user_id=?");
+                    $stmt->bind_param("ssssi", $full_name, $email, $phone, $profile_pic, $user_id);
+                } else {
+                    $stmt = $conn->prepare("UPDATE users SET full_name=?, email=?, phone=? WHERE user_id=?");
+                    $stmt->bind_param("sssi", $full_name, $email, $phone, $user_id);
+                }
+            }
+
+            if ($stmt->execute()) {
+                $success_msg = "Profile updated successfully!";
+                $_SESSION['full_name'] = $full_name;
+            } else {
+                $error_msg = "Failed to update profile.";
+            }
         }
     }
 }
@@ -92,13 +150,13 @@ $bookings = $stmt_b->get_result();
 
 <head>
     <meta charset="utf-8">
-    <title>My Profile | Ulu Garden</title>
+    <title>My Profile | EasyStay</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
+    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png?v=2">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=3">
 
     <style>
         body {
@@ -117,8 +175,8 @@ $bookings = $stmt_b->get_result();
         .avatar-box {
             width: 90px;
             height: 90px;
-            background: #FFF0E6;
-            color: #FF7F32;
+            background: #FAF6F0;
+            color: #C5A880;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -126,7 +184,7 @@ $bookings = $stmt_b->get_result();
             font-size: 36px;
             margin: 0 auto 15px;
             border: 3px solid #ffffff;
-            box-shadow: 0 3px 10px rgba(255, 127, 50, 0.2);
+            box-shadow: 0 3px 10px rgba(197, 168, 128, 0.2);
         }
 
         .user-name {
@@ -160,13 +218,13 @@ $bookings = $stmt_b->get_result();
 
         .nav-pills-custom .nav-link:hover {
             background-color: #F8F9FA;
-            color: #FF7F32;
+            color: #C5A880;
         }
 
         .nav-pills-custom .nav-link.active {
-            background-color: #FF7F32;
+            background-color: #C5A880;
             color: white;
-            box-shadow: 0 4px 12px rgba(255, 127, 50, 0.3);
+            box-shadow: 0 4px 12px rgba(197, 168, 128, 0.3);
         }
 
         .content-panel {
@@ -193,13 +251,13 @@ $bookings = $stmt_b->get_result();
         }
 
         .stat-card.orange {
-            background: #FFF5EB;
-            color: #C05600;
+            background: #FAF6F0;
+            color: #A48256;
         }
 
         .stat-card.blue {
-            background: #EBF8FF;
-            color: #0068A8;
+            background: #F5F5F5;
+            color: #121212;
         }
 
         .stat-value {
@@ -231,9 +289,9 @@ $bookings = $stmt_b->get_result();
         }
 
         .booking-card:hover {
-            border-color: #FF7F32;
+            border-color: #C5A880;
             transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 10px 30px rgba(197, 168, 128, 0.15);
         }
 
         .booking-info h5 {
@@ -255,7 +313,7 @@ $bookings = $stmt_b->get_result();
 
         .booking-price {
             font-weight: 700;
-            color: #FF7F32;
+            color: #C5A880;
             font-size: 15px;
             margin-top: 8px;
         }
@@ -270,29 +328,34 @@ $bookings = $stmt_b->get_result();
         }
 
         .badge-success-soft {
-            background: #E6F8EB;
-            color: #0F9D58;
+            background: rgba(46, 125, 50, 0.1);
+            color: #2E7D32;
+            border: 1px solid rgba(46, 125, 50, 0.2);
         }
 
         .badge-danger-soft {
-            background: #FEEBEB;
-            color: #D93025;
+            background: rgba(198, 40, 40, 0.1);
+            color: #C62828;
+            border: 1px solid rgba(198, 40, 40, 0.2);
         }
 
         .badge-warning-soft {
-            background: #FFF8E1;
+            background: rgba(249, 168, 37, 0.1);
             color: #F9A825;
+            border: 1px solid rgba(249, 168, 37, 0.2);
         }
 
         .badge-info-soft {
-            background: #EBF8FF;
+            background: rgba(0, 104, 168, 0.1);
             color: #0068A8;
+            border: 1px solid rgba(0, 104, 168, 0.2);
         }
 
         .badge-muted {
-            background: #f3f3f3;
+            background: rgba(136, 136, 136, 0.1);
             color: #888;
-            text-decoration: line-through;
+            border: 1px solid rgba(136, 136, 136, 0.2);
+            text-decoration: none !important;
         }
 
         .star-rating {
@@ -320,28 +383,86 @@ $bookings = $stmt_b->get_result();
             display: none;
         }
 
-        .form-control-custom {
-            height: 50px;
-            border-radius: 10px;
-            border: 1px solid #E0E0E0;
-            padding: 0 20px;
-            font-size: 15px;
-            width: 100%;
-            transition: 0.3s;
+        /* Reka Bentuk Borang Tetapan (Settings Form) */
+        .form-label-custom {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+            margin-bottom: 8px;
+            display: block;
         }
 
-        .btn-save {
-            background: #FF7F32;
+        .input-wrapper-custom {
+            position: relative;
+            width: 100%;
+        }
+
+        .input-icon-custom {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #C5A880; /* Gold */
+            font-size: 16px;
+            transition: 0.3s;
+            pointer-events: none;
+        }
+
+        .form-control-custom {
+            height: 52px;
+            border-radius: 12px;
+            border: 1.5px solid #EAEAEA;
+            padding: 0 20px 0 52px; /* Pad kiri ekstra untuk ikon */
+            font-size: 15px;
+            width: 100%;
+            transition: all 0.3s ease;
+            background: #FCFCFC;
+            color: #1a1a1a;
+            font-weight: 500;
+            outline: none;
+        }
+
+        .form-control-custom:focus {
+            border-color: #C5A880;
+            background: #fff;
+            box-shadow: 0 4px 15px rgba(197, 168, 128, 0.08);
+        }
+
+        .form-control-custom:focus ~ .input-icon-custom {
+            color: #A48256; /* Darker Gold on focus */
+        }
+
+        .btn-save-custom {
+            background: #C5A880;
             color: white;
             border: none;
-            height: 50px;
-            border-radius: 10px;
+            height: 52px;
+            padding: 0 40px;
+            border-radius: 12px;
             font-weight: 700;
-            font-size: 16px;
-            width: 100%;
+            font-size: 14px;
             cursor: pointer;
-            transition: 0.3s;
-            margin-top: 10px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(197, 168, 128, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-save-custom:hover {
+            background: #A48256;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(197, 168, 128, 0.3);
+            text-decoration: none !important;
+            color: white !important;
+        }
+
+        .btn-save-custom:active {
+            transform: translateY(0);
         }
 
         /* Modal Info */
@@ -395,10 +516,10 @@ $bookings = $stmt_b->get_result();
                     </nav>
                 </div>
                 <div class="col-xl-2 col-lg-2 text-center">
-                    <a href="index.php" class="logo-link"><img src="img/logo.png" alt="Logo"></a>
+                    <a href="index.php" class="logo-link"><img src="img/logo.png?v=2" alt="Logo"></a>
                 </div>
                 <div class="col-xl-5 col-lg-5 text-right">
-                    <a href="logout.php" class="auth-btn" style="background: #ff7b00; color: white; padding: 10px 20px; border-radius: 5px; font-weight: bold; text-decoration: none;">Logout</a>
+                    <a href="logout.php" class="auth-btn">Logout</a>
                 </div>
             </div>
         </div>
@@ -413,7 +534,13 @@ $bookings = $stmt_b->get_result();
             <div class="row">
                 <div class="col-lg-3 mb-4">
                     <div class="profile-sidebar mb-4">
-                        <div class="avatar-box"><i class="fas fa-user"></i></div>
+                        <div class="avatar-box" style="overflow: hidden; padding: 0;">
+                            <?php if (!empty($user['profile_pic']) && file_exists("uploads/profile/" . $user['profile_pic'])): ?>
+                                <img src="uploads/profile/<?= htmlspecialchars($user['profile_pic']) ?>?v=<?= time() ?>" alt="Profile Picture" style="width: 100%; height: 100%; object-fit: cover;">
+                            <?php else: ?>
+                                <i class="fas fa-user"></i>
+                            <?php endif; ?>
+                        </div>
                         <h5 class="user-name"><?= htmlspecialchars($user['full_name']) ?></h5>
                         <p class="user-email">@<?= htmlspecialchars($user['username']) ?></p>
 
@@ -521,14 +648,62 @@ $bookings = $stmt_b->get_result();
 
                         <div class="tab-pane fade" id="settings" role="tabpanel">
                             <div class="content-panel">
-                                <h4 class="panel-title">Account Settings</h4>
-                                <form method="POST">
+                                <h4 class="panel-title mb-1">Account Settings</h4>
+                                <p class="text-muted small mb-4" style="font-size: 14px;">Update your personal details and change your account password.</p>
+                                
+                                <form method="POST" enctype="multipart/form-data">
                                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                                    <div class="mb-3"><label class="small font-weight-bold">Full Name</label><input type="text" name="full_name" class="form-control-custom" value="<?= htmlspecialchars($user['full_name']) ?>" required></div>
-                                    <div class="mb-3"><label class="small font-weight-bold">Email</label><input type="email" name="email" class="form-control-custom" value="<?= htmlspecialchars($user['email']) ?>" required></div>
-                                    <div class="mb-3"><label class="small font-weight-bold">Phone</label><input type="text" name="phone" class="form-control-custom" value="<?= htmlspecialchars($user['phone']) ?>" required></div>
-                                    <div class="mb-4"><label class="small font-weight-bold">New Password (Optional)</label><input type="password" name="password" class="form-control-custom" placeholder="Leave blank to keep current"></div>
-                                    <button type="submit" name="update_profile" class="btn-save">Save Changes</button>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6 mb-4">
+                                            <label class="form-label-custom">Full Name</label>
+                                            <div class="input-wrapper-custom">
+                                                <i class="fas fa-user input-icon-custom"></i>
+                                                <input type="text" name="full_name" class="form-control-custom" value="<?= htmlspecialchars($user['full_name']) ?>" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-4">
+                                            <label class="form-label-custom">Email Address</label>
+                                            <div class="input-wrapper-custom">
+                                                <i class="fas fa-envelope input-icon-custom"></i>
+                                                <input type="email" name="email" class="form-control-custom" value="<?= htmlspecialchars($user['email']) ?>" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6 mb-4">
+                                            <label class="form-label-custom">Phone Number</label>
+                                            <div class="input-wrapper-custom">
+                                                <i class="fas fa-phone input-icon-custom"></i>
+                                                <input type="text" name="phone" class="form-control-custom" value="<?= htmlspecialchars($user['phone']) ?>" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-4">
+                                            <label class="form-label-custom">New Password (Optional)</label>
+                                            <div class="input-wrapper-custom">
+                                                <i class="fas fa-lock input-icon-custom"></i>
+                                                <input type="password" name="password" class="form-control-custom" placeholder="Leave blank to keep current">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12 mb-4">
+                                            <label class="form-label-custom">Profile Picture</label>
+                                            <div class="input-wrapper-custom">
+                                                <i class="fas fa-image input-icon-custom"></i>
+                                                <input type="file" name="profile_pic" class="form-control-custom" accept="image/*" style="padding-top: 13px; padding-left: 52px;">
+                                            </div>
+                                            <small class="text-muted mt-1 d-block" style="font-size: 11px;">Supported formats: JPG, JPEG, PNG, WEBP. Max size: 2MB.</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="text-right mt-3">
+                                        <button type="submit" name="update_profile" class="btn-save-custom">
+                                            <i class="fas fa-save mr-2"></i> Save Changes
+                                        </button>
+                                    </div>
                                 </form>
                             </div>
                         </div>
@@ -672,18 +847,18 @@ $bookings = $stmt_b->get_result();
         <div class="container">
             <div class="row">
                 <div class="col-lg-3 col-md-6 mb-4">
-                    <h3>ULU GARDEN</h3>
+                    <h3>EASYSTAY</h3>
                     <p>Lot 8012, Kampung Binjai Kertas,</p>
                     <p>21700 Kuala Berang, Terengganu.</p>
                     <div class="footer-social-icons">
                         <a href="https://www.facebook.com/profile.php?id=100092359781203" target="_blank"><i class="fab fa-facebook"></i></a>
-                        <a href="https://www.tiktok.com/@ulugardenhomestay" target="_blank"><i class="fab fa-tiktok"></i></a>
+                        <a href="https://www.tiktok.com/@easystayhomestay" target="_blank"><i class="fab fa-tiktok"></i></a>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-4">
                     <h3>CONTACT US</h3>
                     <p><i class="fas fa-phone-alt mr-2"></i> +60 19 211 9223</p>
-                    <p><i class="fas fa-envelope mr-2"></i> reservation@ulugarden.com</p>
+                    <p><i class="fas fa-envelope mr-2"></i> reservation@easystay.com</p>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-4">
                     <h3>NAVIGATION</h3>
@@ -703,7 +878,7 @@ $bookings = $stmt_b->get_result();
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>Copyright Ulu Garden © 2025. All rights reserved.</p>
+                <p>Copyright EasyStay © 2025. All rights reserved.</p>
             </div>
         </div>
     </footer>

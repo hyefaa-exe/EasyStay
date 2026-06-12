@@ -3,7 +3,7 @@ require 'db_connect.php';
 session_start();
 
 if (!isset($_SESSION['admin_id'])) {
-    header("Location: loginform.html");
+    header("Location: ../login.php");
     exit();
 }
 $user_id = $_SESSION['admin_id'];
@@ -36,8 +36,7 @@ while($row = $weekly_result->fetch_assoc()) {
     $weeks_data[] = $row['total'];
 }
 
-// 3. RINGKASAN STATISTIK (DIPERBAIKI)
-// Ubah: Kira 'grand_total' (Semua masa) bukannya 'monthly_total' sahaja
+// 3. RINGKASAN STATISTIK
 $stats_sql = "SELECT 
                 COALESCE(SUM(total_price), 0) as grand_total, 
                 COUNT(book_id) as total_bookings
@@ -45,7 +44,7 @@ $stats_sql = "SELECT
               
 $stats_result = $conn->query($stats_sql)->fetch_assoc();
 
-$grand_revenue = $stats_result['grand_total']; // Duit masuk semua masa
+$grand_revenue = $stats_result['grand_total']; 
 $total_bookings = $stats_result['total_bookings'];
 
 // Kira purata
@@ -60,51 +59,21 @@ if ($total_bookings > 0) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reports & Analysis | UluGarden</title>
-    <link rel="shortcut icon" type="image/x-icon" href="../img/favicon.png">
+    <title>Reports & Analysis | EasyStay</title>
+    <link rel="shortcut icon" type="image/x-icon" href="../img/favicon.png?v=2">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="css/admin_style.css">
     
     <style>
-        :root {
-            --ulu-orange: #FF7F32;
-            --garden-black: #1A1A1A;
-            --soft-orange-bg: #FFF5E9;
-            --white: #ffffff;
-            --text-main: #2D3E4E;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--soft-orange-bg); color: var(--text-main); }
-
-        .header {
-            background: var(--white); padding: 15px 50px; display: flex;
-            justify-content: space-between; align-items: center;
-            box-shadow: 0 4px 20px rgba(255, 127, 50, 0.08); position: sticky; top: 0; z-index: 1000;
-        }
-        .logo-area h1 { font-size: 1.7rem; font-weight: 800; }
-        .logo-ulu { color: var(--ulu-orange); }
-        .logo-garden { color: var(--garden-black); }
-        
-        .nav-actions { display: flex; gap: 15px; }
-        .nav-btn {
-            text-decoration: none; padding: 10px 22px; border-radius: 12px;
-            font-weight: 600; font-size: 0.85rem; transition: 0.3s;
-            display: flex; align-items: center; gap: 8px;
-        }
-        .btn-profile { background: transparent; color: var(--ulu-orange); border: 1.5px solid var(--ulu-orange); }
-        .btn-logout { background: var(--ulu-orange); color: white; border: 1.5px solid var(--ulu-orange); }
-
-        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
-
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; }
-        .stat-card { background: var(--white); padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid rgba(255,127,50,0.1); }
+        .stat-card { background: var(--white); padding: 25px; border-radius: 20px; box-shadow: var(--card-shadow); border: 1px solid rgba(197, 168, 128, 0.08); }
         .stat-card h3 { color: #888; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 10px; font-weight: 700; }
-        .stat-card p { font-size: 1.8rem; font-weight: 800; color: var(--garden-black); margin-bottom: 5px; }
-        .stat-card span { color: var(--success); font-size: 0.85rem; font-weight: 600; }
+        .stat-card p { font-size: 1.8rem; font-weight: 800; color: var(--easy-charcoal); margin-bottom: 5px; }
+        .stat-card span { color: #27ae60; font-size: 0.85rem; font-weight: 600; }
 
-        .charts-main { background: var(--white); padding: 30px; border-radius: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.03); }
+        .charts-main { background: var(--white); padding: 30px; border-radius: 25px; box-shadow: var(--card-shadow); border: 1px solid rgba(0,0,0,0.02); }
         .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
         .chart-container { position: relative; height: 400px; width: 100%; }
         
@@ -112,12 +81,14 @@ if ($total_bookings > 0) {
             padding: 8px 20px; border-radius: 10px; border: 1.5px solid #eee; 
             cursor: pointer; font-weight: 700; background: white; transition: 0.3s;
         }
-        .tab-btn.active { background: var(--ulu-orange); color: white; border-color: var(--ulu-orange); }
+        .tab-btn.active { background: var(--easy-gold); color: white; border-color: var(--easy-gold); }
 
         @media print {
             .header, .nav-actions, .tab-btn { display: none; }
-            body { background: white; }
             .stat-card { border: 1px solid #eee; box-shadow: none; }
+        }
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -125,8 +96,10 @@ if ($total_bookings > 0) {
 
     <header class="header">
         <div class="logo-area">
-            <h1><span class="logo-ulu">Ulu</span><span class="logo-garden">Garden</span></h1>
-            <span style="font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 2px; font-weight: 600;">Reports Portal</span>
+            <a href="admin_dashboard.php" style="text-decoration: none;">
+                <h1><span class="logo-ulu">Easy</span><span class="logo-garden">Stay</span></h1>
+            </a>
+            <span class="brand-sub">Reports Portal</span>
         </div>
         <div class="nav-actions">
             <a href="admin_dashboard.php" class="nav-btn btn-profile"><i class="fas fa-th-large"></i> Dashboard</a>
@@ -137,7 +110,7 @@ if ($total_bookings > 0) {
 
     <main class="container">
         <div style="margin-bottom: 30px;">
-            <h2 style="font-size: 2.2rem; font-weight: 800; color: var(--garden-black); letter-spacing: -1px;">Sales Analytics</h2>
+            <h2 style="font-size: 2.2rem; font-weight: 800; color: var(--easy-charcoal); letter-spacing: -1px;">Sales Analytics</h2>
             <p style="color: #777;">Performance overview.</p>
         </div>
 
@@ -150,7 +123,7 @@ if ($total_bookings > 0) {
             <div class="stat-card">
                 <h3>Total Accepted Bookings</h3>
                 <p><?= $total_bookings ?></p>
-                <span style="color: var(--ulu-orange);">Confirmed reservations</span>
+                <span style="color: var(--easy-gold);">Confirmed reservations</span>
             </div>
             <div class="stat-card">
                 <h3>Avg. Revenue / Booking</h3>
@@ -163,8 +136,8 @@ if ($total_bookings > 0) {
             <div class="chart-header">
                 <h3 style="font-weight: 800; font-size: 1.2rem;">Revenue Trend</h3>
                 <div style="display: flex; gap: 8px;">
-                    <button class="tab-btn active" onclick="updateChart('monthly')">Monthly (<?= date('Y') ?>)</button>
-                    <button class="tab-btn" onclick="updateChart('weekly')">Weekly Trend</button>
+                    <button class="tab-btn active" onclick="updateChart(event, 'monthly')">Monthly (<?= date('Y') ?>)</button>
+                    <button class="tab-btn" onclick="updateChart(event, 'weekly')">Weekly Trend</button>
                 </div>
             </div>
             <div class="chart-container">
@@ -189,13 +162,13 @@ if ($total_bookings > 0) {
                 datasets: [{
                     label: 'Revenue (RM)',
                     data: monthlyData,
-                    borderColor: '#FF7F32',
-                    backgroundColor: 'rgba(255, 127, 50, 0.1)',
+                    borderColor: '#C5A880',
+                    backgroundColor: 'rgba(197, 168, 128, 0.1)',
                     borderWidth: 3,
                     fill: true,
                     tension: 0.4,
                     pointRadius: 6,
-                    pointBackgroundColor: '#FF7F32',
+                    pointBackgroundColor: '#C5A880',
                     pointBorderColor: '#fff',
                     pointBorderWidth: 2
                 }]
@@ -215,9 +188,9 @@ if ($total_bookings > 0) {
             }
         });
 
-        function updateChart(type) {
+        function updateChart(e, type) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            e.target.classList.add('active');
 
             if (type === 'monthly') {
                 salesChart.data.labels = monthlyLabels;

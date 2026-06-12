@@ -86,14 +86,15 @@ if (isset($_POST['login'])) {
 
 <head>
     <meta charset="utf-8">
-    <title>Login | Ulu Garden</title>
+    <title>Login | EasyStay</title>
+    <meta name="description" content="EasyStay - A Digital Platform for Fast and Efficient Homestay Reservation">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
+    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png?v=2">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=3">
 
     <style>
         body.login-body {
@@ -160,9 +161,9 @@ if (isset($_POST['login'])) {
         }
 
         .form-control-ios:focus {
-            border-color: #ff7b00;
+            border-color: #C5A880;
             background: #fff;
-            box-shadow: 0 0 0 4px rgba(255, 123, 0, 0.1);
+            box-shadow: 0 0 0 4px rgba(197, 168, 128, 0.1);
         }
 
         .btn-login-ios {
@@ -180,9 +181,9 @@ if (isset($_POST['login'])) {
         }
 
         .btn-login-ios:hover {
-            background: #ff7b00;
+            background: #C5A880;
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(255, 123, 0, 0.2);
+            box-shadow: 0 10px 20px rgba(197, 168, 128, 0.2);
         }
 
         .alert-custom {
@@ -206,7 +207,7 @@ if (isset($_POST['login'])) {
         }
 
         .register-link a {
-            color: #ff7b00;
+            color: #C5A880;
             font-weight: 600;
             text-decoration: none;
         }
@@ -233,7 +234,7 @@ if (isset($_POST['login'])) {
 
     <div class="login-card">
         <div class="login-logo">
-            <img src="img/logo.png" alt="Ulu Garden Logo">
+            <img src="img/logo.png?v=2" alt="EasyStay Logo">
         </div>
         <h2 class="login-title">Welcome Back</h2>
         <p class="login-subtitle">Sign in to access your account</p>

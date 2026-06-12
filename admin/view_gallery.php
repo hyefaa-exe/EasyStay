@@ -16,60 +16,28 @@ $user_id = $_SESSION['admin_id'] ?? 1;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gallery Management | UluGarden</title>
-    <link rel="shortcut icon" type="image/x-icon" href="../img/favicon.png">
+    <title>Gallery Management | EasyStay</title>
+    <link rel="shortcut icon" type="image/x-icon" href="../img/favicon.png?v=2">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        :root {
-            --ulu-orange: #FF7F32;
-            --garden-black: #1A1A1A;
-            --soft-orange-bg: #FFF5E9;
-            --white: #ffffff;
-            --text-main: #2D3E4E;
-            --danger: #e74c3c;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--soft-orange-bg);
-            color: var(--text-main);
-            min-height: 100vh;
-        }
-
-        /* --- HEADER (Identikal dengan view_payments) --- */
-        .header {
-            background: var(--white);
-            padding: 15px 50px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 20px rgba(255, 127, 50, 0.08);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
+/* --- HEADER (Identikal dengan view_payments) --- */
+        
 
         .logo-area h1 { font-size: 1.7rem; font-weight: 800; letter-spacing: -1px; }
-        .logo-ulu { color: var(--ulu-orange); }
-        .logo-garden { color: var(--garden-black); }
-        .brand-sub { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; display: block; margin-top: -3px; }
+        
+        
+        
 
-        .nav-actions { display: flex; gap: 15px; align-items: center; }
-        .nav-btn {
-            text-decoration: none; padding: 10px 22px; border-radius: 12px;
-            font-weight: 600; font-size: 0.85rem; transition: all 0.3s ease;
-            display: flex; align-items: center; gap: 8px;
-        }
-        .btn-profile { background: transparent; color: var(--ulu-orange); border: 1.5px solid var(--ulu-orange); }
-        .btn-logout { background: var(--ulu-orange); color: var(--white); border: 1.5px solid var(--ulu-orange); }
-        .nav-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255, 127, 50, 0.2); }
+        
+        
+        
+        
+        .nav-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(197, 168, 128, 0.2); }
 
         /* --- MAIN CONTENT --- */
-        .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+        
 
         .page-header-flex {
             display: flex;
@@ -88,10 +56,10 @@ $user_id = $_SESSION['admin_id'] ?? 1;
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            box-shadow: 0 10px 20px rgba(255, 127, 50, 0.2);
+            box-shadow: 0 10px 20px rgba(197, 168, 128, 0.2);
             transition: 0.3s;
         }
-        .btn-add-photo:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(255, 127, 50, 0.3); }
+        .btn-add-photo:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(197, 168, 128, 0.3); }
 
         .stats-badge {
             margin-top: 15px;
@@ -103,7 +71,7 @@ $user_id = $_SESSION['admin_id'] ?? 1;
             font-weight: 700;
             color: var(--ulu-orange);
             box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-            border: 1px solid rgba(255, 127, 50, 0.1);
+            border: 1px solid rgba(197, 168, 128, 0.1);
         }
 
         /* --- TABLE CARD --- */
@@ -115,9 +83,9 @@ $user_id = $_SESSION['admin_id'] ?? 1;
             padding: 10px;
         }
 
-        table { width: 100%; border-collapse: collapse; }
-        th { padding: 20px; background: #fafafa; color: #888; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; text-align: left; }
-        td { padding: 15px 20px; border-bottom: 1px solid #f9f9f9; vertical-align: middle; }
+        
+        
+        
 
         .gallery-img {
             width: 120px;
@@ -129,35 +97,24 @@ $user_id = $_SESSION['admin_id'] ?? 1;
             transition: 0.3s;
         }
 
-        .btn-delete {
-            color: var(--danger);
-            background: rgba(231, 76, 60, 0.1);
-            padding: 10px 18px;
-            border-radius: 10px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 0.8rem;
-            transition: 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
+        
         .btn-delete:hover { background: var(--danger); color: white; }
 
         .no-data-box { text-align: center; padding: 60px; color: #bbb; }
 
         @media (max-width: 992px) {
-            .header { padding: 15px 25px; }
+            
             .page-header-flex { flex-direction: column; align-items: flex-start; gap: 20px; }
         }
     </style>
+    <link rel="stylesheet" href="css/admin_style.css">
 </head>
 <body>
 
     <header class="header">
         <div class="logo-area">
             <a href="admin_dashboard.php" style="text-decoration: none;">
-                <h1><span class="logo-ulu">Ulu</span><span class="logo-garden">Garden</span></h1>
+                <h1><span class="logo-ulu">Easy</span><span class="logo-garden">Stay</span></h1>
             </a>
             <span class="brand-sub">Management Portal</span>
         </div>
