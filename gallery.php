@@ -8,7 +8,7 @@ $is_logged_in = isset($_SESSION['user_id']);
 $current_page = basename($_SERVER['PHP_SELF']);
 
 // Ambil data dari database
-$result = $conn->query("SELECT * FROM `gallery` ORDER BY id DESC");
+$result = $conn->query("SELECT * FROM `gallery` ORDER BY sort_order ASC, id ASC");
 ?>
 <!doctype html>
 <html lang="zxx">
