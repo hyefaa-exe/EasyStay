@@ -65,32 +65,140 @@ $result = $conn->query("SELECT * FROM `gallery` ORDER BY id DESC");
     </header>
     <main class="main-content">
         <section class="gallery-section py-5">
-            <div class="container">
+            <div class="container-fluid px-4 px-lg-5">
                 <div class="text-center mb-5 mt-4">
-                    <h2 style="font-size: 3rem; font-weight: 800;">Our Gallery</h2>
-                    <p style="color: #C5A880; font-size: 1.2rem;">Discover the beauty and tranquility of EasyStay.</p>
+                    <h2 class="gallery-main-title">Our Gallery</h2>
+                    <p class="gallery-subtitle">Discover the beauty and tranquility of EasyStay.</p>
                 </div>
 
-                <div class="row">
+                <div class="gallery-grid">
                     <?php if ($result && $result->num_rows > 0): ?>
                         <?php while ($row = $result->fetch_assoc()): ?>
-                            <div class="col-lg-4 col-md-6 mb-4">
-                                <div class="gallery-item">
-                                    <a href="admin/uploads/<?php echo $row['filename']; ?>" class="img-pop-up">
-                                        <img src="admin/uploads/<?php echo $row['filename']; ?>" class="img-fluid" alt="EasyStay">
-                                    </a>
-                                </div>
+                            <div class="gallery-card">
+                                <a href="admin/uploads/<?php echo htmlspecialchars($row['filename']); ?>" class="img-pop-up gallery-link">
+                                    <div class="gallery-img-wrap">
+                                        <img src="admin/uploads/<?php echo htmlspecialchars($row['filename']); ?>" alt="EasyStay Gallery" class="gallery-img" loading="lazy">
+                                        <div class="gallery-overlay">
+                                            <div class="gallery-overlay-icon">
+                                                <i class="fas fa-expand-alt"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
                             </div>
                         <?php endwhile; ?>
                     <?php else: ?>
-                        <div class="col-12 text-center">
+                        <div class="gallery-empty">
+                            <i class="fas fa-images fa-3x mb-3" style="color:#C5A880; opacity:0.4;"></i>
                             <p>No images found.</p>
                         </div>
                     <?php endif; ?>
                 </div>
             </div>
         </section>
+
+        <style>
+            .gallery-main-title {
+                font-size: 2.8rem;
+                font-weight: 800;
+                color: #1a1a1a;
+                letter-spacing: -0.5px;
+            }
+            .gallery-subtitle {
+                color: #C5A880;
+                font-size: 1.1rem;
+                font-weight: 500;
+                margin-top: -5px;
+            }
+            .gallery-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 12px;
+            }
+            @media (max-width: 1200px) {
+                .gallery-grid { grid-template-columns: repeat(3, 1fr); }
+            }
+            @media (max-width: 768px) {
+                .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+                .gallery-main-title { font-size: 2rem; }
+            }
+            @media (max-width: 480px) {
+                .gallery-grid { grid-template-columns: 1fr; }
+            }
+            .gallery-card {
+                border-radius: 12px;
+                overflow: hidden;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+                background: #f5f5f5;
+            }
+            .gallery-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 12px 35px rgba(197,168,128,0.25);
+            }
+            .gallery-link {
+                display: block;
+                text-decoration: none;
+            }
+            .gallery-img-wrap {
+                position: relative;
+                width: 100%;
+                padding-top: 72%;  /* 4:3 aspect ratio – semua gambar sama tinggi */
+                overflow: hidden;
+            }
+            .gallery-img {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                object-position: center;
+                transition: transform 0.4s ease;
+                display: block;
+            }
+            .gallery-card:hover .gallery-img {
+                transform: scale(1.06);
+            }
+            .gallery-overlay {
+                position: absolute;
+                top: 0; left: 0; right: 0; bottom: 0;
+                background: linear-gradient(135deg, rgba(197,168,128,0.0) 0%, rgba(26,26,26,0.45) 100%);
+                opacity: 0;
+                transition: opacity 0.35s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .gallery-card:hover .gallery-overlay {
+                opacity: 1;
+            }
+            .gallery-overlay-icon {
+                width: 52px;
+                height: 52px;
+                border-radius: 50%;
+                background: rgba(255,255,255,0.92);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #C5A880;
+                font-size: 18px;
+                transform: scale(0.7);
+                transition: transform 0.3s ease;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            }
+            .gallery-card:hover .gallery-overlay-icon {
+                transform: scale(1);
+            }
+            .gallery-empty {
+                grid-column: 1 / -1;
+                text-align: center;
+                padding: 60px 20px;
+                color: #888;
+            }
+        </style>
     </main>
+
 
     <footer class="footer">
         <div class="container">
