@@ -13,13 +13,13 @@ function sendBookingStatusEmail($toEmail, $toName, $emailContent, $bookingId) {
         $mail->isSMTP();
         $mail->Host       = 'smtp.gmail.com'; 
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'easystay@gmail.com'; 
-        $mail->Password   = 'zjcp zpxj swio gtbl'; // Gunakan App Password anda
+        $mail->Username   = 'easystay.mpi@gmail.com'; 
+        $mail->Password   = 'EasyStay123'; // App Password Gmail
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
 
         // --- PENGHANTAR & PENERIMA ---
-        $mail->setFrom('easystay@gmail.com', 'EasyStay Admin');
+        $mail->setFrom('easystay.mpi@gmail.com', 'EasyStay Admin');
         $mail->addAddress($toEmail, $toName);
 
         // --- KANDUNGAN EMEL ---
