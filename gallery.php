@@ -143,7 +143,7 @@ $result = $conn->query("SELECT * FROM `gallery` ORDER BY id DESC");
             .gallery-img-wrap {
                 position: relative;
                 width: 100%;
-                padding-top: 72%;  /* 4:3 aspect ratio – semua gambar sama tinggi */
+                padding-top: 56.25%;  /* 16:9 aspect ratio – semua gambar sama tinggi */
                 overflow: hidden;
             }
             .gallery-img {
