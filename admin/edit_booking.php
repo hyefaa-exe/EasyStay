@@ -40,28 +40,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Jika tidak, baki ialah TOTAL PRICE penuh (tanpa tolak deposit).
             $balance = ($new_payment_status == 'Fully Paid') ? 0.00 : $user_res['total_price'];
             
-            // Bina Mesej Emel yang Detail
-            $emailBody = "
-            <h3>Booking Status Update #$id</h3>
-            <p>Dear <strong>{$user_res['full_name']}</strong>,</p>
-            <p>Your booking details have been updated by the admin:</p>
-            <hr>
-            <p>
-                <strong>Package:</strong> {$user_res['package_name']}<br>
-                <strong>Check-in:</strong> $checkin<br>
-                <strong>Check-out:</strong> $checkout<br>
-                <strong>Room Status:</strong> $new_status<br>
-                <strong>Payment Status:</strong> $new_payment_status
-            </p>
-            <p style='font-size:16px; color:#d35400;'>
-                <strong>Total Amount to Pay: RM " . number_format($balance, 2) . "</strong>
-            </p>
-            <hr>
-            <p>Please login to your dashboard to view full details or upload payment proof.</p>
-            ";
-
+            // Bina Data Emel untuk dihantar
+            $emailDetails = [
+                'booking_id' => $id,
+                'package_name' => $user_res['package_name'],
+                'checkin' => $checkin,
+                'checkout' => $checkout,
+                'status' => $new_status,
+                'payment_status' => $new_payment_status,
+                'balance' => $balance
+            ];
+ 
             // Hantar Emel
-            sendBookingStatusEmail($user_res['email'], $user_res['full_name'], $emailBody, $id);
+            sendBookingStatusEmail($user_res['email'], $user_res['full_name'], $emailDetails, $id);
         }
 
         header("Location: manage_bookings.php?msg=updated");

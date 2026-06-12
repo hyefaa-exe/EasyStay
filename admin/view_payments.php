@@ -46,26 +46,17 @@ if (isset($_GET['book_id'])) {
                 // Logik baki bayaran sama seperti edit_booking.php
                 $balance = ($new_pay_status == 'Fully Paid') ? 0.00 : $user_res['total_price'];
                 
-                $emailBody = "
-                <h3>Booking Status Update #$book_id</h3>
-                <p>Dear <strong>{$user_res['full_name']}</strong>,</p>
-                <p>Your booking details have been updated by the admin:</p>
-                <hr>
-                <p>
-                    <strong>Package:</strong> {$user_res['package_name']}<br>
-                    <strong>Check-in:</strong> $checkin<br>
-                    <strong>Check-out:</strong> $checkout<br>
-                    <strong>Room Status:</strong> $new_status<br>
-                    <strong>Payment Status:</strong> $new_pay_status
-                </p>
-                <p style='font-size:16px; color:#d35400;'>
-                    <strong>Total Amount to Pay: RM " . number_format($balance, 2) . "</strong>
-                </p>
-                <hr>
-                <p>Please login to your dashboard to view full details or upload payment proof.</p>
-                ";
+                $emailDetails = [
+                    'booking_id' => $book_id,
+                    'package_name' => $user_res['package_name'],
+                    'checkin' => $checkin,
+                    'checkout' => $checkout,
+                    'status' => $new_status,
+                    'payment_status' => $new_pay_status,
+                    'balance' => $balance
+                ];
                 
-                sendBookingStatusEmail($user_res['email'], $user_res['full_name'], $emailBody, $book_id);
+                sendBookingStatusEmail($user_res['email'], $user_res['full_name'], $emailDetails, $book_id);
             }
         }
     }
