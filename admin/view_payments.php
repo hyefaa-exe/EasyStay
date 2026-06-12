@@ -25,6 +25,48 @@ if (isset($_GET['book_id'])) {
         
         if ($stmt->execute()) {
             $msg = "Status berjaya dikemaskini!";
+            
+            // Ambil data terkini untuk dihantar ke e-mel
+            $user_sql = "SELECT b.*, u.full_name, u.email, p.package_name 
+                         FROM bookings b 
+                         JOIN users u ON b.user_id = u.user_id 
+                         JOIN packages p ON b.package_id = p.package_id
+                         WHERE b.book_id = ?";
+            $stmt_user = $conn->prepare($user_sql);
+            $stmt_user->bind_param("i", $book_id);
+            $stmt_user->execute();
+            $user_res = $stmt_user->get_result()->fetch_assoc();
+
+            if ($user_res) {
+                require_once 'email.php';
+                
+                $checkin = date('d M Y', strtotime($user_res['checkin_date']));
+                $checkout = date('d M Y', strtotime($user_res['checkout_date']));
+                
+                // Logik baki bayaran sama seperti edit_booking.php
+                $balance = ($new_pay_status == 'Fully Paid') ? 0.00 : $user_res['total_price'];
+                
+                $emailBody = "
+                <h3>Booking Status Update #$book_id</h3>
+                <p>Dear <strong>{$user_res['full_name']}</strong>,</p>
+                <p>Your booking details have been updated by the admin:</p>
+                <hr>
+                <p>
+                    <strong>Package:</strong> {$user_res['package_name']}<br>
+                    <strong>Check-in:</strong> $checkin<br>
+                    <strong>Check-out:</strong> $checkout<br>
+                    <strong>Room Status:</strong> $new_status<br>
+                    <strong>Payment Status:</strong> $new_pay_status
+                </p>
+                <p style='font-size:16px; color:#d35400;'>
+                    <strong>Total Amount to Pay: RM " . number_format($balance, 2) . "</strong>
+                </p>
+                <hr>
+                <p>Please login to your dashboard to view full details or upload payment proof.</p>
+                ";
+                
+                sendBookingStatusEmail($user_res['email'], $user_res['full_name'], $emailBody, $book_id);
+            }
         }
     }
 
