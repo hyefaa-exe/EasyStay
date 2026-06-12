@@ -14,7 +14,7 @@ function sendBookingStatusEmail($toEmail, $toName, $emailContent, $bookingId) {
         $mail->Host       = 'smtp.gmail.com'; 
         $mail->SMTPAuth   = true;
         $mail->Username   = 'easystay.mpi@gmail.com'; 
-        $mail->Password   = 'EasyStay123'; // App Password Gmail
+        $mail->Password   = 'zzfp ayfc buxf fsgk'; // App Password Gmail
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
 
