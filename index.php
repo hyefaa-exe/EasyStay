@@ -117,40 +117,277 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </div>
 
-        <div class="photo-sections">
-            <div class="photo-block" style="background-image: url('img/chalet day.jpg');">
-                <div class="overlay">
-                    <div class="content">
-                        <h3>Peaceful Nature Setting</h3>
-                        <p>Surrounded by lush greenery</p>
+
+        <!-- ===== VISUAL SHOWCASE SECTION ===== -->
+        <section class="visual-showcase">
+            <div class="showcase-header">
+                <span class="showcase-tag">Experience EasyStay</span>
+                <h2 class="showcase-title">Where Every Moment<br><em>Becomes a Memory</em></h2>
+            </div>
+
+            <div class="showcase-grid">
+                <!-- Panel 1 — Large Left -->
+                <a href="gallery.php" class="showcase-panel panel-large">
+                    <div class="showcase-img" style="background-image: url('img/chalet day.jpg');"></div>
+                    <div class="showcase-overlay">
+                        <div class="showcase-content">
+                            <div class="showcase-icon"><i class="fas fa-home"></i></div>
+                            <h3>Peaceful Nature Setting</h3>
+                            <p>Surrounded by lush tropical greenery</p>
+                            <span class="showcase-cta">Explore <i class="fas fa-arrow-right"></i></span>
+                        </div>
                     </div>
+                </a>
+
+                <!-- Right column — 3 stacked -->
+                <div class="showcase-right">
+                    <a href="gallery.php" class="showcase-panel panel-sm">
+                        <div class="showcase-img" style="background-image: url('img/chalet night.jpg');"></div>
+                        <div class="showcase-overlay">
+                            <div class="showcase-content">
+                                <div class="showcase-icon"><i class="fas fa-moon"></i></div>
+                                <h3>Luxury by Night</h3>
+                                <p>Magical evenings under the stars</p>
+                                <span class="showcase-cta">Explore <i class="fas fa-arrow-right"></i></span>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="gallery.php" class="showcase-panel panel-sm">
+                        <div class="showcase-img" style="background-image: url('img/poolday.jpg');"></div>
+                        <div class="showcase-overlay">
+                            <div class="showcase-content">
+                                <div class="showcase-icon"><i class="fas fa-swimming-pool"></i></div>
+                                <h3>Private Pool & Recreation</h3>
+                                <p>Your own slice of paradise</p>
+                                <span class="showcase-cta">Explore <i class="fas fa-arrow-right"></i></span>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="gallery.php" class="showcase-panel panel-sm">
+                        <div class="showcase-img" style="background-image: url('img/poolnight.jpg');"></div>
+                        <div class="showcase-overlay">
+                            <div class="showcase-content">
+                                <div class="showcase-icon"><i class="fas fa-star"></i></div>
+                                <h3>Night Paradise</h3>
+                                <p>Glowing pool under starry skies</p>
+                                <span class="showcase-cta">Explore <i class="fas fa-arrow-right"></i></span>
+                            </div>
+                        </div>
+                    </a>
                 </div>
             </div>
-            <div class="photo-block" style="background-image: url('img/chalet night.jpg');">
-                <div class="overlay">
-                    <div class="content">
-                        <h3>Luxury Accommodations</h3>
-                        <p>Comfortable chalets and homestay</p>
-                    </div>
-                </div>
+
+            <div class="showcase-footer">
+                <a href="gallery.php" class="showcase-gallery-btn">
+                    <i class="fas fa-images mr-2"></i> View Full Gallery
+                </a>
             </div>
-            <div class="photo-block" style="background-image: url('img/poolday.jpg');">
-                <div class="overlay">
-                    <div class="content">
-                        <h3>Pool & Recreation</h3>
-                        <p>Enjoy our private pool</p>
-                    </div>
-                </div>
-            </div>
-            <div class="photo-block" style="background-image: url('img/poolnight.jpg');">
-                <div class="overlay">
-                    <div class="content">
-                        <h3>Night Paradise</h3>
-                        <p>Beautiful nights under the stars</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+        </section>
+
+        <style>
+        /* ===== VISUAL SHOWCASE ===== */
+        .visual-showcase {
+            padding: 80px 0 60px;
+            background: #0a0a0a;
+        }
+        .showcase-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 0 20px;
+        }
+        .showcase-tag {
+            display: inline-block;
+            background: rgba(197,168,128,0.15);
+            color: #C5A880;
+            border: 1px solid rgba(197,168,128,0.3);
+            padding: 6px 20px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 18px;
+        }
+        .showcase-title {
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.2;
+            margin: 0;
+        }
+        .showcase-title em {
+            font-style: normal;
+            background: linear-gradient(135deg, #C5A880, #E8D5B7, #A48256);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .showcase-grid {
+            display: grid;
+            grid-template-columns: 1.6fr 1fr;
+            gap: 6px;
+            padding: 0 6px;
+            height: 620px;
+        }
+        .showcase-right {
+            display: grid;
+            grid-template-rows: 1fr 1fr 1fr;
+            gap: 6px;
+        }
+        .showcase-panel {
+            position: relative;
+            overflow: hidden;
+            display: block;
+            text-decoration: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .showcase-img {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            will-change: transform;
+        }
+        .showcase-panel:hover .showcase-img {
+            transform: scale(1.08);
+        }
+        .showcase-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to top,
+                rgba(0,0,0,0.82) 0%,
+                rgba(0,0,0,0.3) 40%,
+                rgba(0,0,0,0.05) 70%,
+                transparent 100%
+            );
+            display: flex;
+            align-items: flex-end;
+            padding: 30px;
+            transition: background 0.4s ease;
+        }
+        .showcase-panel:hover .showcase-overlay {
+            background: linear-gradient(
+                to top,
+                rgba(0,0,0,0.88) 0%,
+                rgba(197,168,128,0.15) 50%,
+                rgba(0,0,0,0.1) 100%
+            );
+        }
+        .showcase-content {
+            transform: translateY(12px);
+            transition: transform 0.4s ease;
+        }
+        .showcase-panel:hover .showcase-content {
+            transform: translateY(0);
+        }
+        .showcase-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(197,168,128,0.25);
+            border: 1px solid rgba(197,168,128,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #C5A880;
+            font-size: 14px;
+            margin-bottom: 10px;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.4s ease 0.05s;
+        }
+        .showcase-panel:hover .showcase-icon {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .showcase-content h3 {
+            color: #fff;
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+        .panel-large .showcase-content h3 {
+            font-size: 1.5rem;
+        }
+        .showcase-content p {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.82rem;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        .panel-large .showcase-content p {
+            font-size: 0.95rem;
+        }
+        .showcase-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #C5A880;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(197,168,128,0.4);
+            padding-bottom: 2px;
+            opacity: 0;
+            transform: translateX(-8px);
+            transition: all 0.35s ease 0.1s;
+        }
+        .showcase-panel:hover .showcase-cta {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .showcase-footer {
+            text-align: center;
+            margin-top: 35px;
+        }
+        .showcase-gallery-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 14px 36px;
+            border: 1.5px solid rgba(197,168,128,0.5);
+            color: #C5A880;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .showcase-gallery-btn:hover {
+            background: #C5A880;
+            color: #fff;
+            border-color: #C5A880;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(197,168,128,0.3);
+            text-decoration: none;
+        }
+        @media (max-width: 900px) {
+            .showcase-grid {
+                grid-template-columns: 1fr 1fr;
+                height: auto;
+            }
+            .panel-large { height: 300px; }
+            .showcase-right { height: auto; }
+            .panel-sm { height: 200px; }
+            .showcase-right { grid-template-rows: auto; }
+        }
+        @media (max-width: 600px) {
+            .showcase-grid {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            .showcase-right { grid-template-columns: 1fr; }
+            .panel-large, .panel-sm { height: 260px; }
+            .showcase-title { font-size: 1.8rem; }
+        }
+        </style>
+
+
 
         <!-- Testimonials Section -->
         <?php if ($testi_result && $testi_result->num_rows > 0): ?>
