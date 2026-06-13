@@ -1,261 +1,172 @@
 <?php
-// Database connection
 require 'db_connect.php';
-
-// Pastikan session dimulakan untuk mendapatkan ID admin
 session_start();
-if (!isset($_SESSION['admin_id'])) {
-    header("Location: ../login.php");
-    exit();
-} else {
-    $user_id = $_SESSION['admin_id'];
-}
+if (!isset($_SESSION['admin_id'])) { header("Location: ../login.php"); exit(); }
+$user_id = $_SESSION['admin_id'];
 
-// --- CONFIGURATION PAGINATION ---
+// Pagination
 $results_per_page = 10;
-$page = isset($_GET['page']) && is_numeric($_GET['page']) ? intval($_GET['page']) : 1;
+$page   = isset($_GET['page']) && is_numeric($_GET['page']) ? intval($_GET['page']) : 1;
 $offset = ($page - 1) * $results_per_page;
 
-// --- HANDLE SEARCH ---
+// Search
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $search_condition = "";
 if (!empty($search)) {
-    // Cari berdasarkan nama penuh atau nama pakej
-    $search_condition = " WHERE u.full_name LIKE '%$search%' OR p.package_name LIKE '%$search%' ";
+    $search_safe = $conn->real_escape_string($search);
+    $search_condition = " WHERE u.full_name LIKE '%$search_safe%' OR p.package_name LIKE '%$search_safe%' ";
 }
 
-// --- COUNT TOTAL FOR PAGINATION ---
-$total_sql = "SELECT COUNT(*) AS total FROM bookings b 
-              JOIN users u ON b.user_id = u.user_id 
-              JOIN packages p ON b.package_id = p.package_id 
-              $search_condition";
-$total_result = $conn->query($total_sql);
-$total_rows = $total_result->fetch_assoc()['total'];
+// Total count
+$total_rows  = $conn->query("SELECT COUNT(*) AS total FROM bookings b JOIN users u ON b.user_id = u.user_id JOIN packages p ON b.package_id = p.package_id $search_condition")->fetch_assoc()['total'];
 $total_pages = ceil($total_rows / $results_per_page);
 
-// --- FETCH DATA WITH SEARCH, LIMIT & OFFSET ---
-// Kita gunakan FIELD(b.status, 'Pending', 'Accepted', 'Rejected') 
-// supaya 'Pending' mendapat nilai 1 (paling atas), 'Accepted' nilai 2, dan seterusnya.
-$sql = "SELECT 
-            b.book_id, 
-            b.user_id, 
-            u.full_name,
-            p.package_name, 
-            b.checkin_date, 
-            b.checkout_date, 
-            b.status
+// Fetch data
+$sql = "SELECT b.book_id, b.user_id, u.full_name, p.package_name, b.checkin_date, b.checkout_date, b.status
         FROM bookings b
         JOIN users u ON b.user_id = u.user_id
         JOIN packages p ON b.package_id = p.package_id
         $search_condition
-        ORDER BY FIELD(b.status, 'Pending', 'Accepted', 'Rejected') ASC, b.checkin_date DESC
+        ORDER BY FIELD(b.status,'Pending','Accepted','Rejected') ASC, b.checkin_date DESC
         LIMIT $offset, $results_per_page";
-
 $result = $conn->query($sql);
 
 header("Cache-Control: no-cache, must-revalidate");
-header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Bookings | EasyStay</title>
+    <title>Manage Bookings | EasyStay Admin</title>
     <link rel="shortcut icon" type="image/x-icon" href="../img/favicon.png?v=2">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-/* --- HEADER --- */
-        
-
-        .logo-area h1 { font-size: 1.7rem; font-weight: 800; letter-spacing: -1px; }
-        
-        
-        
-
-        
-        
-        
-        
-        .nav-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(197, 168, 128, 0.2); }
-
-        /* --- MAIN CONTENT & TABLE STYLES --- */
-        
-        .page-header-flex { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; }
-
-        .search-form { position: relative; }
-        .search-input {
-            padding: 15px 25px 15px 50px; border-radius: 30px; border: 2px solid white;
-            width: 350px; font-size: 0.9rem; box-shadow: 0 10px 25px rgba(0,0,0,0.03);
-            outline: none; transition: 0.3s; background: white;
-        }
-        .search-input:focus { border-color: var(--ulu-orange); box-shadow: 0 10px 25px rgba(197, 168, 128, 0.1); }
-        .search-icon-inside { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: var(--ulu-orange); }
-
-        .table-card { background: var(--white); border-radius: 25px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.03); padding: 10px; }
-        
-        
-        
-
-        /* --- PAYMENT BUTTON STYLE --- */
-        .btn-payment-link {
-            display: inline-block; border: 2px solid var(--success); color: var(--success);
-            padding: 6px 12px; border-radius: 8px; text-decoration: none;
-            font-weight: 800; font-size: 0.7rem; text-transform: uppercase;
-            transition: 0.2s; text-align: center;
-        }
-        .btn-payment-link:hover { background: var(--success); color: white; }
-
-        .status-badge { padding: 6px 12px; border-radius: 8px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; display: inline-block; min-width: 90px; text-align: center; }
-        .status-Accepted { background: #D1FAE5; color: #065F46; }
-        .status-Rejected { background: #FEE2E2; color: #991B1B; }
-        .status-Pending { background: #FEF9C3; color: #854D0E; }
-
-        .btn-icon {
-            text-decoration: none; padding: 8px; border-radius: 10px;
-            color: var(--garden-black); background: #F3F4F6; transition: 0.2s;
-            margin-left: 5px; display: inline-flex; align-items: center; justify-content: center;
-        }
-        .btn-icon:hover { background: var(--garden-black); color: white; }
-        .btn-delete-action { background: rgba(231, 76, 60, 0.1); color: var(--danger); }
-        .btn-delete-action:hover { background: var(--danger); color: white; }
-
-        /* --- PAGINATION --- */
-        .pagination { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 30px; }
-        .page-link {
-            text-decoration: none; padding: 10px 18px; border-radius: 12px;
-            background: var(--white); color: var(--garden-black);
-            font-weight: 700; font-size: 0.85rem; box-shadow: 0 4px 10px rgba(0,0,0,0.04); transition: 0.3s;
-        }
-        .page-link:hover, .page-link.active { background: var(--ulu-orange); color: white; }
-        .page-link.disabled { opacity: 0.5; pointer-events: none; }
-
-        @media (max-width: 992px) {
-            
-            .page-header-flex { flex-direction: column; align-items: flex-start; gap: 20px; }
-            .search-input { width: 100%; }
-        }
-    </style>
     <link rel="stylesheet" href="css/admin_style.css">
+    <style>
+        .page-link { text-decoration:none; padding:7px 13px; border-radius:7px; background:var(--white); color:var(--slate-700); font-weight:700; font-size:0.8rem; border:1px solid var(--slate-200); transition:0.2s; }
+        .page-link:hover, .page-link.active { background:var(--gold); color:white; border-color:var(--gold); }
+        .page-link.disabled { opacity:0.4; pointer-events:none; }
+    </style>
 </head>
 <body>
 
-    <header class="header">
-        <div class="logo-area">
-            <a href="admin_dashboard.php" style="text-decoration: none;">
-                <h1><span class="logo-ulu">Easy</span><span class="logo-garden">Stay</span></h1>
-            </a>
-            <span class="brand-sub">Management Portal</span>
-        </div>
-        <div class="nav-actions">
-            <a href="admin_dashboard.php" class="nav-btn btn-profile"><i class="fas fa-th-large"></i> Dashboard</a>
-            <a href="edit_profile.php?id=<?php echo $user_id; ?>" class="nav-btn btn-profile"><i class="fas fa-user-circle"></i> Profile</a>
-            <a href="../logout.php" class="nav-btn btn-logout" onclick="return confirm('Confirm Logout?');"><i class="fas fa-sign-out-alt"></i> Logout</a>
-        </div>
-    </header>
+<?php include 'sidebar.php'; ?>
 
-    <main class="container">
-        <div class="page-header-flex">
-            <div>
-                <h2 style="font-size: 2rem; font-weight: 800; color: var(--garden-black);">Booking Management</h2>
-                <p style="color: #666; font-size: 0.95rem;">Review reservations and track payment statuses.</p>
-            </div>
-
-            <form action="" method="GET" class="search-form">
-                <i class="fas fa-search search-icon-inside"></i>
-                <input type="text" name="search" class="search-input" placeholder="Search guest or package..." value="<?= htmlspecialchars($search) ?>">
+<div class="admin-wrapper">
+    <!-- Topbar -->
+    <div class="topbar">
+        <div class="topbar-left">
+            <div class="topbar-title">Booking Management</div>
+            <div class="topbar-breadcrumb">Review reservations and track payment statuses</div>
+        </div>
+        <div class="topbar-right">
+            <form action="" method="GET" style="display:flex; gap:8px; align-items:center;">
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" name="search" class="search-box" placeholder="Search guest or package..." value="<?= htmlspecialchars($search) ?>">
+                </div>
             </form>
         </div>
+    </div>
+
+    <div class="admin-content">
 
         <?php if (isset($_GET['updated'])): ?>
-            <div style="background: #D1FAE5; color: #065F46; padding: 15px; border-radius: 12px; margin-bottom: 20px; font-weight: 700;">
-                <i class="fas fa-check-circle"></i> Booking status updated successfully!
-            </div>
+            <div class="alert alert-success"><i class="fas fa-check-circle"></i> Booking status updated successfully!</div>
         <?php endif; ?>
 
         <div class="table-card">
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 50px;">No.</th>
-                        <th style="width: 110px;">Booking ID</th>
-                        <th>Guest Name</th>
-                        <th>Package</th>
-                        <th style="width: 180px;">Check-in / Out</th>
-                        <th style="width: 150px; text-align: center;">Payment</th>
-                        <th style="width: 120px; text-align: center;">Status</th>
-                        <th style="width: 110px; text-align: right;">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if ($result && $result->num_rows > 0): ?>
-                        <?php 
-                        $no = $offset + 1;
-                        while ($row = $result->fetch_assoc()): 
-                        ?>
+            <div class="table-header">
+                <h3><i class="fas fa-calendar-check" style="color:var(--gold)"></i> All Bookings
+                    <span style="font-size:0.75rem; font-weight:500; color:var(--slate-400); margin-left:8px;"><?= $total_rows ?> records</span>
+                </h3>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width:50px;">No.</th>
+                            <th style="width:90px;">ID</th>
+                            <th>Guest</th>
+                            <th>Package</th>
+                            <th>Check-in / Out</th>
+                            <th style="text-align:center;">Payment</th>
+                            <th style="text-align:center;">Status</th>
+                            <th style="text-align:right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if ($result && $result->num_rows > 0):
+                            $no = $offset + 1;
+                            while ($row = $result->fetch_assoc()): ?>
                             <tr>
-                                <td style="font-weight: 600; color: #bbb;"><?= $no++; ?>.</td>
-                                <td style="font-family: monospace; font-weight: 700; color: var(--ulu-orange);">#<?= $row['book_id']; ?></td>
+                                <td style="color:var(--slate-300); font-weight:600;"><?= $no++ ?>.</td>
+                                <td><span class="table-id">#<?= $row['book_id'] ?></span></td>
                                 <td>
-                                    <div style="font-weight: 700; color: var(--garden-black);"><?= htmlspecialchars($row['full_name']); ?></div>
-                                    <div style="font-size: 0.75rem; color: #888;">User ID: <?= $row['user_id']; ?></div>
+                                    <div class="user-cell">
+                                        <div class="avatar"><?= strtoupper(substr($row['full_name'],0,1)) ?></div>
+                                        <div>
+                                            <div class="user-info-name"><?= htmlspecialchars($row['full_name']) ?></div>
+                                            <div class="user-info-sub">ID: <?= $row['user_id'] ?></div>
+                                        </div>
+                                    </div>
                                 </td>
-                                <td style="font-weight: 600;"><?= htmlspecialchars($row['package_name']); ?></td>
+                                <td style="font-weight:600; color:var(--slate-800);"><?= htmlspecialchars($row['package_name']) ?></td>
                                 <td>
-                                    <div style="font-size: 0.85rem; font-weight: 600;"><i class="far fa-calendar-check" style="color: var(--ulu-orange); width: 15px;"></i> In: <?= date('d M Y', strtotime($row['checkin_date'])); ?></div>
-                                    <div style="font-size: 0.85rem; color: #888;"><i class="far fa-calendar-times" style="width: 15px;"></i> Out: <?= date('d M Y', strtotime($row['checkout_date'])); ?></div>
+                                    <div style="font-size:0.82rem; font-weight:600;"><i class="far fa-calendar-check text-gold" style="width:14px;"></i> <?= date('d M Y', strtotime($row['checkin_date'])) ?></div>
+                                    <div style="font-size:0.78rem; color:var(--slate-400);"><i class="far fa-calendar-times" style="width:14px;"></i> <?= date('d M Y', strtotime($row['checkout_date'])) ?></div>
                                 </td>
-                                <td style="text-align: center;">
-                                    <a href="view_payments.php?book_id=<?= $row['book_id']; ?>" class="btn-payment-link">
-                                        <i class="fas fa-receipt"></i> Payment Page
+                                <td style="text-align:center;">
+                                    <a href="view_payments.php?book_id=<?= $row['book_id'] ?>" class="btn btn-sm btn-outline" style="font-size:0.72rem;">
+                                        <i class="fas fa-receipt"></i> Verify
                                     </a>
                                 </td>
-                                <td style="text-align: center;">
-                                    <span class="status-badge status-<?= $row['status']; ?>">
-                                        <?= $row['status']; ?>
-                                    </span>
+                                <td style="text-align:center;">
+                                    <span class="badge status-<?= $row['status'] ?>"><?= $row['status'] ?></span>
                                 </td>
-                                <td style="text-align: right;">
-                                    <a href="edit_booking.php?id=<?= $row['book_id']; ?>" class="btn-icon" title="Edit Status">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a href="delete_booking.php?id=<?= $row['book_id']; ?>" class="btn-icon btn-delete-action" onclick="return confirm('Confirm delete booking?')" title="Delete">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </a>
+                                <td style="text-align:right;">
+                                    <div class="action-btns" style="justify-content:flex-end;">
+                                        <a href="edit_booking.php?id=<?= $row['book_id'] ?>" class="btn-action btn-edit" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="delete_booking.php?id=<?= $row['book_id'] ?>" class="btn-action btn-delete" onclick="return confirm('Confirm delete booking #<?= $row['book_id'] ?>?')" title="Delete">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
-                        <?php endwhile; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td colspan="8" style="text-align: center; padding: 50px; color: #999;">
-                                <?= !empty($search) ? "No results found for '".htmlspecialchars($search)."'" : "No bookings found." ?>
-                            </td>
-                        </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
+                        <?php endwhile; else: ?>
+                            <tr>
+                                <td colspan="8" class="table-empty">
+                                    <i class="fas fa-calendar-times"></i>
+                                    <?= !empty($search) ? "No results for \"".htmlspecialchars($search)."\"" : "No bookings found." ?>
+                                </td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+
+            <?php if ($total_pages > 1): ?>
+            <div class="pagination-container">
+                <span><?= $total_rows ?> total records &bull; Page <?= $page ?> of <?= $total_pages ?></span>
+                <div style="display:flex; gap:6px; align-items:center;">
+                    <a href="?page=<?= max(1, $page-1) ?>&search=<?= urlencode($search) ?>" class="page-link <?= $page <= 1 ? 'disabled' : '' ?>">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                        <a href="?page=<?= $i ?>&search=<?= urlencode($search) ?>" class="page-link <?= $i == $page ? 'active' : '' ?>"><?= $i ?></a>
+                    <?php endfor; ?>
+                    <a href="?page=<?= min($total_pages, $page+1) ?>&search=<?= urlencode($search) ?>" class="page-link <?= $page >= $total_pages ? 'disabled' : '' ?>">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </div>
+            </div>
+            <?php endif; ?>
         </div>
 
-        <?php if ($total_pages > 1): ?>
-            <div class="pagination">
-                <a href="?page=<?= max(1, $page-1) ?>&search=<?= urlencode($search) ?>" class="page-link <?= $page <= 1 ? 'disabled' : '' ?>">
-                    <i class="fas fa-chevron-left"></i>
-                </a>
-
-                <?php for($i = 1; $i <= $total_pages; $i++): ?>
-                    <a href="?page=<?= $i ?>&search=<?= urlencode($search) ?>" class="page-link <?= $i == $page ? 'active' : '' ?>">
-                        <?= $i ?>
-                    </a>
-                <?php endfor; ?>
-
-                <a href="?page=<?= min($total_pages, $page+1) ?>&search=<?= urlencode($search) ?>" class="page-link <?= $page >= $total_pages ? 'disabled' : '' ?>">
-                    <i class="fas fa-chevron-right"></i>
-                </a>
-            </div>
-        <?php endif; ?>
-    </main>
-
+    </div>
+</div>
 </body>
 </html>
