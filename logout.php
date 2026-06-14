@@ -20,6 +20,8 @@ session_destroy();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
         :root {
             --primary-orange: #C5A880;
             --hover-orange: #B3966F;
@@ -35,7 +37,7 @@ session_destroy();
             align-items: center;
             justify-content: center;
             margin: 0;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
         .logout-box {
@@ -55,6 +57,7 @@ session_destroy();
         }
 
         .logout-box h2 {
+            font-family: 'Playfair Display', serif;
             font-weight: 800;
             color: #111;
             font-size: 2rem;
