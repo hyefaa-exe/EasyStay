@@ -7,42 +7,60 @@ require_once 'db_connect.php';
 $error_msg = '';
 
 if (isset($_POST['register'])) {
-    $full_name = trim($_POST['full_name']);
-    $username  = trim($_POST['username']);
-    $email     = trim($_POST['email']);
-    $phone     = trim($_POST['phone']);
-    $password  = $_POST['password'];
+    $full_name       = strip_tags(trim($_POST['full_name']));
+    $username        = strip_tags(trim($_POST['username']));
+    $email           = trim($_POST['email']);
+    $phone           = trim($_POST['phone']);
+    $password        = $_POST['password'];
+    $confirm_password = $_POST['confirm_password'];
 
-    $check_sql = "SELECT user_id FROM users WHERE username = ? OR email = ?";
-    $check_stmt = $conn->prepare($check_sql);
-    $check_stmt->bind_param("ss", $username, $email);
-    $check_stmt->execute();
-    $check_result = $check_stmt->get_result();
-
-    if ($check_result->num_rows > 0) {
-        $error_msg = "Username or Email already registered!";
+    // === VALIDASI ===
+    if (empty($full_name) || empty($username) || empty($email) || empty($phone) || empty($password)) {
+        $error_msg = "Sila isi semua maklumat yang diperlukan.";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error_msg = "Format email tidak sah.";
+    } elseif (!preg_match('/^(01[0-9])\d{7,8}$/', $phone)) {
+        $error_msg = "Format nombor telefon tidak sah. Contoh: 0123456789";
+    } elseif (strlen($password) < 8) {
+        $error_msg = "Kata laluan mesti sekurang-kurangnya 8 aksara.";
+    } elseif (!preg_match('/[A-Z]/', $password)) {
+        $error_msg = "Kata laluan mesti mengandungi sekurang-kurangnya 1 huruf besar.";
+    } elseif (!preg_match('/[0-9]/', $password)) {
+        $error_msg = "Kata laluan mesti mengandungi sekurang-kurangnya 1 nombor.";
+    } elseif ($password !== $confirm_password) {
+        $error_msg = "Kata laluan tidak sepadan. Sila semak semula.";
     } else {
-        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-        $sql = "INSERT INTO users (full_name, username, email, phone, password) VALUES (?, ?, ?, ?, ?)";
-        $stmt = $conn->prepare($sql);
+        // Semak username/email duplikat
+        $check_stmt = $conn->prepare("SELECT user_id FROM users WHERE username = ? OR email = ?");
+        $check_stmt->bind_param("ss", $username, $email);
+        $check_stmt->execute();
+        $check_result = $check_stmt->get_result();
 
-        if ($stmt) {
-            $stmt->bind_param("sssss", $full_name, $username, $email, $phone, $hashed_password);
-            if ($stmt->execute()) {
-                $_SESSION['user_id']  = $conn->insert_id;
-                $_SESSION['username'] = $username;
-                $_SESSION['full_name'] = $full_name;
-                header("Location: index.php");
-                exit();
-            } else {
-                $error_msg = "Registration failed. Please try again.";
-            }
-            $stmt->close();
+        if ($check_result->num_rows > 0) {
+            $error_msg = "Username atau Email sudah didaftarkan!";
         } else {
-            $error_msg = "Database error.";
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+            $stmt = $conn->prepare("INSERT INTO users (full_name, username, email, phone, password) VALUES (?, ?, ?, ?, ?)");
+
+            if ($stmt) {
+                $stmt->bind_param("sssss", $full_name, $username, $email, $phone, $hashed_password);
+                if ($stmt->execute()) {
+                    $_SESSION['user_id']   = $conn->insert_id;
+                    $_SESSION['username']  = $username;
+                    $_SESSION['full_name'] = $full_name;
+                    $_SESSION['role']      = 'customer';
+                    header("Location: index.php");
+                    exit();
+                } else {
+                    $error_msg = "Pendaftaran gagal. Sila cuba lagi.";
+                }
+                $stmt->close();
+            } else {
+                $error_msg = "Ralat pangkalan data.";
+            }
         }
+        $check_stmt->close();
     }
-    $check_stmt->close();
 }
 $is_logged_in = isset($_SESSION['user_id']);
 $current_page = basename($_SERVER['PHP_SELF']);
@@ -236,7 +254,14 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
             <div class="form-group">
                 <label class="form-label">Password</label>
-                <input type="password" name="password" class="form-control-ios" placeholder="Create a strong password" required>
+                <input type="password" name="password" id="password" class="form-control-ios" placeholder="Min. 8 aksara, 1 huruf besar, 1 nombor" required>
+                <div id="pwd-strength" style="font-size:11px; margin-top:5px; color:#888;"></div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Confirm Password</label>
+                <input type="password" name="confirm_password" id="confirm_password" class="form-control-ios" placeholder="Taip semula kata laluan" required>
+                <div id="pwd-match" style="font-size:11px; margin-top:5px;"></div>
             </div>
 
             <button type="submit" name="register" class="btn-login-ios">Register Now</button>
@@ -251,6 +276,43 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
     <script src="js/vendor/jquery-1.12.4.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script>
+        // Password Strength Checker
+        document.getElementById('password').addEventListener('input', function() {
+            const val = this.value;
+            const el  = document.getElementById('pwd-strength');
+            let score = 0;
+            let tips  = [];
+
+            if (val.length >= 8)          score++; else tips.push('min. 8 aksara');
+            if (/[A-Z]/.test(val))        score++; else tips.push('1 huruf besar');
+            if (/[0-9]/.test(val))        score++; else tips.push('1 nombor');
+            if (/[^A-Za-z0-9]/.test(val)) score++;
+
+            const labels = ['', '⚠️ Lemah', '⚠️ Sederhana', '✅ Baik', '✅ Sangat Kuat'];
+            const colors = ['', '#e74c3c', '#f39c12', '#27ae60', '#1e8449'];
+            el.style.color = colors[score] || '#888';
+            el.innerHTML = score > 0 ? labels[score] + (tips.length ? ' — perlu: ' + tips.join(', ') : '') : '';
+
+            checkMatch();
+        });
+
+        // Confirm Password Matcher
+        function checkMatch() {
+            const pwd  = document.getElementById('password').value;
+            const conf = document.getElementById('confirm_password').value;
+            const el   = document.getElementById('pwd-match');
+            if (!conf) { el.innerHTML = ''; return; }
+            if (pwd === conf) {
+                el.style.color = '#27ae60';
+                el.innerHTML   = '✅ Kata laluan sepadan';
+            } else {
+                el.style.color = '#e74c3c';
+                el.innerHTML   = '❌ Kata laluan tidak sepadan';
+            }
+        }
+        document.getElementById('confirm_password').addEventListener('input', checkMatch);
+    </script>
 </body>
 
-</html>
+</html>

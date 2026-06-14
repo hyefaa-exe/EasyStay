@@ -15,12 +15,10 @@ if (empty($_SESSION['csrf_token'])) {
 // -----------------------------------------
 // DATABASE CONNECTION
 // -----------------------------------------
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "easystay";
+require_once __DIR__ . '/config.php';
 
-$conn = new mysqli($servername, $username, $password, $dbname);
+$conn = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+
 
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);

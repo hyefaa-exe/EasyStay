@@ -24,34 +24,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         $error_msg = "Security Error (CSRF). Please refresh and try again.";
     } else {
-        $full_name = trim($_POST['full_name']);
-        $email = trim($_POST['email']);
-        $phone = trim($_POST['phone']);
-        $password = $_POST['password'];
+        $full_name = strip_tags(trim($_POST['full_name']));
+        $email     = trim($_POST['email']);
+        $phone     = trim($_POST['phone']);
+        $password  = $_POST['password'];
 
-        $profile_pic = null;
+        // === VALIDASI INPUT ===
+        if (empty($full_name)) {
+            $error_msg = "Nama penuh tidak boleh kosong.";
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $error_msg = "Format email tidak sah. Contoh: nama@email.com";
+        } elseif (!preg_match('/^(01[0-9])\d{7,8}$/', $phone)) {
+            $error_msg = "Format nombor telefon tidak sah. Contoh: 0123456789";
+        } elseif (!empty($password) && strlen($password) < 8) {
+            $error_msg = "Kata laluan mesti sekurang-kurangnya 8 aksara.";
+        } else {
+
+        $profile_pic  = null;
         $upload_error = false;
 
         // Handle profile picture upload if selected
         if (isset($_FILES['profile_pic']) && $_FILES['profile_pic']['error'] == 0) {
-            $allowed = ['jpg', 'jpeg', 'png', 'webp'];
+            $allowed  = ['jpg', 'jpeg', 'png', 'webp'];
             $filename = $_FILES['profile_pic']['name'];
-            $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+            $ext      = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
             $filesize = $_FILES['profile_pic']['size'];
 
             if (!in_array($ext, $allowed)) {
-                $error_msg = "Invalid file type. Only JPG, JPEG, PNG, and WEBP files are allowed.";
+                $error_msg    = "Invalid file type. Only JPG, JPEG, PNG, and WEBP files are allowed.";
                 $upload_error = true;
             } elseif ($filesize > 2 * 1024 * 1024) {
-                $error_msg = "File size exceeds 2MB limit.";
+                $error_msg    = "File size exceeds 2MB limit.";
                 $upload_error = true;
             } else {
                 $target_dir = 'uploads/profile/';
                 if (!file_exists($target_dir)) {
-                    mkdir($target_dir, 0777, true);
+                    mkdir($target_dir, 0755, true);
                 }
 
-                $new_name = time() . '_profile_' . uniqid() . '.' . $ext;
+                $new_name    = time() . '_profile_' . uniqid() . '.' . $ext;
                 $destination = $target_dir . $new_name;
 
                 if (move_uploaded_file($_FILES['profile_pic']['tmp_name'], $destination)) {
@@ -69,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                         }
                     }
                 } else {
-                    $error_msg = "Failed to upload profile picture.";
+                    $error_msg    = "Failed to upload profile picture.";
                     $upload_error = true;
                 }
             }
@@ -95,15 +106,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                 }
             }
 
+
             if ($stmt->execute()) {
                 $success_msg = "Profile updated successfully!";
                 $_SESSION['full_name'] = $full_name;
             } else {
                 $error_msg = "Failed to update profile.";
             }
-        }
-    }
-}
+        } // end if (!$upload_error)
+        } // end validation else
+    } // end CSRF else
+} // end POST check
+
 
 // --- LOGIC 2: SUBMIT REVIEW ---
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_review'])) {

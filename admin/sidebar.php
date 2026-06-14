@@ -38,13 +38,15 @@ $nav_items = [
     [
         'label' => 'People',
         'items' => [
-            ['file' => 'view_users.php', 'icon' => 'fas fa-users', 'label' => 'Users'],
+            ['file' => 'view_users.php',  'icon' => 'fas fa-users',      'label' => 'Users'],
+            ['file' => 'edit_profile.php','icon' => 'fas fa-user-shield', 'label' => 'My Profile'],
         ]
     ],
     [
         'label' => 'Analytics',
         'items' => [
             ['file' => 'reports_analysis.php', 'icon' => 'fas fa-chart-line', 'label' => 'Reports'],
+            ['file' => 'admin_log.php',         'icon' => 'fas fa-history',    'label' => 'Activity Log'],
         ]
     ],
 ];

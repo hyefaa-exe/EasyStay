@@ -6,10 +6,26 @@ $user_id = $_SESSION['admin_id'];
 
 if (isset($_GET['delete_id'])) {
     $delete_id = intval($_GET['delete_id']);
-    $conn->query("DELETE FROM users WHERE user_id = $delete_id");
-    header("Location: view_users.php");
+
+    // Semak jika user masih ada booking aktif (Pending/Accepted)
+    $chk = $conn->prepare("SELECT COUNT(*) as cnt FROM bookings WHERE user_id = ? AND status IN ('Pending','Accepted')");
+    $chk->bind_param("i", $delete_id);
+    $chk->execute();
+    $active = $chk->get_result()->fetch_assoc()['cnt'];
+
+    if ($active > 0) {
+        header("Location: view_users.php?msg=HasActiveBookings");
+        exit();
+    }
+
+    // Selamat untuk padam
+    $del = $conn->prepare("DELETE FROM users WHERE user_id = ?");
+    $del->bind_param("i", $delete_id);
+    $del->execute();
+    header("Location: view_users.php?msg=Deleted");
     exit();
 }
+
 
 $result           = $conn->query("SELECT user_id, full_name, email, phone FROM users ORDER BY user_id DESC");
 $total_registered = $result->num_rows;
@@ -45,6 +61,14 @@ $total_registered = $result->num_rows;
     </div>
 
     <div class="admin-content">
+
+        <?php if (isset($_GET['msg'])): ?>
+            <?php if ($_GET['msg'] === 'HasActiveBookings'): ?>
+                <div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i> Pengguna ini masih mempunyai booking aktif (Pending/Accepted) dan tidak boleh dipadam.</div>
+            <?php elseif ($_GET['msg'] === 'Deleted'): ?>
+                <div class="alert alert-success"><i class="fas fa-check-circle"></i> Pengguna berjaya dipadam.</div>
+            <?php endif; ?>
+        <?php endif; ?>
 
         <!-- Stats -->
         <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); max-width: 400px;">

@@ -3,6 +3,7 @@ session_start();
 if (!isset($_SESSION['admin_id'])) { header("Location: ../login.php"); exit(); }
 require_once 'db_connect.php';
 require_once 'email.php';
+require_once 'admin_logger.php';
 
 $id  = intval($_GET['id']);
 $msg = "";
@@ -17,6 +18,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->bind_param("ssi", $new_status, $new_payment_status, $id);
 
     if ($stmt->execute()) {
+        // Log aktiviti admin
+        $admin_id = $_SESSION['admin_id'];
+        $desc = "Kemaskini Booking #$id: Status → $new_status | Payment → $new_payment_status";
+        logAdminAction($conn, $admin_id, 'UPDATE_BOOKING', $desc, $id, 'booking');
+
         $user_sql = "SELECT u.email, u.full_name, b.checkin_date, b.checkout_date, b.total_price, p.package_name 
                      FROM bookings b 
                      JOIN users u ON b.user_id = u.user_id 

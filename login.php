@@ -256,12 +256,17 @@ if (isset($_POST['login'])) {
                 <input type="password" name="password" class="form-control-ios" placeholder="Enter your password" required>
             </div>
 
-            <button type="submit" name="login" class="btn-login-ios">Sign In</button>
-        </form>
-
-        <div class="register-link">
-            Don't have an account? <a href="register.php">Create Account</a>
+        <div style="text-align:right; margin-top:8px; margin-bottom:4px;">
+            <a href="forgot_password.php" style="font-size:12px; color:#C5A880; text-decoration:none; font-weight:600;">Forgot password?</a>
         </div>
+
+        <button type="submit" name="login" class="btn-login-ios">Sign In</button>
+    </form>
+
+    <div class="register-link">
+        Don't have an account? <a href="register.php">Create Account</a>
+    </div>
+
 
         <a href="index.php" class="back-home"><i class="fas fa-arrow-left mr-1"></i> Back to Home</a>
     </div>

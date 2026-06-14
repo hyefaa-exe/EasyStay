@@ -1,0 +1,13 @@
+Options -Indexes
+
+# Custom Error Pages
+ErrorDocument 404 /EasyStay/404.php
+
+# Protect sensitive files
+<FilesMatch "^(config\.php|\.env|email_config\.php)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Prevent directory browsing
+Options -Indexes
