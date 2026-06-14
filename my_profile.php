@@ -399,6 +399,100 @@ $bookings = $stmt_b->get_result();
             border: 1px solid rgba(46, 125, 50, 0.15);
         }
 
+        /* Tracker Stepper styling */
+        .booking-tracker {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding: 10px 0;
+            width: 100%;
+        }
+        .tracker-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            flex: 1;
+        }
+        .step-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 2px #e2e8f0;
+            z-index: 2;
+        }
+        .tracker-step.completed .step-circle {
+            background: #2E7D32;
+            color: #fff;
+            box-shadow: 0 0 0 2px #2E7D32;
+        }
+        .tracker-step.active .step-circle {
+            background: #C5A880;
+            color: #fff;
+            box-shadow: 0 0 0 2px #C5A880;
+            transform: scale(1.1);
+        }
+        .step-label {
+            font-size: 10px;
+            font-weight: 800;
+            color: #64748b;
+            margin-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: center;
+        }
+        .tracker-step.completed .step-label {
+            color: #2E7D32;
+        }
+        .tracker-step.active .step-label {
+            color: #C5A880;
+        }
+        .tracker-line {
+            height: 4px;
+            background: #e2e8f0;
+            flex-grow: 1;
+            margin: 0 -10px;
+            position: relative;
+            top: -12px;
+            z-index: 1;
+        }
+        .tracker-line.completed {
+            background: #2E7D32;
+        }
+        @media (max-width: 576px) {
+            .booking-tracker {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            .tracker-step {
+                flex-direction: row;
+                gap: 15px;
+                flex: none;
+                width: 100%;
+            }
+            .tracker-line {
+                width: 4px;
+                height: 20px;
+                margin: -10px 0 -10px 16px;
+                top: 0;
+            }
+            .step-label {
+                margin-top: 0;
+                text-align: left;
+            }
+        }
+
         .badge-danger-soft {
             background: rgba(198, 40, 40, 0.08);
             color: #C62828;
@@ -895,44 +989,89 @@ $bookings = $stmt_b->get_result();
                                         if ($is_cancelled) $badgeClass = 'badge-muted';
                                     ?>
                                         <div class="booking-card" style="<?= $is_cancelled ? 'opacity:0.6;' : '' ?>">
-                                            <div class="booking-info">
-                                                <h5><?= htmlspecialchars($row['package_name']) ?></h5>
-                                                <div class="booking-dates"><i class="far fa-calendar-alt mr-2"></i> <?= date('d M', strtotime($row['checkin_date'])) ?> - <?= date('d M Y', strtotime($row['checkout_date'])) ?></div>
-                                                <div class="booking-price">Total: RM <?= number_format($row['total_price'], 2) ?></div>
-                                            </div>
-                                            <div class="text-right d-flex flex-column align-items-end" style="gap: 8px;">
-                                                <span class="status-badge <?= $badgeClass ?>"><?= $row['status'] ?></span>
+                                            <div class="d-flex justify-content-between align-items-start w-100" style="gap: 20px; flex-wrap: wrap;">
+                                                <div class="booking-info">
+                                                    <h5><?= htmlspecialchars($row['package_name']) ?></h5>
+                                                    <div class="booking-dates"><i class="far fa-calendar-alt mr-2"></i> <?= date('d M', strtotime($row['checkin_date'])) ?> - <?= date('d M Y', strtotime($row['checkout_date'])) ?></div>
+                                                    <div class="booking-price">Total: RM <?= number_format($row['total_price'], 2) ?></div>
+                                                </div>
+                                                <div class="text-right d-flex flex-column align-items-end" style="gap: 8px;">
+                                                    <span class="status-badge <?= $badgeClass ?>"><?= $row['status'] ?></span>
 
-                                                <div class="d-flex" style="gap: 5px;">
-                                                    <button type="button" class="btn btn-sm btn-info text-white rounded-pill px-3" data-toggle="modal" data-target="#detailModal<?= $row['book_id'] ?>">
-                                                        <i class="fas fa-info-circle"></i> Details
-                                                    </button>
+                                                    <div class="d-flex" style="gap: 5px;">
+                                                        <button type="button" class="btn btn-sm btn-info text-white rounded-pill px-3" data-toggle="modal" data-target="#detailModal<?= $row['book_id'] ?>">
+                                                            <i class="fas fa-info-circle"></i> Details
+                                                        </button>
 
-                                                    <?php if (!$is_cancelled): ?>
-                                                        <?php if ($status_clean == 'accepted' && empty($row['balance_receipt'])): ?>
-                                                            <button type="button" class="btn btn-sm btn-success text-white rounded-pill px-3" data-toggle="modal" data-target="#balanceModal<?= $row['book_id'] ?>">
-                                                                <i class="fas fa-dollar-sign"></i> Pay Balance
-                                                            </button>
+                                                        <?php if (!$is_cancelled): ?>
+                                                            <?php if ($status_clean == 'accepted' && empty($row['balance_receipt'])): ?>
+                                                                <button type="button" class="btn btn-sm btn-success text-white rounded-pill px-3" data-toggle="modal" data-target="#balanceModal<?= $row['book_id'] ?>">
+                                                                    <i class="fas fa-dollar-sign"></i> Pay Balance
+                                                                </button>
+                                                            <?php endif; ?>
+
+                                                            <?php if ($status_clean == 'pending' || $status_clean == 'accepted'): ?>
+                                                                <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3" data-toggle="modal" data-target="#cancelModal<?= $row['book_id'] ?>">
+                                                                    Cancel
+                                                                </button>
+                                                            <?php endif; ?>
+
+                                                            <?php if ($status_clean == 'accepted' || $status_clean == 'completed'): ?>
+                                                                <a href="generate_receipt.php?id=<?= $row['book_id'] ?>" target="_blank" class="btn btn-sm btn-outline-dark rounded-pill px-3">Receipt</a>
+                                                            <?php endif; ?>
+
+                                                            <?php if ($status_clean == 'completed' && !$row['review_id']): ?>
+                                                                <button class="btn btn-sm btn-warning text-white rounded-pill px-3" data-toggle="modal" data-target="#rateModal<?= $row['book_id'] ?>">Rate Us</button>
+                                                            <?php elseif ($row['review_id']): ?>
+                                                                <span class="badge badge-light text-warning mt-1"><i class="fas fa-star"></i> <?= $row['user_rating'] ?>/5</span>
+                                                            <?php endif; ?>
                                                         <?php endif; ?>
-
-                                                        <?php if ($status_clean == 'pending' || $status_clean == 'accepted'): ?>
-                                                            <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3" data-toggle="modal" data-target="#cancelModal<?= $row['book_id'] ?>">
-                                                                Cancel
-                                                            </button>
-                                                        <?php endif; ?>
-
-                                                        <?php if ($status_clean == 'accepted' || $status_clean == 'completed'): ?>
-                                                            <a href="generate_receipt.php?id=<?= $row['book_id'] ?>" target="_blank" class="btn btn-sm btn-outline-dark rounded-pill px-3">Receipt</a>
-                                                        <?php endif; ?>
-
-                                                        <?php if ($status_clean == 'completed' && !$row['review_id']): ?>
-                                                            <button class="btn btn-sm btn-warning text-white rounded-pill px-3" data-toggle="modal" data-target="#rateModal<?= $row['book_id'] ?>">Rate Us</button>
-                                                        <?php elseif ($row['review_id']): ?>
-                                                            <span class="badge badge-light text-warning mt-1"><i class="fas fa-star"></i> <?= $row['user_rating'] ?>/5</span>
-                                                        <?php endif; ?>
-                                                    <?php endif; ?>
+                                                    </div>
                                                 </div>
                                             </div>
+
+                                            <?php if (!$is_cancelled && $status_clean !== 'rejected'): 
+                                                // Calculate progress step
+                                                $step = 1; // Reserved
+                                                if ($status_clean == 'accepted' || $status_clean == 'completed' || $row['payment_status'] == 'Deposit Paid' || $row['payment_status'] == 'Fully Paid') {
+                                                    $step = 2; // Deposit Paid
+                                                }
+                                                
+                                                $today = date('Y-m-d');
+                                                if ($status_clean == 'completed' || ($status_clean == 'accepted' && $today >= $row['checkin_date'])) {
+                                                    $step = 3; // Checked In
+                                                }
+                                                if ($status_clean == 'completed') {
+                                                    $step = 4; // Refunded & Done
+                                                }
+                                            ?>
+                                                <div class="booking-stepper-wrap w-100 mt-4 pt-3 border-top">
+                                                    <div class="booking-tracker">
+                                                        <div class="tracker-step <?= $step >= 1 ? 'completed' : '' ?> <?= $step == 1 ? 'active' : '' ?>">
+                                                            <div class="step-circle"><i class="fa fa-calendar-plus"></i></div>
+                                                            <div class="step-label">Reserved</div>
+                                                        </div>
+                                                        <div class="tracker-line <?= $step >= 2 ? 'completed' : '' ?>"></div>
+                                                        
+                                                        <div class="tracker-step <?= $step >= 2 ? 'completed' : '' ?> <?= $step == 2 ? 'active' : '' ?>">
+                                                            <div class="step-circle"><i class="fa fa-wallet"></i></div>
+                                                            <div class="step-label">Deposit Paid</div>
+                                                        </div>
+                                                        <div class="tracker-line <?= $step >= 3 ? 'completed' : '' ?>"></div>
+                                                        
+                                                        <div class="tracker-step <?= $step >= 3 ? 'completed' : '' ?> <?= $step == 3 ? 'active' : '' ?>">
+                                                            <div class="step-circle"><i class="fa fa-key"></i></div>
+                                                            <div class="step-label">Checked In</div>
+                                                        </div>
+                                                        <div class="tracker-line <?= $step >= 4 ? 'completed' : '' ?>"></div>
+                                                        
+                                                        <div class="tracker-step <?= $step >= 4 ? 'completed' : '' ?> <?= $step == 4 ? 'active' : '' ?>">
+                                                            <div class="step-circle"><i class="fa fa-handshake"></i></div>
+                                                            <div class="step-label">Refunded & Done</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <?php endif; ?>
                                         </div>
                                     <?php endwhile; ?>
                                 <?php else: ?>

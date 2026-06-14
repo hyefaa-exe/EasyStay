@@ -8,9 +8,105 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
 $check_in = isset($_GET['check_in']) ? trim($_GET['check_in']) : '';
 $check_out = isset($_GET['check_out']) ? trim($_GET['check_out']) : '';
+$guests = isset($_GET['guests']) ? intval($_GET['guests']) : 0;
+$min_price = isset($_GET['min_price']) && $_GET['min_price'] !== '' ? floatval($_GET['min_price']) : '';
+$max_price = isset($_GET['max_price']) && $_GET['max_price'] !== '' ? floatval($_GET['max_price']) : '';
+$sort_by = isset($_GET['sort_by']) ? trim($_GET['sort_by']) : '';
 
-// Ambil senarai pakej aktif dari database
-$result = $conn->query("SELECT package_id, package_name, description, price, availability, image FROM packages WHERE status = 'ACTIVE'");
+// ----------------------------------------------------
+// BUILD DYNAMIC SQL QUERY
+// ----------------------------------------------------
+$where_clauses = ["status = 'ACTIVE'"];
+$bind_types = "";
+$bind_params = [];
+
+// Guest Capacity Filter mapping
+if ($guests > 0) {
+    if ($guests <= 3) {
+        $where_clauses[] = "package_id = 12";
+    } elseif ($guests <= 15) {
+        $where_clauses[] = "package_id = 13";
+    } else {
+        $where_clauses[] = "package_id = 14";
+    }
+}
+
+// Min Price Filter
+if ($min_price !== '') {
+    $where_clauses[] = "price >= ?";
+    $bind_types .= "d";
+    $bind_params[] = $min_price;
+}
+
+// Max Price Filter
+if ($max_price !== '') {
+    $where_clauses[] = "price <= ?";
+    $bind_types .= "d";
+    $bind_params[] = $max_price;
+}
+
+// Amenities / Inclusions Filter
+if (isset($_GET['amenities']) && is_array($_GET['amenities'])) {
+    $matching_package_ids = [];
+    $all_package_ids = [12, 13, 14];
+    foreach ($all_package_ids as $pid) {
+        $features = get_package_features($pid);
+        $inc_lower = array_map('strtolower', $features['inclusions']);
+        
+        $match = true;
+        foreach ($_GET['amenities'] as $amenity) {
+            if ($amenity == 'aircond' && !in_array('aircond', $inc_lower) && !in_array('fully airconditioned (bilik & ruang tamu)', $inc_lower)) {
+                $match = false;
+            }
+            if ($amenity == 'wifi' && !in_array('free high-speed wifi', $inc_lower)) {
+                $match = false;
+            }
+            if ($amenity == 'pool' && !in_array('private pool (kolam mandi persendirian)', $inc_lower)) {
+                $match = false;
+            }
+            if ($amenity == 'kitchen' && !in_array('kitchen & cooking utensils (peralatan memasak)', $inc_lower)) {
+                $match = false;
+            }
+            if ($amenity == 'washing' && !in_array('iron & washing machine (seterika & mesin basuh)', $inc_lower)) {
+                $match = false;
+            }
+            if ($amenity == 'bbq' && !in_array('access to bbq pit', $inc_lower)) {
+                $match = false;
+            }
+        }
+        if ($match) {
+            $matching_package_ids[] = $pid;
+        }
+    }
+    
+    if (!empty($matching_package_ids)) {
+        $where_clauses[] = "package_id IN (" . implode(",", $matching_package_ids) . ")";
+    } else {
+        $where_clauses[] = "1 = 0"; // Force zero results
+    }
+}
+
+// Assemble Query
+$sql = "SELECT package_id, package_name, description, price, availability, image FROM packages";
+if (!empty($where_clauses)) {
+    $sql .= " WHERE " . implode(" AND ", $where_clauses);
+}
+
+// Sorting logic
+if ($sort_by == 'price_asc') {
+    $sql .= " ORDER BY price ASC";
+} elseif ($sort_by == 'price_desc') {
+    $sql .= " ORDER BY price DESC";
+} else {
+    $sql .= " ORDER BY package_id DESC";
+}
+
+$stmt = $conn->prepare($sql);
+if ($bind_types !== "") {
+    $stmt->bind_param($bind_types, ...$bind_params);
+}
+$stmt->execute();
+$result = $stmt->get_result();
 ?>
 <!doctype html>
 <html lang="zxx">
@@ -23,6 +119,7 @@ $result = $conn->query("SELECT package_id, package_name, description, price, ava
     <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png?v=2">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
     <link rel="stylesheet" href="css/style.css?v=3">
 
@@ -33,6 +130,113 @@ $result = $conn->query("SELECT package_id, package_name, description, price, ava
             --dark-black: #1a1a1a;
             --soft-grey: #f9f9f9;
         }
+
+        /* Search Bar & Filter styling */
+        .search-bar-wrap {
+            background: #fff;
+            padding: 18px 24px;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+        .search-form-bar {
+            display: grid;
+            grid-template-columns: 1.2fr 1.2fr 1fr auto;
+            gap: 16px;
+            align-items: flex-end;
+        }
+        @media (max-width: 991px) {
+            .search-form-bar {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+        }
+        .search-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .search-field label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--primary-orange);
+            margin: 0;
+        }
+        .form-control-bar {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            outline: none;
+            background: #fdfdfd;
+            height: 44px;
+            transition: all 0.3s ease;
+        }
+        .form-control-bar:focus {
+            border-color: var(--primary-orange);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(197, 168, 128, 0.15);
+        }
+        .btn-search-bar {
+            background: var(--dark-black);
+            color: #fff;
+            border: none;
+            padding: 0 28px;
+            height: 44px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-search-bar:hover {
+            background: var(--primary-orange);
+            box-shadow: 0 5px 15px rgba(197, 168, 128, 0.35);
+        }
+
+        /* Filter Sidebar styling */
+        .filter-sidebar {
+            background: #fff;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.03);
+            border: 1px solid rgba(197, 168, 128, 0.08);
+            position: sticky;
+            top: 100px;
+        }
+        .filter-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--dark-black);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            letter-spacing: -0.3px;
+        }
+        .filter-group {
+            margin-bottom: 22px;
+        }
+        .filter-label {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #888;
+            margin-bottom: 12px;
+            display: block;
+        }
+        .gap-2 { gap: 8px; }
 
         body {
             background-color: var(--soft-grey);
@@ -234,15 +438,105 @@ $result = $conn->query("SELECT package_id, package_name, description, price, ava
             <div class="container">
                 <div class="row">
                     <div class="col-xl-12">
-                        <div class="section-title text-center mb-50">
+                        <div class="section-title text-center mb-40">
                             <h2>Our Exclusive Packages</h2>
                             <p>Curated stays for your perfect getaway.</p>
                         </div>
                     </div>
                 </div>
 
+                <!-- 1. Search Bar -->
+                <div class="search-bar-wrap mb-5">
+                    <form method="GET" action="package.php" class="search-form-bar">
+                        <div class="search-field">
+                            <label><i class="fa-solid fa-calendar-days"></i> Check-in</label>
+                            <input type="text" id="check_in" name="check_in" class="form-control-bar" placeholder="Choose check-in date" value="<?= htmlspecialchars($check_in) ?>" readonly>
+                        </div>
+                        <div class="search-field">
+                            <label><i class="fa-solid fa-calendar-days"></i> Check-out</label>
+                            <input type="text" id="check_out" name="check_out" class="form-control-bar" placeholder="Choose check-out date" value="<?= htmlspecialchars($check_out) ?>" readonly>
+                        </div>
+                        <div class="search-field">
+                            <label><i class="fa-solid fa-users"></i> Guests</label>
+                            <select name="guests" class="form-control-bar">
+                                <option value="">Any Capacity</option>
+                                <option value="3" <?= $guests == 3 ? 'selected' : '' ?>>Up to 3 Guests (Chalet)</option>
+                                <option value="15" <?= $guests == 15 ? 'selected' : '' ?>>Up to 15 Guests (Homestay)</option>
+                                <option value="30" <?= $guests == 30 ? 'selected' : '' ?>>Up to 30 Guests (Entire Property)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-search-bar"><i class="fa fa-search"></i> Search Available Stays</button>
+                    </form>
+                </div>
+
                 <div class="row">
-                    <?php if ($result->num_rows > 0): ?>
+                    <!-- 2. Filter Sidebar -->
+                    <div class="col-xl-3 col-lg-4 col-md-12 mb-4">
+                        <div class="filter-sidebar">
+                            <h5 class="filter-title"><i class="fa fa-sliders mr-2"></i> Filter Results</h5>
+                            <form method="GET" action="package.php" id="filterForm">
+                                <input type="hidden" name="check_in" value="<?= htmlspecialchars($check_in) ?>">
+                                <input type="hidden" name="check_out" value="<?= htmlspecialchars($check_out) ?>">
+                                <input type="hidden" name="guests" value="<?= $guests > 0 ? $guests : '' ?>">
+                                <input type="hidden" name="sort_by" id="filter_sort_by" value="<?= htmlspecialchars($sort_by) ?>">
+
+                                <!-- Price Range -->
+                                <div class="filter-group">
+                                    <label class="filter-label">Price / Night (RM)</label>
+                                    <div class="d-flex align-items-center">
+                                        <input type="number" name="min_price" class="form-control form-control-sm" placeholder="Min" value="<?= isset($_GET['min_price']) ? htmlspecialchars($_GET['min_price']) : '' ?>" style="border-radius: 8px;">
+                                        <span class="mx-2 text-muted">-</span>
+                                        <input type="number" name="max_price" class="form-control form-control-sm" placeholder="Max" value="<?= isset($_GET['max_price']) ? htmlspecialchars($_GET['max_price']) : '' ?>" style="border-radius: 8px;">
+                                    </div>
+                                </div>
+
+                                <!-- Amenities -->
+                                <div class="filter-group">
+                                    <label class="filter-label">Amenities</label>
+                                    <?php
+                                    $amenity_options = [
+                                        'aircond' => 'Air Conditioning',
+                                        'wifi' => 'Free WiFi',
+                                        'pool' => 'Private Pool',
+                                        'kitchen' => 'Kitchen',
+                                        'washing' => 'Washing Machine',
+                                        'bbq' => 'BBQ Pit'
+                                    ];
+                                    foreach ($amenity_options as $key => $lbl):
+                                        $checked = isset($_GET['amenities']) && in_array($key, $_GET['amenities']) ? 'checked' : '';
+                                    ?>
+                                        <div class="custom-control custom-checkbox mb-2">
+                                            <input type="checkbox" class="custom-control-input" id="amenity_<?= $key ?>" name="amenities[]" value="<?= $key ?>" <?= $checked ?> onchange="document.getElementById('filterForm').submit();">
+                                            <label class="custom-control-label small text-dark font-weight-bold" for="amenity_<?= $key ?>"><?= $lbl ?></label>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary btn-sm btn-block mt-3" style="background: var(--primary-orange); border-color: var(--primary-orange); border-radius: 8px; font-weight: 700; height: 38px;">Apply Filters</button>
+                                <a href="package.php" class="btn btn-link btn-sm btn-block text-muted text-center small mt-2">Clear All</a>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- 3. Packages Grid Column -->
+                    <div class="col-xl-9 col-lg-8 col-md-12">
+                        <!-- Sorting Bar -->
+                        <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+                            <div class="text-muted small font-weight-bold">
+                                Showing <?= $result->num_rows ?> Packages
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <label class="mr-2 mb-0 small font-weight-bold text-dark text-nowrap">Sort By:</label>
+                                <select class="form-control form-control-sm" style="width: auto; border-radius: 8px; font-weight: 600;" onchange="changeSort(this.value)">
+                                    <option value="" <?= $sort_by == '' ? 'selected' : '' ?>>Default</option>
+                                    <option value="price_asc" <?= $sort_by == 'price_asc' ? 'selected' : '' ?>>Price: Low to High</option>
+                                    <option value="price_desc" <?= $sort_by == 'price_desc' ? 'selected' : '' ?>>Price: High to Low</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <?php if ($result->num_rows > 0): ?>
                         <?php while ($row = $result->fetch_assoc()): 
                             $is_booked = false;
                             if (!empty($check_in) && !empty($check_out)) {
@@ -266,7 +560,7 @@ $result = $conn->query("SELECT package_id, package_name, description, price, ava
                             $count_reviews = $rev_data['count_reviews'];
                             $stmt_rev->close();
                         ?>
-                            <div class="col-xl-4 col-lg-4 col-md-6 mb-4">
+                            <div class="col-xl-6 col-lg-6 col-md-6 mb-4">
                                 <div class="package-card">
                                     <div class="package-img-box">
                                         <img src="admin/uploads/<?= htmlspecialchars($row['image']) ?>?v=<?= time() ?>" alt="<?= htmlspecialchars($row['package_name']) ?>">
@@ -395,12 +689,14 @@ $result = $conn->query("SELECT package_id, package_name, description, price, ava
                                     </div>
                                 </div>
                             </div>
+                            </div>
                         <?php endwhile; ?>
                     <?php else: ?>
                         <div class="col-12 text-center">
                             <p class="alert alert-warning">No packages available at the moment.</p>
                         </div>
                     <?php endif; ?>
+                    </div>
                 </div>
             </div>
         </div>
@@ -450,6 +746,25 @@ $result = $conn->query("SELECT package_id, package_name, description, price, ava
     </footer>
     <script src="js/vendor/jquery-1.12.4.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        const inPicker = flatpickr("#check_in", {
+            minDate: "today",
+            dateFormat: "Y-m-d",
+            onChange: function(selectedDates, dateStr, instance) {
+                outPicker.set('minDate', dateStr);
+            }
+        });
+        const outPicker = flatpickr("#check_out", {
+            minDate: "today",
+            dateFormat: "Y-m-d"
+        });
+
+        function changeSort(val) {
+            document.getElementById('filter_sort_by').value = val;
+            document.getElementById('filterForm').submit();
+        }
+    </script>
 </body>
 
 </html>

@@ -58,6 +58,146 @@ while ($row = $result_cal->fetch_assoc()) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="css/style.css?v=<?= time() ?>">
+    <style>
+        .payment-option-card {
+            flex: 1;
+            background: #fff;
+            padding: 16px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .payment-option-card:hover {
+            border-color: #C5A880;
+            background: #fafafa;
+        }
+        .payment-option-card.active {
+            border-color: #C5A880;
+            background: rgba(197, 168, 128, 0.05);
+        }
+        .option-icon {
+            font-size: 20px;
+            color: #C5A880;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(197, 168, 128, 0.1);
+            border-radius: 10px;
+            flex-shrink: 0;
+        }
+        .option-details strong {
+            display: block;
+            font-size: 13px;
+            color: #333;
+            line-height: 1.2;
+            margin-bottom: 2px;
+        }
+        .option-details span {
+            font-size: 11px;
+            color: #888;
+            display: block;
+        }
+        
+        /* Custom Styling for Inline Flatpickr Calendar */
+        #inline_calendar .flatpickr-calendar {
+            background: #ffffff !important;
+            box-shadow: none !important;
+            border: none !important;
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+        #inline_calendar .flatpickr-innerContainer {
+            width: 100% !important;
+        }
+        #inline_calendar .flatpickr-rContainer {
+            width: 100% !important;
+        }
+        #inline_calendar .flatpickr-days {
+            width: 100% !important;
+        }
+        #inline_calendar .dayContainer {
+            width: 100% !important;
+            min-width: 100% !important;
+            max-width: 100% !important;
+            justify-content: space-around !important;
+        }
+        #inline_calendar .flatpickr-day {
+            max-width: 100% !important;
+            height: 38px !important;
+            line-height: 36px !important;
+            border-radius: 8px !important;
+            margin: 2px 0 !important;
+        }
+        /* Style for disabled/booked days */
+        #inline_calendar .flatpickr-day.disabled,
+        #inline_calendar .flatpickr-day.flatpickr-disabled,
+        #inline_calendar .flatpickr-day.disabled:hover,
+        #inline_calendar .flatpickr-day.flatpickr-disabled:hover {
+            background: #fff5f5 !important;
+            color: #e53e3e !important;
+            border: 1px solid #fed7d7 !important;
+            cursor: not-allowed !important;
+            text-decoration: line-through !important;
+            opacity: 0.85 !important;
+            position: relative;
+        }
+        
+        /* Available days (not disabled/today) */
+        #inline_calendar .flatpickr-day:not(.disabled):not(.flatpickr-disabled) {
+            background: #f0fdf4 !important;
+            color: #16a34a !important;
+            border: 1px solid #dcfce7 !important;
+        }
+        #inline_calendar .flatpickr-day:not(.disabled):not(.flatpickr-disabled):hover {
+            background: #dcfce7 !important;
+            border-color: #bbf7d0 !important;
+            color: #15803d !important;
+        }
+        
+        /* Today styling */
+        #inline_calendar .flatpickr-day.today {
+            border: 2px solid #C5A880 !important;
+            font-weight: 700 !important;
+        }
+        
+        /* Header styling */
+        #inline_calendar .flatpickr-months {
+            background: transparent !important;
+        }
+        #inline_calendar .flatpickr-month {
+            color: #1c1c1c !important;
+            fill: #1c1c1c !important;
+            height: 34px !important;
+        }
+        #inline_calendar .flatpickr-current-month {
+            font-weight: 600 !important;
+            font-size: 14px !important;
+            padding-top: 0 !important;
+            color: #1c1c1c !important;
+        }
+        #inline_calendar .flatpickr-weekday {
+            color: #6e6e73 !important;
+            font-weight: 600 !important;
+            font-size: 12px !important;
+        }
+        #inline_calendar .flatpickr-prev-month,
+        #inline_calendar .flatpickr-next-month {
+            fill: #1c1c1c !important;
+            color: #1c1c1c !important;
+            padding: 4px !important;
+        }
+        #inline_calendar .flatpickr-prev-month:hover,
+        #inline_calendar .flatpickr-next-month:hover {
+            fill: #C5A880 !important;
+            color: #C5A880 !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -139,6 +279,28 @@ while ($row = $result_cal->fetch_assoc()) {
                                 <?php endforeach; ?>
                             </ul>
                         </div>
+
+                        <!-- Inline Availability Calendar -->
+                        <div class="availability-calendar-box mt-4 pt-3 border-top">
+                            <h5 class="mb-3" style="font-size: 14px; font-weight: 700; color: #1c1c1c; letter-spacing: -0.2px;">
+                                <i class="fa-solid fa-calendar-days mr-2" style="color: #C5A880;"></i>Availability Calendar
+                            </h5>
+                            <div class="inline-calendar-container" style="background: #ffffff; border-radius: 12px; padding: 10px; border: 1px solid rgba(0, 0, 0, 0.05); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);">
+                                <div id="inline_calendar"></div>
+                            </div>
+                            <div class="calendar-legend d-flex justify-content-start mt-2 px-1" style="font-size: 11px; color: #6e6e73; gap: 15px;">
+                                <div class="d-flex align-items-center">
+                                    <span style="display: inline-block; width: 10px; height: 10px; background: #f0fdf4; border: 1px solid #dcfce7; border-radius: 2px; margin-right: 5px;"></span>
+                                    Available
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <span style="display: inline-block; width: 10px; height: 10px; background: #fff5f5; border: 1px solid #fed7d7; border-radius: 2px; position: relative; overflow: hidden; margin-right: 5px;">
+                                        <span style="position: absolute; top: 50%; left: 0; right: 0; border-top: 1px dashed #e53e3e; transform: rotate(-45deg);"></span>
+                                    </span>
+                                    Booked
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -193,38 +355,78 @@ while ($row = $result_cal->fetch_assoc()) {
                             </div>
                         </div>
 
-                        <div class="bank-info-section">
-                            <h6 class="font-weight-bold mb-3"><i class="fa fa-university mr-2 text-warning"></i> Bank Transfer Information</h6>
+                        <!-- Hidden inputs -->
+                        <input type="hidden" name="payment_method" id="payment_method_input" value="gateway">
+
+                        <!-- Payment Mode Toggles -->
+                        <div class="payment-method-selector mb-4">
+                            <label class="font-weight-bold small mb-2 d-block text-dark">Select Payment Option</label>
+                            <div class="d-flex flex-column flex-sm-row gap-2" style="gap: 12px;">
+                                <div class="payment-option-card active" id="opt_gateway" onclick="selectPaymentMethod('gateway')">
+                                    <div class="option-icon"><i class="fa-solid fa-credit-card"></i></div>
+                                    <div class="option-details">
+                                        <strong>Instant Online Payment</strong>
+                                        <span>FPX / Visa / Mastercard</span>
+                                    </div>
+                                </div>
+                                <div class="payment-option-card" id="opt_manual" onclick="selectPaymentMethod('manual')">
+                                    <div class="option-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+                                    <div class="option-details">
+                                        <strong>Manual Bank Transfer</strong>
+                                        <span>Upload Bank Receipt</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 1. Gateway Info Section -->
+                        <div id="section_gateway" class="bank-info-section">
+                            <div class="deposit-alert-box mb-0 py-3 px-4" style="background: rgba(40, 167, 69, 0.08); border-left: 4px solid #28a745; border-radius: 8px;">
+                                <div class="d-flex align-items-start">
+                                    <div class="alert-icon-wrap mr-3" style="color: #28a745; font-size: 1.25rem;">
+                                        <i class="fa-solid fa-circle-check"></i>
+                                    </div>
+                                    <div class="alert-body">
+                                        <h6 class="alert-title font-weight-bold mb-1 text-success">Instant Booking Confirmation</h6>
+                                        <p class="alert-text mb-0 text-dark small" style="line-height: 1.5;">
+                                            By paying the deposit of <span class="highlight-deposit" style="font-weight:700; color:#C5A880;">RM 50.00</span> through our secure online payment portal, your stay will be <strong>instantly booked and accepted</strong> in our system! No manual verification required.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. Manual Bank Info Section -->
+                        <div id="section_manual" class="bank-info-section" style="display: none;">
+                            <h6 class="font-weight-bold mb-3 text-dark" style="font-size: 14px;"><i class="fa fa-university mr-2 text-warning"></i> Bank Transfer Information</h6>
                             <div class="d-flex justify-content-between mb-1">
                                 <span class="text-muted small">Bank Name:</span>
-                                <span class="font-weight-bold small">PUBLIC BANK BERHAD</span>
+                                <span class="font-weight-bold small text-dark">PUBLIC BANK BERHAD</span>
                             </div>
                             <div class="d-flex justify-content-between mb-3">
                                 <span class="text-muted small">Account No:</span>
                                 <span class="font-weight-bold text-dark">8763780979</span>
                             </div>
 
-                            <div class="deposit-alert-box">
+                            <div class="deposit-alert-box mb-3 py-3 px-4" style="background: rgba(255, 193, 7, 0.08); border-left: 4px solid #ffc107; border-radius: 8px;">
                                 <div class="d-flex align-items-start">
-                                    <div class="alert-icon-wrap mr-3">
+                                    <div class="alert-icon-wrap mr-3" style="color: #e0a800; font-size: 1.25rem;">
                                         <i class="fa-solid fa-triangle-exclamation"></i>
                                     </div>
                                     <div class="alert-body">
-                                        <h6 class="alert-title font-weight-bold">Booking Deposit & Balance Information</h6>
-                                        <p class="alert-text mb-0">
-                                            To confirm this booking, you only need to pay a deposit of <span class="highlight-deposit">RM 50.00</span> online now. 
-                                            The remaining room balance of <strong>RM <span id="display_room_balance_text">0.00</span></strong> must be paid during check-in. 
-                                            This RM 50.00 deposit will be <strong>fully refunded</strong> after check-out, subject to room inspection.
+                                        <h6 class="alert-title font-weight-bold mb-1" style="color: #856404;">Requires Manual Review</h6>
+                                        <p class="alert-text mb-0 text-dark small" style="line-height: 1.5;">
+                                            Transfer exactly <span class="highlight-deposit" style="font-weight:700; color:#C5A880;">RM 50.00</span> to the bank details above. You must upload the receipt slip below. The booking will remain <strong>Pending</strong> until an administrator manually verifies it.
                                         </p>
                                     </div>
                                 </div>
                             </div>
 
-                            <label class="font-weight-bold small">Proof of Payment (Image/PDF)</label>
-                            <input type="file" id="payment_receipt" name="payment_receipt" class="form-control-file" accept="image/*,.pdf" required>
+                            <label class="font-weight-bold small text-dark mb-2">Proof of Payment (Image/PDF)</label>
+                            <input type="file" id="payment_receipt" name="payment_receipt" class="form-control-file" accept="image/*,.pdf">
                         </div>
 
-                        <button type="submit" id="submitBtn" class="btn-confirm" disabled>
+                        <button type="submit" id="submitBtn" class="btn-confirm" disabled style="margin-top: 15px;">
                             <i class="fa fa-lock mr-2"></i> Confirm & Book Securely
                         </button>
                     </form>
@@ -277,6 +479,104 @@ while ($row = $result_cal->fetch_assoc()) {
         </div>
     </footer>
 
+    <!-- PAYMENT GATEWAY SIMULATION MODAL -->
+    <div class="modal fade" id="checkoutModal" tabindex="-1" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0" style="border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.25); overflow: hidden;">
+                <!-- Header -->
+                <div class="modal-header bg-dark text-white border-0 py-3 px-4 d-flex justify-content-between align-items-center">
+                    <h5 class="modal-title font-weight-bold" style="font-size: 16px; letter-spacing: -0.3px; color: white;"><i class="fa-solid fa-shield-halved mr-2 text-warning"></i> Secure Gateway Checkout</h5>
+                    <button type="button" class="close text-white opacity-80" data-dismiss="modal" aria-label="Close" style="background:transparent; border:none; outline:none; font-size: 20px; color: white;">&times;</button>
+                </div>
+                
+                <!-- Modal Body -->
+                <div class="modal-body p-4" style="background: #fcfcfc;">
+                    <div class="text-center mb-4 pb-3 border-bottom">
+                        <span class="text-muted small uppercase font-weight-bold d-block mb-1">EasyStay Deposit Payment</span>
+                        <h2 class="font-weight-bold mb-0 text-dark">RM 50.00</h2>
+                    </div>
+
+                    <!-- Payment Mode Tabs -->
+                    <ul class="nav nav-pills nav-fill mb-3" id="pills-tab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link active font-weight-bold small py-2" id="pills-card-tab" data-toggle="pill" href="#pills-card" role="tab" style="border-radius: 8px;"><i class="fa-solid fa-credit-card mr-2"></i> Credit / Debit Card</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link font-weight-bold small py-2" id="pills-fpx-tab" data-toggle="pill" href="#pills-fpx" role="tab" style="border-radius: 8px;"><i class="fa-solid fa-building-columns mr-2"></i> FPX Online Banking</a>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="pills-tabContent">
+                        <!-- Card Payment Tab -->
+                        <div class="tab-pane fade show active" id="pills-card" role="tabpanel">
+                            <div class="card-form-wrapper">
+                                <div class="form-group mb-3">
+                                    <label class="small font-weight-bold mb-1 text-dark">Card Number</label>
+                                    <div class="input-group">
+                                        <input type="text" id="cc_number" class="form-control" placeholder="4111 2222 3333 4444" maxlength="19" style="height: 42px; border-radius: 8px; font-size: 14px;">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text bg-white" id="cc_icon" style="border-radius: 0 8px 8px 0; color: #888; border-left: none;"><i class="fa-solid fa-credit-card"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-7 form-group mb-3">
+                                        <label class="small font-weight-bold mb-1 text-dark">Expiry Date</label>
+                                        <input type="text" id="cc_expiry" class="form-control" placeholder="MM/YY" maxlength="5" style="height: 42px; border-radius: 8px; font-size: 14px;">
+                                    </div>
+                                    <div class="col-5 form-group mb-3">
+                                        <label class="small font-weight-bold mb-1 text-dark">CVV</label>
+                                        <input type="password" id="cc_cvv" class="form-control" placeholder="123" maxlength="3" style="height: 42px; border-radius: 8px; font-size: 14px;">
+                                    </div>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label class="small font-weight-bold mb-1 text-dark">Cardholder Name</label>
+                                    <input type="text" id="cc_name" class="form-control" placeholder="e.g. John Doe" style="height: 42px; border-radius: 8px; font-size: 14px;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FPX Online Banking Tab -->
+                        <div class="tab-pane fade" id="pills-fpx" role="tabpanel">
+                            <div class="form-group mb-3">
+                                <label class="small font-weight-bold mb-1 text-dark">Choose Bank</label>
+                                <select id="fpx_bank" class="form-control" style="height: 42px; border-radius: 8px; font-size: 14px;">
+                                    <option value="">-- Select Bank --</option>
+                                    <option value="maybank">Maybank2U</option>
+                                    <option value="cimb">CIMB Clicks</option>
+                                    <option value="public">Public Bank</option>
+                                    <option value="rhb">RHB Now</option>
+                                    <option value="islam">Bank Islam</option>
+                                    <option value="ambank">AmOnline</option>
+                                    <option value="hlb">Hong Leong Connect</option>
+                                </select>
+                            </div>
+                            <div class="alert alert-info py-2 px-3 mb-0" style="border-radius: 8px; font-size: 12px; line-height: 1.4;">
+                                <i class="fa-solid fa-info-circle mr-1"></i> You will be redirected to the secure banking simulation page to authorize the transaction.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Button -->
+                    <button type="button" id="payNowBtn" class="btn btn-primary btn-block py-2 mt-4 font-weight-bold" style="background: var(--primary-orange); border: none; border-radius: 10px; font-size: 14px; height: 46px;">
+                        Pay RM 50.00 Securely
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROCESSING GATEWAY OVERLAY -->
+    <div id="paymentProcessingOverlay" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.95); z-index: 9999; align-items: center; justify-content: center; color: white;">
+        <div class="text-center">
+            <div id="processingIconContainer" class="mb-3">
+                <div id="processingSpinner" class="spinner-border text-warning" role="status" style="width: 3.5rem; height: 3.5rem;"></div>
+            </div>
+            <h4 class="font-weight-bold" id="processingTitle" style="color: white; margin-bottom: 8px;">Processing Payment</h4>
+            <p class="text-muted small" id="processingStatus" style="font-size: 13px;">Establishing secure handshake...</p>
+        </div>
+    </div>
+
     <script src="js/vendor/jquery-1.12.4.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -290,6 +590,7 @@ while ($row = $result_cal->fetch_assoc()) {
         function validateForm() {
             const inDate = document.getElementById('checkin_date').value;
             const outDate = document.getElementById('checkout_date').value;
+            const paymentMethod = document.getElementById('payment_method_input').value;
             const hasFile = receiptInput.files.length > 0;
 
             let nights = 0;
@@ -299,12 +600,120 @@ while ($row = $result_cal->fetch_assoc()) {
                 nights = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
             }
 
-            if (nights > 0 && hasFile) {
-                submitBtn.disabled = false;
+            if (nights > 0) {
+                if (paymentMethod === 'gateway') {
+                    submitBtn.disabled = false;
+                } else {
+                    submitBtn.disabled = !hasFile;
+                }
             } else {
                 submitBtn.disabled = true;
             }
         }
+
+        function selectPaymentMethod(method) {
+            document.getElementById('payment_method_input').value = method;
+            
+            // Toggle active card
+            document.getElementById('opt_gateway').classList.toggle('active', method === 'gateway');
+            document.getElementById('opt_manual').classList.toggle('active', method === 'manual');
+            
+            // Toggle sections
+            document.getElementById('section_gateway').style.display = (method === 'gateway') ? 'block' : 'none';
+            document.getElementById('section_manual').style.display = (method === 'manual') ? 'block' : 'none';
+            
+            // Adjust validation requirements
+            if (method === 'gateway') {
+                receiptInput.removeAttribute('required');
+            } else {
+                receiptInput.setAttribute('required', 'required');
+            }
+            validateForm();
+        }
+
+        // Intercept form submit to show checkout modal
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            const paymentMethod = document.getElementById('payment_method_input').value;
+            if (paymentMethod === 'gateway') {
+                e.preventDefault();
+                $('#checkoutModal').modal('show');
+            }
+        });
+
+        // Card number masking and icon detection
+        document.getElementById('cc_number').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            let formatted = value.match(/.{1,4}/g)?.join(' ') || value;
+            e.target.value = formatted;
+            
+            const ccIcon = document.getElementById('cc_icon');
+            if (value.startsWith('4')) {
+                ccIcon.innerHTML = '<i class="fab fa-cc-visa" style="color:#1a1f71; font-size:20px;"></i>';
+            } else if (value.startsWith('5')) {
+                ccIcon.innerHTML = '<i class="fab fa-cc-mastercard" style="color:#eb001b; font-size:20px;"></i>';
+            } else {
+                ccIcon.innerHTML = '<i class="fa-solid fa-credit-card"></i>';
+            }
+        });
+
+        // Card expiry masking
+        document.getElementById('cc_expiry').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            e.target.value = value;
+        });
+
+        // CVV digit restriction
+        document.getElementById('cc_cvv').addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/\D/g, '');
+        });
+
+        // Pay now button click handler
+        document.getElementById('payNowBtn').addEventListener('click', function() {
+            const activeTab = document.querySelector('#pills-tab .nav-link.active').id;
+            
+            if (activeTab === 'pills-card-tab') {
+                const ccNum = document.getElementById('cc_number').value.trim();
+                const ccExp = document.getElementById('cc_expiry').value.trim();
+                const ccCvv = document.getElementById('cc_cvv').value.trim();
+                const ccName = document.getElementById('cc_name').value.trim();
+                
+                if (ccNum.length < 19 || ccExp.length < 5 || ccCvv.length < 3 || ccName === '') {
+                    alert('Please fill in complete and valid credit card details.');
+                    return;
+                }
+            } else {
+                const bank = document.getElementById('fpx_bank').value;
+                if (!bank) {
+                    alert('Please select your bank for FPX online banking.');
+                    return;
+                }
+            }
+
+            // Hide modal
+            $('#checkoutModal').modal('hide');
+            
+            // Show processing overlay
+            const overlay = document.getElementById('paymentProcessingOverlay');
+            overlay.style.display = 'flex';
+            
+            const status = document.getElementById('processingStatus');
+            
+            setTimeout(() => {
+                status.innerText = "Authenticating with payment gateway...";
+            }, 1000);
+
+            setTimeout(() => {
+                status.innerText = "Payment of RM 50.00 approved! Creating your booking...";
+                document.getElementById('processingIconContainer').innerHTML = '<i class="fa-solid fa-circle-check text-success fa-3x animate__animated animate__zoomIn"></i>';
+            }, 2300);
+
+            setTimeout(() => {
+                document.getElementById('bookingForm').submit();
+            }, 3300);
+        });
 
         function calc() {
             const inDate = document.getElementById('checkin_date').value;
@@ -339,6 +748,17 @@ while ($row = $result_cal->fetch_assoc()) {
         };
         flatpickr("#checkin_date", flatConfig);
         flatpickr("#checkout_date", flatConfig);
+
+        // Initialize Inline Availability Calendar
+        flatpickr("#inline_calendar", {
+            inline: true,
+            minDate: "today",
+            disable: booked,
+            dateFormat: "Y-m-d",
+            locale: {
+                firstDayOfWeek: 1 // Start week on Monday
+            }
+        });
         
         // Trigger calc on load to set initial values if pre-filled
         calc();

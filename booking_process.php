@@ -73,39 +73,52 @@ if ($stmt_check->get_result()->num_rows > 0) {
     exit();
 }
 
-// 8. Proses Upload Resit Deposit
-if (!isset($_FILES['payment_receipt']) || $_FILES['payment_receipt']['error'] !== 0) {
-    header("Location: book_new.php?package_id=$package_id&msg=ReceiptRequired");
-    exit();
-}
+$payment_method = trim($_POST['payment_method'] ?? 'manual');
 
-$allowed    = ['jpg', 'jpeg', 'png', 'pdf'];
-$filename   = $_FILES['payment_receipt']['name'];
-$file_ext   = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-$filesize   = $_FILES['payment_receipt']['size'];
-$max_size   = 5 * 1024 * 1024; // 5MB
+if ($payment_method === 'gateway') {
+    // Instant simulation payment
+    $new_name = 'instant_gateway.png';
+    $original_filename = 'Instant Gateway Payment';
+    $status = 'Accepted';
+    $payment_status = 'Deposit Paid';
+} else {
+    // 8. Proses Upload Resit Deposit
+    if (!isset($_FILES['payment_receipt']) || $_FILES['payment_receipt']['error'] !== 0) {
+        header("Location: book_new.php?package_id=$package_id&msg=ReceiptRequired");
+        exit();
+    }
 
-if (!in_array($file_ext, $allowed)) {
-    header("Location: book_new.php?package_id=$package_id&msg=InvalidFileType");
-    exit();
-}
+    $allowed    = ['jpg', 'jpeg', 'png', 'pdf'];
+    $filename   = $_FILES['payment_receipt']['name'];
+    $file_ext   = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+    $filesize   = $_FILES['payment_receipt']['size'];
+    $max_size   = 5 * 1024 * 1024; // 5MB
 
-if ($filesize > $max_size) {
-    header("Location: book_new.php?package_id=$package_id&msg=FileTooLarge");
-    exit();
-}
+    if (!in_array($file_ext, $allowed)) {
+        header("Location: book_new.php?package_id=$package_id&msg=InvalidFileType");
+        exit();
+    }
 
-$new_name        = time() . "_" . uniqid() . "." . $file_ext;
-$destination     = "admin/uploads/receipts/" . $new_name;
-$original_filename = htmlspecialchars(strip_tags($filename));
+    if ($filesize > $max_size) {
+        header("Location: book_new.php?package_id=$package_id&msg=FileTooLarge");
+        exit();
+    }
 
-if (!is_dir('admin/uploads/receipts/')) {
-    mkdir('admin/uploads/receipts/', 0755, true);
-}
+    $new_name        = time() . "_" . uniqid() . "." . $file_ext;
+    $destination     = "admin/uploads/receipts/" . $new_name;
+    $original_filename = htmlspecialchars(strip_tags($filename));
 
-if (!move_uploaded_file($_FILES['payment_receipt']['tmp_name'], $destination)) {
-    header("Location: book_new.php?package_id=$package_id&msg=UploadFailed");
-    exit();
+    if (!is_dir('admin/uploads/receipts/')) {
+        mkdir('admin/uploads/receipts/', 0755, true);
+    }
+
+    if (!move_uploaded_file($_FILES['payment_receipt']['tmp_name'], $destination)) {
+        header("Location: book_new.php?package_id=$package_id&msg=UploadFailed");
+        exit();
+    }
+    
+    $status         = 'Pending';
+    $payment_status = 'Pending Deposit';
 }
 
 // 9. Ambil data user untuk rekod
@@ -117,8 +130,6 @@ $u_data = $stmt_u->get_result()->fetch_assoc();
 
 $full_name      = $u_data['full_name'];
 $customer_email = $u_data['email'];
-$status         = 'Pending';
-$payment_status = 'Pending Deposit';
 
 // 10. Simpan ke Database
 $sql_insert = "INSERT INTO bookings 
@@ -139,7 +150,9 @@ if ($stmt->execute()) {
     exit();
 } else {
     // Padam fail yang terlanjur diupload jika DB gagal
-    @unlink($destination);
+    if (isset($destination)) {
+        @unlink($destination);
+    }
     header("Location: book_new.php?package_id=$package_id&msg=BookingFailed");
     exit();
 }
