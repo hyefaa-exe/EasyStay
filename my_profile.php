@@ -11,18 +11,21 @@ $user_id = $_SESSION['user_id'];
 $success_msg = "";
 $error_msg = "";
 
+$is_logged_in = isset($_SESSION['user_id']);
+$current_page = basename($_SERVER['PHP_SELF']);
+
 // --- HANDLING MESSAGES ---
 if (isset($_GET['msg'])) {
-    if ($_GET['msg'] == 'ReviewSuccess') $success_msg = "Thank you! Your review has been submitted.";
-    if ($_GET['msg'] == 'CancelSuccess') $success_msg = "Booking has been cancelled successfully.";
-    if ($_GET['msg'] == 'BalanceUploadSuccess') $success_msg = "Balance receipt uploaded successfully! Admin will verify shortly.";
-    if ($_GET['msg'] == 'Error') $error_msg = "An error occurred. Please try again.";
+    if ($_GET['msg'] == 'ReviewSuccess') $success_msg = __('profile_msg_review_success');
+    if ($_GET['msg'] == 'CancelSuccess') $success_msg = __('profile_msg_cancel_success');
+    if ($_GET['msg'] == 'BalanceUploadSuccess') $success_msg = __('profile_msg_balance_success');
+    if ($_GET['msg'] == 'Error') $error_msg = __('profile_msg_error');
 }
 
 // --- LOGIC 1: UPDATE PROFILE ---
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-        $error_msg = "Security Error (CSRF). Please refresh and try again.";
+        $error_msg = __('profile_err_csrf');
     } else {
         $full_name = strip_tags(trim($_POST['full_name']));
         $email     = trim($_POST['email']);
@@ -31,13 +34,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
 
         // === VALIDASI INPUT ===
         if (empty($full_name)) {
-            $error_msg = "Nama penuh tidak boleh kosong.";
+            $error_msg = __('profile_err_name');
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $error_msg = "Format email tidak sah. Contoh: nama@email.com";
+            $error_msg = __('profile_err_email');
         } elseif (!preg_match('/^(01[0-9])\d{7,8}$/', $phone)) {
-            $error_msg = "Format nombor telefon tidak sah. Contoh: 0123456789";
+            $error_msg = __('profile_err_phone');
         } elseif (!empty($password) && strlen($password) < 8) {
-            $error_msg = "Kata laluan mesti sekurang-kurangnya 8 aksara.";
+            $error_msg = __('profile_err_password');
         } else {
 
         $profile_pic  = null;
@@ -51,10 +54,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
             $filesize = $_FILES['profile_pic']['size'];
 
             if (!in_array($ext, $allowed)) {
-                $error_msg    = "Invalid file type. Only JPG, JPEG, PNG, and WEBP files are allowed.";
+                $error_msg    = __('profile_err_file_type');
                 $upload_error = true;
             } elseif ($filesize > 2 * 1024 * 1024) {
-                $error_msg    = "File size exceeds 2MB limit.";
+                $error_msg    = __('profile_err_file_size');
                 $upload_error = true;
             } else {
                 $target_dir = 'uploads/profile/';
@@ -80,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                         }
                     }
                 } else {
-                    $error_msg    = "Failed to upload profile picture.";
+                    $error_msg    = __('profile_err_file_upload');
                     $upload_error = true;
                 }
             }
@@ -108,10 +111,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
 
 
             if ($stmt->execute()) {
-                $success_msg = "Profile updated successfully!";
+                $success_msg = __('profile_msg_profile_success');
                 $_SESSION['full_name'] = $full_name;
             } else {
-                $error_msg = "Failed to update profile.";
+                $error_msg = __('profile_msg_profile_error');
             }
         } // end if (!$upload_error)
         } // end validation else
@@ -122,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
 // --- LOGIC 2: SUBMIT REVIEW ---
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_review'])) {
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-        $error_msg = "Security Error (CSRF).";
+        $error_msg = __('profile_err_csrf');
     } else {
         $booking_id = $_POST['booking_id'];
         $package_id = $_POST['package_id'];
@@ -136,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_review'])) {
             header("Location: my_profile.php?msg=ReviewSuccess&tab=booking");
             exit();
         } else {
-            $error_msg = "Failed to submit review.";
+            $error_msg = __('profile_msg_review_error');
         }
     }
 }
@@ -164,7 +167,7 @@ $bookings = $stmt_b->get_result();
 
 <head>
     <meta charset="utf-8">
-    <title>My Profile | EasyStay</title>
+    <title><?= __('nav_profile') ?> | EasyStay</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png?v=2">
 
@@ -892,25 +895,42 @@ $bookings = $stmt_b->get_result();
 <body>
 
     <header class="header-area">
-        <div class="container-fluid h-100">
-            <div class="row align-items-center h-100">
+        <div class="container-fluid">
+            <div class="row align-items-center">
                 <div class="col-xl-5 col-lg-5 d-none d-lg-block">
                     <nav>
                         <ul id="navigation">
-                            <li><a href="index.php">Home</a></li>
-                            <li><a href="package.php">Package</a></li>
-                            <li><a href="about.php">About</a></li>
-                            <li><a href="gallery.php">Gallery</a></li>
-                            <li><a href="contact.php">Contact</a></li>
-                            <li><a href="my_profile.php" class="active-link">My Profile</a></li>
+                            <li><a href="index.php" class="<?= $current_page == 'index.php' ? 'active-link' : '' ?>"><?= __('nav_home') ?></a></li>
+                            <li><a href="package.php" class="<?= $current_page == 'package.php' ? 'active-link' : '' ?>"><?= __('nav_package') ?></a></li>
+                            <li><a href="about.php" class="<?= $current_page == 'about.php' ? 'active-link' : '' ?>"><?= __('nav_about') ?></a></li>
+                            <li><a href="gallery.php" class="<?= $current_page == 'gallery.php' ? 'active-link' : '' ?>"><?= __('nav_gallery') ?></a></li>
+                            <li><a href="contact.php" class="<?= $current_page == 'contact.php' ? 'active-link' : '' ?>"><?= __('nav_contact') ?></a></li>
+                            <?php if ($is_logged_in): ?>
+                                <li><a href="my_profile.php" class="<?= $current_page == 'my_profile.php' ? 'active-link' : '' ?>"><?= __('nav_profile') ?></a></li>
+                            <?php endif; ?>
                         </ul>
                     </nav>
                 </div>
                 <div class="col-xl-2 col-lg-2 text-center">
-                    <a href="index.php" class="logo-link"><img src="img/logo.png?v=2" alt="Logo"></a>
+                    <a href="index.php" class="logo-link"><img src="img/logo.png?v=2" alt="Logo" style="height: 50px;"></a>
                 </div>
-                <div class="col-xl-5 col-lg-5 text-right">
-                    <a href="logout.php" class="auth-btn">Logout</a>
+                <div class="col-xl-5 col-lg-5">
+                    <div class="header-right-part d-flex justify-content-end align-items-center">
+                        <div class="lang-selector mr-4 d-flex align-items-center" style="gap: 8px;">
+                            <a href="<?= get_lang_url('en') ?>" style="color: <?= $lang_code == 'en' ? '#C5A880' : 'rgba(255,255,255,0.6)' ?>; font-weight: 700; font-size: 13px; text-decoration: none; border-bottom: <?= $lang_code == 'en' ? '2px solid #C5A880' : 'none' ?>; padding-bottom: 2px;">EN</a>
+                            <span style="color: rgba(255,255,255,0.3); font-size: 13px;">|</span>
+                            <a href="<?= get_lang_url('ms') ?>" style="color: <?= $lang_code == 'ms' ? '#C5A880' : 'rgba(255,255,255,0.6)' ?>; font-weight: 700; font-size: 13px; text-decoration: none; border-bottom: <?= $lang_code == 'ms' ? '2px solid #C5A880' : 'none' ?>; padding-bottom: 2px;">BM</a>
+                        </div>
+                        <ul class="social-icons-head d-flex list-unstyled m-0 mr-4">
+                            <li class="mr-3"><a href="https://www.facebook.com/profile.php?id=100092359781203" target="_blank" style="color:white;"><i class="fa-brands fa-facebook-f"></i></a></li>
+                            <li><a href="https://www.tiktok.com/@easystayhomestay" target="_blank" style="color:white;"><i class="fa-brands fa-tiktok"></i></a></li>
+                        </ul>
+                        <?php if ($is_logged_in): ?>
+                            <a href="logout.php" class="auth-btn"><?= __('nav_logout') ?></a>
+                        <?php else: ?>
+                            <a href="login.php" class="auth-btn"><?= __('nav_login') ?></a>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
         </div>
@@ -936,10 +956,10 @@ $bookings = $stmt_b->get_result();
                         <p class="user-email">@<?= htmlspecialchars($user['username']) ?></p>
 
                         <div class="nav flex-column nav-pills nav-pills-custom" id="v-pills-tab" role="tablist">
-                            <a class="nav-link active" data-toggle="pill" href="#dashboard" role="tab"><i class="fas fa-th-large"></i> Dashboard</a>
-                            <a class="nav-link" data-toggle="pill" href="#booking" role="tab"><i class="fas fa-calendar-check"></i> My Bookings</a>
-                            <a class="nav-link" data-toggle="pill" href="#settings" role="tab"><i class="fas fa-cog"></i> Settings</a>
-                            <a href="logout.php" class="nav-link text-danger mt-3" style="justify-content: center;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                            <a class="nav-link active" data-toggle="pill" href="#dashboard" role="tab"><i class="fas fa-th-large"></i> <?= __('profile_dashboard') ?></a>
+                            <a class="nav-link" data-toggle="pill" href="#booking" role="tab"><i class="fas fa-calendar-check"></i> <?= __('profile_my_bookings') ?></a>
+                            <a class="nav-link" data-toggle="pill" href="#settings" role="tab"><i class="fas fa-cog"></i> <?= __('profile_settings') ?></a>
+                            <a href="logout.php" class="nav-link text-danger mt-3" style="justify-content: center;"><i class="fas fa-sign-out-alt"></i> <?= __('profile_logout') ?></a>
                         </div>
                     </div>
                 </div>
@@ -949,13 +969,13 @@ $bookings = $stmt_b->get_result();
 
                         <div class="tab-pane fade show active" id="dashboard" role="tabpanel">
                             <div class="content-panel">
-                                <h3 class="panel-title">Welcome, <?= explode(' ', trim($user['full_name']))[0] ?>!</h3>
+                                <h3 class="panel-title"><?= __('profile_welcome') ?>, <?= explode(' ', trim($user['full_name']))[0] ?>!</h3>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <div class="stat-card orange">
                                             <div>
                                                 <div class="stat-value"><?= $bookings->num_rows ?></div>
-                                                <div class="stat-label">Total Bookings</div>
+                                                <div class="stat-label"><?= __('profile_total_bookings') ?></div>
                                             </div>
                                             <i class="fas fa-bookmark fa-2x" style="opacity: 0.2;"></i>
                                         </div>
@@ -975,7 +995,7 @@ $bookings = $stmt_b->get_result();
 
                         <div class="tab-pane fade" id="booking" role="tabpanel">
                             <div class="content-panel">
-                                <h4 class="panel-title">Booking History</h4>
+                                <h4 class="panel-title"><?= __('profile_history') ?></h4>
                                 <?php if ($bookings->num_rows > 0): ?>
                                     <?php while ($row = $bookings->fetch_assoc()):
                                         $status_clean = strtolower($row['status']);
@@ -993,35 +1013,35 @@ $bookings = $stmt_b->get_result();
                                                 <div class="booking-info">
                                                     <h5><?= htmlspecialchars($row['package_name']) ?></h5>
                                                     <div class="booking-dates"><i class="far fa-calendar-alt mr-2"></i> <?= date('d M', strtotime($row['checkin_date'])) ?> - <?= date('d M Y', strtotime($row['checkout_date'])) ?></div>
-                                                    <div class="booking-price">Total: RM <?= number_format($row['total_price'], 2) ?></div>
+                                                    <div class="booking-price"><?= __('profile_total') ?>: RM <?= number_format($row['total_price'], 2) ?></div>
                                                 </div>
                                                 <div class="text-right d-flex flex-column align-items-end" style="gap: 8px;">
-                                                    <span class="status-badge <?= $badgeClass ?>"><?= $row['status'] ?></span>
+                                                    <span class="status-badge <?= $badgeClass ?>"><?= __('status_' . strtolower($row['status'])) ?></span>
 
                                                     <div class="d-flex" style="gap: 5px;">
                                                         <button type="button" class="btn btn-sm btn-info text-white rounded-pill px-3" data-toggle="modal" data-target="#detailModal<?= $row['book_id'] ?>">
-                                                            <i class="fas fa-info-circle"></i> Details
+                                                            <i class="fas fa-info-circle"></i> <?= __('profile_details') ?>
                                                         </button>
 
                                                         <?php if (!$is_cancelled): ?>
                                                             <?php if ($status_clean == 'accepted' && empty($row['balance_receipt'])): ?>
                                                                 <button type="button" class="btn btn-sm btn-success text-white rounded-pill px-3" data-toggle="modal" data-target="#balanceModal<?= $row['book_id'] ?>">
-                                                                    <i class="fas fa-dollar-sign"></i> Pay Balance
+                                                                    <i class="fas fa-dollar-sign"></i> <?= __('profile_pay_balance') ?>
                                                                 </button>
                                                             <?php endif; ?>
 
                                                             <?php if ($status_clean == 'pending' || $status_clean == 'accepted'): ?>
                                                                 <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3" data-toggle="modal" data-target="#cancelModal<?= $row['book_id'] ?>">
-                                                                    Cancel
+                                                                    <?= __('profile_cancel') ?>
                                                                 </button>
                                                             <?php endif; ?>
 
                                                             <?php if ($status_clean == 'accepted' || $status_clean == 'completed'): ?>
-                                                                <a href="generate_receipt.php?id=<?= $row['book_id'] ?>" target="_blank" class="btn btn-sm btn-outline-dark rounded-pill px-3">Receipt</a>
+                                                                <a href="generate_receipt.php?id=<?= $row['book_id'] ?>" target="_blank" class="btn btn-sm btn-outline-dark rounded-pill px-3"><?= __('profile_receipt') ?></a>
                                                             <?php endif; ?>
 
                                                             <?php if ($status_clean == 'completed' && !$row['review_id']): ?>
-                                                                <button class="btn btn-sm btn-warning text-white rounded-pill px-3" data-toggle="modal" data-target="#rateModal<?= $row['book_id'] ?>">Rate Us</button>
+                                                                <button class="btn btn-sm btn-warning text-white rounded-pill px-3" data-toggle="modal" data-target="#rateModal<?= $row['book_id'] ?>"><?= __('profile_rate_us') ?></button>
                                                             <?php elseif ($row['review_id']): ?>
                                                                 <span class="badge badge-light text-warning mt-1"><i class="fas fa-star"></i> <?= $row['user_rating'] ?>/5</span>
                                                             <?php endif; ?>
@@ -1047,36 +1067,36 @@ $bookings = $stmt_b->get_result();
                                             ?>
                                                 <div class="booking-stepper-wrap w-100 mt-4 pt-3 border-top">
                                                     <div class="booking-tracker">
-                                                        <div class="tracker-step <?= $step >= 1 ? 'completed' : '' ?> <?= $step == 1 ? 'active' : '' ?>">
-                                                            <div class="step-circle"><i class="fa fa-calendar-plus"></i></div>
-                                                            <div class="step-label">Reserved</div>
-                                                        </div>
-                                                        <div class="tracker-line <?= $step >= 2 ? 'completed' : '' ?>"></div>
-                                                        
-                                                        <div class="tracker-step <?= $step >= 2 ? 'completed' : '' ?> <?= $step == 2 ? 'active' : '' ?>">
-                                                            <div class="step-circle"><i class="fa fa-wallet"></i></div>
-                                                            <div class="step-label">Deposit Paid</div>
-                                                        </div>
-                                                        <div class="tracker-line <?= $step >= 3 ? 'completed' : '' ?>"></div>
-                                                        
-                                                        <div class="tracker-step <?= $step >= 3 ? 'completed' : '' ?> <?= $step == 3 ? 'active' : '' ?>">
-                                                            <div class="step-circle"><i class="fa fa-key"></i></div>
-                                                            <div class="step-label">Checked In</div>
-                                                        </div>
-                                                        <div class="tracker-line <?= $step >= 4 ? 'completed' : '' ?>"></div>
-                                                        
-                                                        <div class="tracker-step <?= $step >= 4 ? 'completed' : '' ?> <?= $step == 4 ? 'active' : '' ?>">
-                                                            <div class="step-circle"><i class="fa fa-handshake"></i></div>
-                                                            <div class="step-label">Refunded & Done</div>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                         <div class="tracker-step <?= $step >= 1 ? 'completed' : '' ?> <?= $step == 1 ? 'active' : '' ?>">
+                                                             <div class="step-circle"><i class="fa fa-calendar-plus"></i></div>
+                                                             <div class="step-label"><?= __('step_reserved') ?></div>
+                                                         </div>
+                                                         <div class="tracker-line <?= $step >= 2 ? 'completed' : '' ?>"></div>
+                                                         
+                                                         <div class="tracker-step <?= $step >= 2 ? 'completed' : '' ?> <?= $step == 2 ? 'active' : '' ?>">
+                                                             <div class="step-circle"><i class="fa fa-wallet"></i></div>
+                                                             <div class="step-label"><?= __('step_deposit') ?></div>
+                                                         </div>
+                                                         <div class="tracker-line <?= $step >= 3 ? 'completed' : '' ?>"></div>
+                                                         
+                                                         <div class="tracker-step <?= $step >= 3 ? 'completed' : '' ?> <?= $step == 3 ? 'active' : '' ?>">
+                                                             <div class="step-circle"><i class="fa fa-key"></i></div>
+                                                             <div class="step-label"><?= __('step_checkin') ?></div>
+                                                         </div>
+                                                         <div class="tracker-line <?= $step >= 4 ? 'completed' : '' ?>"></div>
+                                                         
+                                                         <div class="tracker-step <?= $step >= 4 ? 'completed' : '' ?> <?= $step == 4 ? 'active' : '' ?>">
+                                                             <div class="step-circle"><i class="fa fa-handshake"></i></div>
+                                                             <div class="step-label"><?= __('step_done') ?></div>
+                                                         </div>
+                                                     </div>
+                                                 </div>
                                             <?php endif; ?>
                                         </div>
                                     <?php endwhile; ?>
                                 <?php else: ?>
                                     <div class="text-center py-5">
-                                        <h5 class="text-muted">No bookings found.</h5>
+                                        <h5 class="text-muted"><?= __('profile_no_bookings') ?></h5>
                                     </div>
                                 <?php endif; ?>
                             </div>
@@ -1084,22 +1104,22 @@ $bookings = $stmt_b->get_result();
 
                         <div class="tab-pane fade" id="settings" role="tabpanel">
                             <div class="content-panel">
-                                <h4 class="panel-title mb-1">Account Settings</h4>
-                                <p class="text-muted small mb-4" style="font-size: 14px;">Update your personal details and change your account password.</p>
+                                <h4 class="panel-title mb-1"><?= __('settings_title') ?></h4>
+                                <p class="text-muted small mb-4" style="font-size: 14px;"><?= __('settings_desc') ?></p>
                                 
                                 <form method="POST" enctype="multipart/form-data">
                                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                                     
                                     <div class="row">
                                         <div class="col-md-6 mb-4">
-                                            <label class="form-label-custom">Full Name</label>
+                                            <label class="form-label-custom"><?= __('settings_name') ?></label>
                                             <div class="input-wrapper-custom">
                                                 <i class="fas fa-user input-icon-custom"></i>
                                                 <input type="text" name="full_name" class="form-control-custom" value="<?= htmlspecialchars($user['full_name']) ?>" required>
                                             </div>
                                         </div>
                                         <div class="col-md-6 mb-4">
-                                            <label class="form-label-custom">Email Address</label>
+                                            <label class="form-label-custom"><?= __('settings_email') ?></label>
                                             <div class="input-wrapper-custom">
                                                 <i class="fas fa-envelope input-icon-custom"></i>
                                                 <input type="email" name="email" class="form-control-custom" value="<?= htmlspecialchars($user['email']) ?>" required>
@@ -1109,17 +1129,17 @@ $bookings = $stmt_b->get_result();
                                     
                                     <div class="row">
                                         <div class="col-md-6 mb-4">
-                                            <label class="form-label-custom">Phone Number</label>
+                                            <label class="form-label-custom"><?= __('settings_phone') ?></label>
                                             <div class="input-wrapper-custom">
                                                 <i class="fas fa-phone input-icon-custom"></i>
                                                 <input type="text" name="phone" class="form-control-custom" value="<?= htmlspecialchars($user['phone']) ?>" required>
                                             </div>
                                         </div>
                                         <div class="col-md-6 mb-4">
-                                            <label class="form-label-custom">New Password (Optional)</label>
+                                            <label class="form-label-custom"><?= __('settings_password') ?></label>
                                             <div class="input-wrapper-custom">
                                                 <i class="fas fa-lock input-icon-custom"></i>
-                                                <input type="password" name="password" class="form-control-custom" placeholder="Leave blank to keep current">
+                                                <input type="password" name="password" class="form-control-custom" placeholder="<?= __('settings_pass_placeholder') ?>">
                                             </div>
                                         </div>
                                     </div>
@@ -1133,21 +1153,21 @@ $bookings = $stmt_b->get_result();
                                                     <i class="fas fa-user" style="font-size: 30px; color: #C5A880;"></i>
                                                 <?php endif; ?>
                                             </div>
-                                            <span style="font-size: 10px; font-weight: 700; color: #C5A880; text-transform: uppercase; letter-spacing: 0.5px;">Current Photo</span>
+                                            <span style="font-size: 10px; font-weight: 700; color: #C5A880; text-transform: uppercase; letter-spacing: 0.5px;"><?= __('settings_current_photo') ?></span>
                                         </div>
                                         <div class="col-md-9 mb-4">
-                                            <label class="form-label-custom">Upload New Profile Picture</label>
+                                            <label class="form-label-custom"><?= __('settings_avatar') ?></label>
                                             <div class="input-wrapper-custom">
                                                 <i class="fas fa-image input-icon-custom"></i>
                                                 <input type="file" name="profile_pic" class="form-control-custom" accept="image/*" style="padding-top: 13px; padding-left: 52px;">
                                             </div>
-                                            <small class="text-muted mt-1 d-block" style="font-size: 11px;">Supported formats: JPG, JPEG, PNG, WEBP. Max size: 2MB.</small>
+                                            <small class="text-muted mt-1 d-block" style="font-size: 11px;"><?= __('settings_avatar_desc') ?></small>
                                         </div>
                                     </div>
                                     
                                     <div class="text-right mt-3">
                                         <button type="submit" name="update_profile" class="btn-save-custom">
-                                            <i class="fas fa-save mr-2"></i> Save Changes
+                                            <i class="fas fa-save mr-2"></i> <?= __('settings_save') ?>
                                         </button>
                                     </div>
                                 </form>
@@ -1170,29 +1190,29 @@ $bookings = $stmt_b->get_result();
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title font-weight-bold">Booking Details #<?= $row['book_id'] ?></h5>
+                        <h5 class="modal-title font-weight-bold"><?= __('profile_details_title') ?> #<?= $row['book_id'] ?></h5>
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
                     <div class="modal-body">
-                        <div class="info-row"><span class="info-label">Package</span><span class="info-val"><?= htmlspecialchars($row['package_name']) ?></span></div>
-                        <div class="info-row"><span class="info-label">Check-In</span><span class="info-val"><?= date('d M Y', strtotime($row['checkin_date'])) ?></span></div>
-                        <div class="info-row"><span class="info-label">Check-Out</span><span class="info-val"><?= date('d M Y', strtotime($row['checkout_date'])) ?></span></div>
-                        <div class="info-row"><span class="info-label">Guests</span><span class="info-val"><?= $row['adults'] ?> Adults, <?= $row['children'] ?> Children</span></div>
-                        <div class="info-row"><span class="info-label">Total Price</span><span class="info-val text-warning">RM <?= number_format($row['total_price'], 2) ?></span></div>
-                        <div class="info-row"><span class="info-label">Status</span><span class="info-val"><?= $row['status'] ?></span></div>
+                        <div class="info-row"><span class="info-label"><?= __('nav_package') ?></span><span class="info-val"><?= htmlspecialchars($row['package_name']) ?></span></div>
+                        <div class="info-row"><span class="info-label"><?= __('home_checkin') ?></span><span class="info-val"><?= date('d M Y', strtotime($row['checkin_date'])) ?></span></div>
+                        <div class="info-row"><span class="info-label"><?= __('home_checkout') ?></span><span class="info-val"><?= date('d M Y', strtotime($row['checkout_date'])) ?></span></div>
+                        <div class="info-row"><span class="info-label"><?= __('pkg_guests') ?></span><span class="info-val"><?= $row['adults'] ?> <?= __('profile_details_adults') ?>, <?= $row['children'] ?> <?= __('profile_details_children') ?></span></div>
+                        <div class="info-row"><span class="info-label"><?= __('pkg_price_label') ?></span><span class="info-val text-warning">RM <?= number_format($row['total_price'], 2) ?></span></div>
+                        <div class="info-row"><span class="info-label">Status</span><span class="info-val"><?= __('status_' . strtolower($row['status'])) ?></span></div>
 
                         <div class="mt-3 bg-light p-3 rounded">
-                            <p class="mb-1 small font-weight-bold text-muted">Deposit Receipt:</p>
+                            <p class="mb-1 small font-weight-bold text-muted"><?= __('profile_details_dep_receipt') ?></p>
                             <?php if ($row['receipt_path']): ?>
-                                <a href="admin/uploads/receipts/<?= $row['receipt_path'] ?>" target="_blank" class="btn btn-sm btn-outline-primary btn-block">View File</a>
+                                <a href="admin/uploads/receipts/<?= $row['receipt_path'] ?>" target="_blank" class="btn btn-sm btn-outline-primary btn-block"><?= __('profile_details_view_file') ?></a>
                             <?php else: ?>
-                                <span class="text-muted small">Not uploaded</span>
+                                <span class="text-muted small"><?= __('profile_details_not_uploaded') ?></span>
                             <?php endif; ?>
 
                             <?php if ($row['balance_receipt']): ?>
                                 <hr>
-                                <p class="mb-1 small font-weight-bold text-muted">Balance Receipt:</p>
-                                <a href="admin/uploads/receipts/<?= $row['balance_receipt'] ?>" target="_blank" class="btn btn-sm btn-outline-success btn-block">View File</a>
+                                <p class="mb-1 small font-weight-bold text-muted"><?= __('profile_details_bal_receipt') ?></p>
+                                <a href="admin/uploads/receipts/<?= $row['balance_receipt'] ?>" target="_blank" class="btn btn-sm btn-outline-success btn-block"><?= __('profile_details_view_file') ?></a>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -1203,26 +1223,39 @@ $bookings = $stmt_b->get_result();
         <div class="modal fade" id="cancelModal<?= $row['book_id'] ?>" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
-                    <div class="modal-header bg-danger text-white">
-                        <h5 class="modal-title font-weight-bold">Cancel Booking?</h5>
+                    <?php
+                        $days_to_checkin = (strtotime($row['checkin_date']) - time()) / (60 * 60 * 24);
+                        $is_refundable = ($days_to_checkin >= 7);
+                    ?>
+                    <div class="modal-header <?= $is_refundable ? 'bg-info' : 'bg-danger' ?> text-white">
+                        <h5 class="modal-title font-weight-bold">
+                            <?= $is_refundable ? __('profile_cancel_refund_title') : __('profile_cancel_forfeit_title') ?>
+                        </h5>
                         <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
                     </div>
                     <form action="cancel_booking.php" method="POST">
                         <div class="modal-body text-center">
                             <input type="hidden" name="booking_id" value="<?= $row['book_id'] ?>">
                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                            <p class="mb-3">Are you sure you want to cancel this booking?</p>
+                            <p class="mb-3"><?= __('profile_cancel_confirm') ?></p>
 
                             <?php if ($status_clean == 'accepted'): ?>
-                                <div class="alert alert-warning text-left small border-0 shadow-sm">
-                                    <i class="fas fa-exclamation-triangle mr-2"></i> <strong>IMPORTANT WARNING:</strong><br>
-                                    Since your booking has been <u>Accepted</u> by admin, cancelling now means your <strong>deposit will be forfeited (burned)</strong> and is non-refundable.
-                                </div>
+                                <?php if ($is_refundable): ?>
+                                    <div class="alert alert-info text-left small border-0 shadow-sm">
+                                        <i class="fas fa-info-circle mr-2"></i> <strong><?= __('profile_cancel_refund_title') ?></strong><br>
+                                        <?= __('profile_cancel_refund_text') ?>
+                                    </div>
+                                <?php else: ?>
+                                    <div class="alert alert-danger text-left small border-0 shadow-sm">
+                                        <i class="fas fa-exclamation-triangle mr-2"></i> <strong><?= __('profile_cancel_forfeit_title') ?></strong><br>
+                                        <?= __('profile_cancel_forfeit_text') ?>
+                                    </div>
+                                <?php endif; ?>
                             <?php endif; ?>
                         </div>
                         <div class="modal-footer justify-content-center border-0">
-                            <button type="button" class="btn btn-secondary rounded-pill px-4" data-dismiss="modal">Keep Booking</button>
-                            <button type="submit" class="btn btn-danger rounded-pill px-4">Yes, Cancel</button>
+                            <button type="button" class="btn btn-secondary rounded-pill px-4" data-dismiss="modal"><?= __('profile_cancel_keep') ?></button>
+                            <button type="submit" class="btn <?= $is_refundable ? 'btn-info' : 'btn-danger' ?> rounded-pill px-4 text-white"><?= __('profile_cancel_yes') ?></button>
                         </div>
                     </form>
                 </div>
@@ -1233,23 +1266,23 @@ $bookings = $stmt_b->get_result();
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header bg-success text-white">
-                        <h5 class="modal-title font-weight-bold">Upload Balance Payment</h5>
+                        <h5 class="modal-title font-weight-bold"><?= __('profile_balance_title') ?></h5>
                         <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
                     </div>
                     <form action="upload_balance.php" method="POST" enctype="multipart/form-data">
                         <div class="modal-body">
                             <input type="hidden" name="booking_id" value="<?= $row['book_id'] ?>">
                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                            <p class="small text-muted mb-3">Please upload the payment receipt for the remaining balance.</p>
+                            <p class="small text-muted mb-3"><?= __('profile_balance_desc') ?></p>
 
                             <div class="form-group p-3 border rounded bg-light text-center">
-                                <label class="font-weight-bold mb-2 d-block text-success"><i class="fas fa-cloud-upload-alt fa-2x"></i><br>Select Receipt File</label>
+                                <label class="font-weight-bold mb-2 d-block text-success"><i class="fas fa-cloud-upload-alt fa-2x"></i><br><?= __('profile_balance_select') ?></label>
                                 <input type="file" name="balance_receipt" class="form-control-file" required accept=".jpg,.jpeg,.png,.pdf">
-                                <small class="d-block mt-2 text-muted">Format: JPG, PNG, PDF</small>
+                                <small class="d-block mt-2 text-muted"><?= __('profile_balance_format') ?></small>
                             </div>
                         </div>
                         <div class="modal-footer border-0">
-                            <button type="submit" class="btn btn-success rounded-pill px-4 btn-block font-weight-bold">Upload Receipt</button>
+                            <button type="submit" class="btn btn-success rounded-pill px-4 btn-block font-weight-bold"><?= __('profile_balance_btn') ?></button>
                         </div>
                     </form>
                 </div>
@@ -1261,7 +1294,7 @@ $bookings = $stmt_b->get_result();
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header d-block text-center border-0 pb-0">
-                            <h5 class="modal-title font-weight-bold">Rate Your Stay</h5>
+                            <h5 class="modal-title font-weight-bold"><?= __('profile_rate_title') ?></h5>
                             <p class="text-muted small"><?= htmlspecialchars($row['package_name']) ?></p>
                         </div>
                         <form method="POST">
@@ -1276,10 +1309,10 @@ $bookings = $stmt_b->get_result();
                                     <input type="radio" id="s2-<?= $row['book_id'] ?>" name="rating" value="2" /><label for="s2-<?= $row['book_id'] ?>">★</label>
                                     <input type="radio" id="s1-<?= $row['book_id'] ?>" name="rating" value="1" required /><label for="s1-<?= $row['book_id'] ?>">★</label>
                                 </div>
-                                <textarea name="comment" class="form-control" rows="3" placeholder="Share your experience..." required style="border-radius:10px;"></textarea>
+                                <textarea name="comment" class="form-control" rows="3" placeholder="<?= __('profile_rate_placeholder') ?>" required style="border-radius:10px;"></textarea>
                             </div>
                             <div class="modal-footer justify-content-center border-0 pt-0">
-                                <button type="submit" name="submit_review" class="btn btn-warning text-white rounded-pill px-5 font-weight-bold">Submit Review</button>
+                                <button type="submit" name="submit_review" class="btn btn-warning text-white rounded-pill px-5 font-weight-bold"><?= __('profile_rate_submit') ?></button>
                             </div>
                         </form>
                     </div>
@@ -1294,37 +1327,36 @@ $bookings = $stmt_b->get_result();
             <div class="row">
                 <div class="col-lg-3 col-md-6 mb-4">
                     <h3>EASYSTAY</h3>
-                    <p>Lot 8012, Kampung Binjai Kertas,</p>
-                    <p>21700 Kuala Berang, Terengganu.</p>
+                    <p><?= __('footer_desc') ?></p>
                     <div class="footer-social-icons">
                         <a href="https://www.facebook.com/profile.php?id=100092359781203" target="_blank"><i class="fab fa-facebook"></i></a>
                         <a href="https://www.tiktok.com/@easystayhomestay" target="_blank"><i class="fab fa-tiktok"></i></a>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-4">
-                    <h3>CONTACT US</h3>
+                    <h3><?= __('footer_contact') ?></h3>
                     <p><i class="fas fa-phone-alt mr-2"></i> +60 19 211 9223</p>
                     <p><i class="fas fa-envelope mr-2"></i> reservation@easystay.com</p>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-4">
-                    <h3>NAVIGATION</h3>
-                    <a href="index.php">Home</a>
-                    <a href="package.php">Package</a>
-                    <a href="about.php">About</a>
-                    <a href="gallery.php">Gallery</a>
-                    <a href="contact.php">Contact</a>
+                    <h3><?= __('footer_nav') ?></h3>
+                    <a href="index.php"><?= __('nav_home') ?></a>
+                    <a href="package.php"><?= __('nav_package') ?></a>
+                    <a href="about.php"><?= __('nav_about') ?></a>
+                    <a href="gallery.php"><?= __('nav_gallery') ?></a>
+                    <a href="contact.php"><?= __('nav_contact') ?></a>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-4">
-                    <h3>NEWSLETTER</h3>
-                    <p>Subscribe to get latest offers.</p>
+                    <h3><?= __('footer_newsletter') ?></h3>
+                    <p><?= __('footer_subscribe') ?></p>
                     <div class="newsletter-box">
-                        <input type="email" placeholder="Your email">
-                        <button type="button">Sign Up</button>
+                        <input type="email" placeholder="<?= __('footer_newsletter_placeholder') ?>">
+                        <button type="button"><?= __('footer_signup') ?></button>
                     </div>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>Copyright EasyStay © 2025. All rights reserved.</p>
+                <p><?= __('footer_copyright') ?></p>
             </div>
         </div>
     </footer>

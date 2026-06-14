@@ -33,13 +33,13 @@ $result = $conn->query("SELECT * FROM `gallery` ORDER BY sort_order ASC, id ASC"
                 <div class="col-xl-5 col-lg-5 d-none d-lg-block">
                     <nav>
                         <ul id="navigation">
-                            <li><a href="index.php">Home</a></li>
-                            <li><a href="package.php">Package</a></li>
-                            <li><a href="about.php">About</a></li>
-                            <li><a href="gallery.php" class="active-link">Gallery</a></li>
-                            <li><a href="contact.php">Contact</a></li>
+                            <li><a href="index.php" class="<?= $current_page == 'index.php' ? 'active-link' : '' ?>"><?= __('nav_home') ?></a></li>
+                            <li><a href="package.php" class="<?= $current_page == 'package.php' ? 'active-link' : '' ?>"><?= __('nav_package') ?></a></li>
+                            <li><a href="about.php" class="<?= $current_page == 'about.php' ? 'active-link' : '' ?>"><?= __('nav_about') ?></a></li>
+                            <li><a href="gallery.php" class="<?= $current_page == 'gallery.php' ? 'active-link' : '' ?>"><?= __('nav_gallery') ?></a></li>
+                            <li><a href="contact.php" class="<?= $current_page == 'contact.php' ? 'active-link' : '' ?>"><?= __('nav_contact') ?></a></li>
                             <?php if ($is_logged_in): ?>
-                                <li><a href="my_profile.php">My Profile</a></li>
+                                <li><a href="my_profile.php" class="<?= $current_page == 'my_profile.php' ? 'active-link' : '' ?>"><?= __('nav_profile') ?></a></li>
                             <?php endif; ?>
                         </ul>
                     </nav>
@@ -49,14 +49,19 @@ $result = $conn->query("SELECT * FROM `gallery` ORDER BY sort_order ASC, id ASC"
                 </div>
                 <div class="col-xl-5 col-lg-5">
                     <div class="header-right-part d-flex justify-content-end align-items-center">
+                        <div class="lang-selector mr-4 d-flex align-items-center" style="gap: 8px;">
+                            <a href="<?= get_lang_url('en') ?>" style="color: <?= $lang_code == 'en' ? '#C5A880' : 'rgba(255,255,255,0.6)' ?>; font-weight: 700; font-size: 13px; text-decoration: none; border-bottom: <?= $lang_code == 'en' ? '2px solid #C5A880' : 'none' ?>; padding-bottom: 2px;">EN</a>
+                            <span style="color: rgba(255,255,255,0.3); font-size: 13px;">|</span>
+                            <a href="<?= get_lang_url('ms') ?>" style="color: <?= $lang_code == 'ms' ? '#C5A880' : 'rgba(255,255,255,0.6)' ?>; font-weight: 700; font-size: 13px; text-decoration: none; border-bottom: <?= $lang_code == 'ms' ? '2px solid #C5A880' : 'none' ?>; padding-bottom: 2px;">BM</a>
+                        </div>
                         <ul class="social-icons-head d-flex list-unstyled m-0 mr-4">
                             <li class="mr-3"><a href="https://www.facebook.com/profile.php?id=100092359781203" target="_blank" style="color:white;"><i class="fa-brands fa-facebook-f"></i></a></li>
                             <li><a href="https://www.tiktok.com/@easystayhomestay" target="_blank" style="color:white;"><i class="fa-brands fa-tiktok"></i></a></li>
                         </ul>
                         <?php if ($is_logged_in): ?>
-                            <a href="logout.php" class="auth-btn">Logout</a>
+                            <a href="logout.php" class="auth-btn"><?= __('nav_logout') ?></a>
                         <?php else: ?>
-                            <a href="login.php" class="auth-btn">Login / Register</a>
+                            <a href="login.php" class="auth-btn"><?= __('nav_login') ?></a>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -67,8 +72,8 @@ $result = $conn->query("SELECT * FROM `gallery` ORDER BY sort_order ASC, id ASC"
         <section class="gallery-section py-5">
             <div class="container-fluid px-4 px-lg-5">
                 <div class="text-center mb-5 mt-4">
-                    <h2 class="gallery-main-title">Our Gallery</h2>
-                    <p class="gallery-subtitle">Discover the beauty and tranquility of EasyStay.</p>
+                    <h2 class="gallery-main-title"><?= __('gallery_main_title') ?></h2>
+                    <p class="gallery-subtitle"><?= __('gallery_main_subtitle') ?></p>
                 </div>
 
                 <div class="gallery-grid">
@@ -90,7 +95,7 @@ $result = $conn->query("SELECT * FROM `gallery` ORDER BY sort_order ASC, id ASC"
                     <?php else: ?>
                         <div class="gallery-empty">
                             <i class="fas fa-images fa-3x mb-3" style="color:#C5A880; opacity:0.4;"></i>
-                            <p>No images found.</p>
+                            <p><?= __('gallery_no_images') ?></p>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -205,37 +210,36 @@ $result = $conn->query("SELECT * FROM `gallery` ORDER BY sort_order ASC, id ASC"
             <div class="row">
                 <div class="col-lg-3 col-md-6 mb-4">
                     <h3>EASYSTAY</h3>
-                    <p>Lot 8012, Kampung Binjai Kertas,</p>
-                    <p>21700 Kuala Berang, Terengganu.</p>
+                    <p><?= __('footer_desc') ?></p>
                     <div class="footer-social-icons">
                         <a href="https://www.facebook.com/profile.php?id=100092359781203" target="_blank"><i class="fab fa-facebook"></i></a>
                         <a href="https://www.tiktok.com/@easystayhomestay" target="_blank"><i class="fab fa-tiktok"></i></a>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-4">
-                    <h3>CONTACT US</h3>
+                    <h3><?= __('footer_contact') ?></h3>
                     <p><i class="fas fa-phone-alt mr-2"></i> +60 19 211 9223</p>
                     <p><i class="fas fa-envelope mr-2"></i> reservation@easystay.com</p>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-4">
-                    <h3>NAVIGATION</h3>
-                    <a href="index.php">Home</a>
-                    <a href="package.php">Package</a>
-                    <a href="about.php">About</a>
-                    <a href="gallery.php">Gallery</a>
-                    <a href="contact.php">Contact</a>
+                    <h3><?= __('footer_nav') ?></h3>
+                    <a href="index.php"><?= __('nav_home') ?></a>
+                    <a href="package.php"><?= __('nav_package') ?></a>
+                    <a href="about.php"><?= __('nav_about') ?></a>
+                    <a href="gallery.php"><?= __('nav_gallery') ?></a>
+                    <a href="contact.php"><?= __('nav_contact') ?></a>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-4">
-                    <h3>NEWSLETTER</h3>
-                    <p>Subscribe to get latest offers.</p>
+                    <h3><?= __('footer_newsletter') ?></h3>
+                    <p><?= __('footer_subscribe') ?></p>
                     <div class="newsletter-box">
-                        <input type="email" placeholder="Your email">
-                        <button type="button">Sign Up</button>
+                        <input type="email" placeholder="<?= __('footer_newsletter_placeholder') ?>">
+                        <button type="button"><?= __('footer_signup') ?></button>
                     </div>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>Copyright EasyStay © 2025. All rights reserved.</p>
+                <p><?= __('footer_copyright') ?></p>
             </div>
         </div>
     </footer>

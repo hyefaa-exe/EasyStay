@@ -98,7 +98,7 @@ if ($sort_by == 'price_asc') {
 } elseif ($sort_by == 'price_desc') {
     $sql .= " ORDER BY price DESC";
 } else {
-    $sql .= " ORDER BY package_id DESC";
+    $sql .= " ORDER BY FIELD(package_id, 14, 12, 13)";
 }
 
 $stmt = $conn->prepare($sql);
@@ -403,13 +403,13 @@ $result = $stmt->get_result();
                 <div class="col-xl-5 col-lg-5 d-none d-lg-block">
                     <nav>
                         <ul id="navigation">
-                            <li><a href="index.php">Home</a></li>
-                            <li><a href="package.php" class="active-link">Package</a></li>
-                            <li><a href="about.php">About</a></li>
-                            <li><a href="gallery.php">Gallery</a></li>
-                            <li><a href="contact.php">Contact</a></li>
+                            <li><a href="index.php" class="<?= $current_page == 'index.php' ? 'active-link' : '' ?>"><?= __('nav_home') ?></a></li>
+                            <li><a href="package.php" class="<?= $current_page == 'package.php' ? 'active-link' : '' ?>"><?= __('nav_package') ?></a></li>
+                            <li><a href="about.php" class="<?= $current_page == 'about.php' ? 'active-link' : '' ?>"><?= __('nav_about') ?></a></li>
+                            <li><a href="gallery.php" class="<?= $current_page == 'gallery.php' ? 'active-link' : '' ?>"><?= __('nav_gallery') ?></a></li>
+                            <li><a href="contact.php" class="<?= $current_page == 'contact.php' ? 'active-link' : '' ?>"><?= __('nav_contact') ?></a></li>
                             <?php if ($is_logged_in): ?>
-                                <li><a href="my_profile.php">My Profile</a></li>
+                                <li><a href="my_profile.php" class="<?= $current_page == 'my_profile.php' ? 'active-link' : '' ?>"><?= __('nav_profile') ?></a></li>
                             <?php endif; ?>
                         </ul>
                     </nav>
@@ -419,14 +419,19 @@ $result = $stmt->get_result();
                 </div>
                 <div class="col-xl-5 col-lg-5">
                     <div class="header-right-part d-flex justify-content-end align-items-center">
+                        <div class="lang-selector mr-4 d-flex align-items-center" style="gap: 8px;">
+                            <a href="<?= get_lang_url('en') ?>" style="color: <?= $lang_code == 'en' ? '#C5A880' : 'rgba(255,255,255,0.6)' ?>; font-weight: 700; font-size: 13px; text-decoration: none; border-bottom: <?= $lang_code == 'en' ? '2px solid #C5A880' : 'none' ?>; padding-bottom: 2px;">EN</a>
+                            <span style="color: rgba(255,255,255,0.3); font-size: 13px;">|</span>
+                            <a href="<?= get_lang_url('ms') ?>" style="color: <?= $lang_code == 'ms' ? '#C5A880' : 'rgba(255,255,255,0.6)' ?>; font-weight: 700; font-size: 13px; text-decoration: none; border-bottom: <?= $lang_code == 'ms' ? '2px solid #C5A880' : 'none' ?>; padding-bottom: 2px;">BM</a>
+                        </div>
                         <ul class="social-icons-head d-flex list-unstyled m-0 mr-4">
                             <li class="mr-3"><a href="https://www.facebook.com/profile.php?id=100092359781203" target="_blank" style="color:white;"><i class="fa-brands fa-facebook-f"></i></a></li>
                             <li><a href="https://www.tiktok.com/@easystayhomestay" target="_blank" style="color:white;"><i class="fa-brands fa-tiktok"></i></a></li>
                         </ul>
                         <?php if ($is_logged_in): ?>
-                            <a href="logout.php" class="auth-btn">Logout</a>
+                            <a href="logout.php" class="auth-btn"><?= __('nav_logout') ?></a>
                         <?php else: ?>
-                            <a href="login.php" class="auth-btn">Login / Register</a>
+                            <a href="login.php" class="auth-btn"><?= __('nav_login') ?></a>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -439,8 +444,8 @@ $result = $stmt->get_result();
                 <div class="row">
                     <div class="col-xl-12">
                         <div class="section-title text-center mb-40">
-                            <h2>Our Exclusive Packages</h2>
-                            <p>Curated stays for your perfect getaway.</p>
+                            <h2><?= __('pkg_title') ?></h2>
+                            <p><?= __('pkg_subtitle') ?></p>
                         </div>
                     </div>
                 </div>
@@ -449,23 +454,23 @@ $result = $stmt->get_result();
                 <div class="search-bar-wrap mb-5">
                     <form method="GET" action="package.php" class="search-form-bar">
                         <div class="search-field">
-                            <label><i class="fa-solid fa-calendar-days"></i> Check-in</label>
+                            <label><i class="fa-solid fa-calendar-days"></i> <?= __('home_checkin') ?></label>
                             <input type="text" id="check_in" name="check_in" class="form-control-bar" placeholder="Choose check-in date" value="<?= htmlspecialchars($check_in) ?>" readonly>
                         </div>
                         <div class="search-field">
-                            <label><i class="fa-solid fa-calendar-days"></i> Check-out</label>
+                            <label><i class="fa-solid fa-calendar-days"></i> <?= __('home_checkout') ?></label>
                             <input type="text" id="check_out" name="check_out" class="form-control-bar" placeholder="Choose check-out date" value="<?= htmlspecialchars($check_out) ?>" readonly>
                         </div>
                         <div class="search-field">
-                            <label><i class="fa-solid fa-users"></i> Guests</label>
+                            <label><i class="fa-solid fa-users"></i> <?= __('pkg_guests') ?></label>
                             <select name="guests" class="form-control-bar">
-                                <option value="">Any Capacity</option>
-                                <option value="3" <?= $guests == 3 ? 'selected' : '' ?>>Up to 3 Guests (Chalet)</option>
-                                <option value="15" <?= $guests == 15 ? 'selected' : '' ?>>Up to 15 Guests (Homestay)</option>
-                                <option value="30" <?= $guests == 30 ? 'selected' : '' ?>>Up to 30 Guests (Entire Property)</option>
+                                <option value=""><?= __('pkg_all_capacities') ?></option>
+                                <option value="3" <?= $guests == 3 ? 'selected' : '' ?>><?= __('pkg_cap_chalet') ?></option>
+                                <option value="15" <?= $guests == 15 ? 'selected' : '' ?>><?= __('pkg_cap_homestay') ?></option>
+                                <option value="30" <?= $guests == 30 ? 'selected' : '' ?>><?= __('pkg_cap_entire') ?></option>
                             </select>
                         </div>
-                        <button type="submit" class="btn-search-bar"><i class="fa fa-search"></i> Search Available Stays</button>
+                        <button type="submit" class="btn-search-bar"><i class="fa fa-search"></i> <?= __('pkg_search_btn') ?></button>
                     </form>
                 </div>
 
@@ -473,7 +478,7 @@ $result = $stmt->get_result();
                     <!-- 2. Filter Sidebar -->
                     <div class="col-xl-3 col-lg-4 col-md-12 mb-4">
                         <div class="filter-sidebar">
-                            <h5 class="filter-title"><i class="fa fa-sliders mr-2"></i> Filter Results</h5>
+                            <h5 class="filter-title"><i class="fa fa-sliders mr-2"></i> <?= __('pkg_filter_title') ?></h5>
                             <form method="GET" action="package.php" id="filterForm">
                                 <input type="hidden" name="check_in" value="<?= htmlspecialchars($check_in) ?>">
                                 <input type="hidden" name="check_out" value="<?= htmlspecialchars($check_out) ?>">
@@ -482,25 +487,25 @@ $result = $stmt->get_result();
 
                                 <!-- Price Range -->
                                 <div class="filter-group">
-                                    <label class="filter-label">Price / Night (RM)</label>
+                                    <label class="filter-label"><?= __('pkg_price_range') ?></label>
                                     <div class="d-flex align-items-center">
-                                        <input type="number" name="min_price" class="form-control form-control-sm" placeholder="Min" value="<?= isset($_GET['min_price']) ? htmlspecialchars($_GET['min_price']) : '' ?>" style="border-radius: 8px;">
+                                        <input type="number" name="min_price" class="form-control form-control-sm" placeholder="<?= __('pkg_min_price') ?>" value="<?= isset($_GET['min_price']) ? htmlspecialchars($_GET['min_price']) : '' ?>" style="border-radius: 8px;">
                                         <span class="mx-2 text-muted">-</span>
-                                        <input type="number" name="max_price" class="form-control form-control-sm" placeholder="Max" value="<?= isset($_GET['max_price']) ? htmlspecialchars($_GET['max_price']) : '' ?>" style="border-radius: 8px;">
+                                        <input type="number" name="max_price" class="form-control form-control-sm" placeholder="<?= __('pkg_max_price') ?>" value="<?= isset($_GET['max_price']) ? htmlspecialchars($_GET['max_price']) : '' ?>" style="border-radius: 8px;">
                                     </div>
                                 </div>
 
                                 <!-- Amenities -->
                                 <div class="filter-group">
-                                    <label class="filter-label">Amenities</label>
+                                    <label class="filter-label"><?= __('pkg_amenities') ?></label>
                                     <?php
                                     $amenity_options = [
-                                        'aircond' => 'Air Conditioning',
-                                        'wifi' => 'Free WiFi',
-                                        'pool' => 'Private Pool',
-                                        'kitchen' => 'Kitchen',
-                                        'washing' => 'Washing Machine',
-                                        'bbq' => 'BBQ Pit'
+                                        'aircond' => __('amenity_aircond'),
+                                        'wifi' => __('amenity_wifi'),
+                                        'pool' => __('amenity_pool'),
+                                        'kitchen' => __('amenity_kitchen'),
+                                        'washing' => __('amenity_washing'),
+                                        'bbq' => __('amenity_bbq')
                                     ];
                                     foreach ($amenity_options as $key => $lbl):
                                         $checked = isset($_GET['amenities']) && in_array($key, $_GET['amenities']) ? 'checked' : '';
@@ -512,8 +517,8 @@ $result = $stmt->get_result();
                                     <?php endforeach; ?>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary btn-sm btn-block mt-3" style="background: var(--primary-orange); border-color: var(--primary-orange); border-radius: 8px; font-weight: 700; height: 38px;">Apply Filters</button>
-                                <a href="package.php" class="btn btn-link btn-sm btn-block text-muted text-center small mt-2">Clear All</a>
+                                <button type="submit" class="btn btn-primary btn-sm btn-block mt-3" style="background: var(--primary-orange); border-color: var(--primary-orange); border-radius: 8px; font-weight: 700; height: 38px;"><?= __('pkg_apply_filters') ?></button>
+                                <a href="package.php" class="btn btn-link btn-sm btn-block text-muted text-center small mt-2"><?= __('pkg_clear_all') ?></a>
                             </form>
                         </div>
                     </div>
@@ -523,14 +528,14 @@ $result = $stmt->get_result();
                         <!-- Sorting Bar -->
                         <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
                             <div class="text-muted small font-weight-bold">
-                                Showing <?= $result->num_rows ?> Packages
+                                <?= __('pkg_showing') ?> <?= $result->num_rows ?> <?= __('pkg_packages') ?>
                             </div>
                             <div class="d-flex align-items-center">
-                                <label class="mr-2 mb-0 small font-weight-bold text-dark text-nowrap">Sort By:</label>
+                                <label class="mr-2 mb-0 small font-weight-bold text-dark text-nowrap"><?= __('pkg_sort_title') ?>:</label>
                                 <select class="form-control form-control-sm" style="width: auto; border-radius: 8px; font-weight: 600;" onchange="changeSort(this.value)">
-                                    <option value="" <?= $sort_by == '' ? 'selected' : '' ?>>Default</option>
-                                    <option value="price_asc" <?= $sort_by == 'price_asc' ? 'selected' : '' ?>>Price: Low to High</option>
-                                    <option value="price_desc" <?= $sort_by == 'price_desc' ? 'selected' : '' ?>>Price: High to Low</option>
+                                    <option value="" <?= $sort_by == '' ? 'selected' : '' ?>><?= __('pkg_sort_default') ?></option>
+                                    <option value="price_asc" <?= $sort_by == 'price_asc' ? 'selected' : '' ?>><?= __('pkg_sort_low') ?></option>
+                                    <option value="price_desc" <?= $sort_by == 'price_desc' ? 'selected' : '' ?>><?= __('pkg_sort_high') ?></option>
                                 </select>
                             </div>
                         </div>
@@ -570,17 +575,17 @@ $result = $stmt->get_result();
                                         <h4>
                                             <?= htmlspecialchars($row['package_name']) ?>
                                             <?php if ($is_booked): ?>
-                                                <span class="badge badge-danger ml-2" style="font-size: 11px; border-radius: 8px; vertical-align: middle; background-color: #dc3545; color: white; padding: 4px 8px;">Fully Booked</span>
+                                                <span class="badge badge-danger ml-2" style="font-size: 11px; border-radius: 8px; vertical-align: middle; background-color: #dc3545; color: white; padding: 4px 8px;"><?= __('pkg_fully_booked') ?></span>
                                             <?php endif; ?>
                                         </h4>
                                         
                                         <!-- Paparan Ulasan Bintang Pelanggan -->
                                         <div class="rating-info mb-3" style="font-size: 14px; font-weight: 600; color: var(--gold-premium);">
                                             <?php if ($count_reviews > 0): ?>
-                                                <i class="fas fa-star text-warning"></i> <?= $avg_rating ?>/5.0 (<?= $count_reviews ?> reviews)
-                                                <a href="#" class="ml-2 text-muted font-weight-normal" data-toggle="modal" data-target="#reviewsModal<?= $package_id ?>" style="font-size: 13px; text-decoration: underline;">Read Reviews</a>
+                                                <i class="fas fa-star text-warning"></i> <?= $avg_rating ?>/5.0 (<?= $count_reviews ?> <?= __('pkg_reviews') ?>)
+                                                <a href="#" class="ml-2 text-muted font-weight-normal" data-toggle="modal" data-target="#reviewsModal<?= $package_id ?>" style="font-size: 13px; text-decoration: underline;"><?= __('pkg_read_reviews') ?></a>
                                             <?php else: ?>
-                                                <i class="far fa-star text-muted"></i> No reviews yet
+                                                <i class="far fa-star text-muted"></i> <?= __('pkg_no_reviews') ?>
                                             <?php endif; ?>
                                         </div>
 
@@ -603,16 +608,16 @@ $result = $stmt->get_result();
                                         </ul>
 
                                         <div class="price-box">
-                                            <small>RM</small> <?= number_format($row['price'], 0) ?> <small>/night</small>
+                                            <small>RM</small> <?= number_format($row['price'], 0) ?> <small>/<?= __('pkg_night') ?></small>
                                         </div>
 
                                         <?php if ($is_booked): ?>
                                             <button class="btn btn-secondary w-100" style="padding: 14px 0; border-radius: 12px; font-weight: 600; font-size: 14px; text-transform: uppercase; cursor: not-allowed;" disabled>
-                                                Unavailable
+                                                <?= __('pkg_unavailable') ?>
                                             </button>
                                         <?php else: ?>
                                             <a href="book_new.php?package_id=<?= $row['package_id'] ?><?= (!empty($check_in) && !empty($check_out)) ? '&check_in=' . urlencode($check_in) . '&check_out=' . urlencode($check_out) : '' ?>" class="btn-book">
-                                                Book This Room
+                                                <?= __('pkg_book_this_room') ?>
                                             </a>
                                         <?php endif; ?>
                                     </div>
@@ -624,7 +629,7 @@ $result = $stmt->get_result();
                                 <div class="modal-dialog modal-dialog-centered modal-md">
                                     <div class="modal-content" style="border-radius: 20px; border: none; overflow: hidden; box-shadow: 0 15px 40px rgba(0,0,0,0.15);">
                                         <div class="modal-header" style="background: var(--ios-black); color: white; border: none; padding: 20px 25px;">
-                                            <h5 class="modal-title font-weight-bold" style="letter-spacing: -0.5px;">Customer Reviews</h5>
+                                            <h5 class="modal-title font-weight-bold" style="letter-spacing: -0.5px;"><?= __('modal_reviews_title') ?></h5>
                                             <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="opacity: 0.8; outline: none; border: none; background: transparent;">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
@@ -643,7 +648,7 @@ $result = $stmt->get_result();
                                                     for ($i = $floor_rating; $i < 5; $i++) echo '<i class="far fa-star"></i>';
                                                     ?>
                                                 </div>
-                                                <p class="text-muted small mb-0">Based on <?= $count_reviews ?> customer ratings</p>
+                                                <p class="text-muted small mb-0"><?= __('modal_based_on') ?> <?= $count_reviews ?> <?= __('modal_ratings') ?></p>
                                             </div>
                                             
                                             <?php
@@ -679,7 +684,7 @@ $result = $stmt->get_result();
                                             ?>
                                                 <div class="text-center py-4 text-muted">
                                                     <i class="far fa-comments fa-2x mb-2" style="opacity: 0.3;"></i>
-                                                    <p class="small mb-0">No written reviews yet.</p>
+                                                    <p class="small mb-0"><?= __('modal_no_reviews') ?></p>
                                                 </div>
                                             <?php 
                                             endif; 
@@ -689,11 +694,10 @@ $result = $stmt->get_result();
                                     </div>
                                 </div>
                             </div>
-                            </div>
                         <?php endwhile; ?>
                     <?php else: ?>
                         <div class="col-12 text-center">
-                            <p class="alert alert-warning">No packages available at the moment.</p>
+                            <p class="alert alert-warning"><?= __('pkg_no_results') ?></p>
                         </div>
                     <?php endif; ?>
                     </div>
@@ -706,8 +710,7 @@ $result = $stmt->get_result();
             <div class="row">
                 <div class="col-lg-3 col-md-6 mb-4">
                     <h3>EASYSTAY</h3>
-                    <p>Lot 8012, Kampung Binjai Kertas,</p>
-                    <p>21700 Kuala Berang, Terengganu.</p>
+                    <p><?= __('footer_desc') ?></p>
                     <div class="footer-social-icons">
                         <a href="https://www.facebook.com/profile.php?id=100092359781203" target="_blank"><i class="fab fa-facebook"></i></a>
                         <a href="https://www.tiktok.com/@easystayhomestay" target="_blank"><i class="fab fa-tiktok"></i></a>
@@ -715,32 +718,32 @@ $result = $stmt->get_result();
                 </div>
 
                 <div class="col-lg-3 col-md-6 mb-4">
-                    <h3>CONTACT US</h3>
+                    <h3><?= __('footer_contact') ?></h3>
                     <p><i class="fas fa-phone-alt mr-2"></i> +60 19 211 9223</p>
                     <p><i class="fas fa-envelope mr-2"></i> reservation@easystay.com</p>
                 </div>
 
                 <div class="col-lg-3 col-md-6 mb-4">
-                    <h3>NAVIGATION</h3>
-                    <a href="index.php">Home</a>
-                    <a href="package.php">Package</a>
-                    <a href="about.php">About</a>
-                    <a href="gallery.php">Gallery</a>
-                    <a href="contact.php">Contact</a>
+                    <h3><?= __('footer_nav') ?></h3>
+                    <a href="index.php"><?= __('nav_home') ?></a>
+                    <a href="package.php"><?= __('nav_package') ?></a>
+                    <a href="about.php"><?= __('nav_about') ?></a>
+                    <a href="gallery.php"><?= __('nav_gallery') ?></a>
+                    <a href="contact.php"><?= __('nav_contact') ?></a>
                 </div>
 
                 <div class="col-lg-3 col-md-6 mb-4">
-                    <h3>NEWSLETTER</h3>
-                    <p>Subscribe to get latest offers.</p>
+                    <h3><?= __('footer_newsletter') ?></h3>
+                    <p><?= __('footer_subscribe') ?></p>
                     <div class="newsletter-box">
-                        <input type="email" placeholder="Your email">
-                        <button type="button">Sign Up</button>
+                        <input type="email" placeholder="<?= __('footer_newsletter_placeholder') ?>">
+                        <button type="button"><?= __('footer_signup') ?></button>
                     </div>
                 </div>
             </div>
 
             <div class="footer-bottom">
-                <p>Copyright EasyStay &copy; 2025. All rights reserved.</p>
+                <p><?= __('footer_copyright') ?></p>
             </div>
         </div>
     </footer>

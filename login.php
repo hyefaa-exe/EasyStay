@@ -78,7 +78,7 @@ if (isset($_POST['login'])) {
     $stmt_admin->close();
 
     // Jika sampai sini, login gagal
-    $error_msg = "Username or Password incorrect.";
+    $error_msg = __('login_err_incorrect');
 }
 ?>
 <!doctype html>
@@ -86,7 +86,7 @@ if (isset($_POST['login'])) {
 
 <head>
     <meta charset="utf-8">
-    <title>Login | EasyStay</title>
+    <title><?= __('nav_login') ?> | EasyStay</title>
     <meta name="description" content="EasyStay - A Digital Platform for Fast and Efficient Homestay Reservation">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png?v=2">
@@ -236,8 +236,8 @@ if (isset($_POST['login'])) {
         <div class="login-logo">
             <img src="img/logo.png?v=2" alt="EasyStay Logo">
         </div>
-        <h2 class="login-title">Welcome Back</h2>
-        <p class="login-subtitle">Sign in to access your account</p>
+        <h2 class="login-title"><?= __('login_title') ?></h2>
+        <p class="login-subtitle"><?= __('login_subtitle') ?></p>
 
         <?php if (!empty($error_msg)): ?>
             <div class="alert-custom">
@@ -247,28 +247,28 @@ if (isset($_POST['login'])) {
 
         <form method="POST">
             <div class="form-group">
-                <label class="form-label">Username</label>
-                <input type="text" name="username" class="form-control-ios" placeholder="Enter your username" required>
+                <label class="form-label"><?= __('login_username') ?></label>
+                <input type="text" name="username" class="form-control-ios" placeholder="<?= __('login_username_placeholder') ?>" required>
             </div>
 
             <div class="form-group">
-                <label class="form-label">Password</label>
-                <input type="password" name="password" class="form-control-ios" placeholder="Enter your password" required>
+                <label class="form-label"><?= __('login_password') ?></label>
+                <input type="password" name="password" class="form-control-ios" placeholder="<?= __('login_password_placeholder') ?>" required>
             </div>
 
         <div style="text-align:right; margin-top:8px; margin-bottom:4px;">
-            <a href="forgot_password.php" style="font-size:12px; color:#C5A880; text-decoration:none; font-weight:600;">Forgot password?</a>
+            <a href="forgot_password.php" style="font-size:12px; color:#C5A880; text-decoration:none; font-weight:600;"><?= __('login_forgot') ?></a>
         </div>
 
-        <button type="submit" name="login" class="btn-login-ios">Sign In</button>
+        <button type="submit" name="login" class="btn-login-ios"><?= __('login_btn') ?></button>
     </form>
 
     <div class="register-link">
-        Don't have an account? <a href="register.php">Create Account</a>
+        <?= __('login_no_account') ?> <a href="register.php"><?= __('login_create') ?></a>
     </div>
 
 
-        <a href="index.php" class="back-home"><i class="fas fa-arrow-left mr-1"></i> Back to Home</a>
+        <a href="index.php" class="back-home"><i class="fas fa-arrow-left mr-1"></i> <?= __('login_back') ?></a>
     </div>
 
 </body>

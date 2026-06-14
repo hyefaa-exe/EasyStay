@@ -54,13 +54,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="col-xl-5 col-lg-5 d-none d-lg-block">
                     <nav>
                         <ul id="navigation">
-                            <li><a href="index.php" class="active-link">Home</a></li>
-                            <li><a href="package.php">Package</a></li>
-                            <li><a href="about.php">About</a></li>
-                            <li><a href="gallery.php">Gallery</a></li>
-                            <li><a href="contact.php">Contact</a></li>
+                            <li><a href="index.php" class="<?= $current_page == 'index.php' ? 'active-link' : '' ?>"><?= __('nav_home') ?></a></li>
+                            <li><a href="package.php" class="<?= $current_page == 'package.php' ? 'active-link' : '' ?>"><?= __('nav_package') ?></a></li>
+                            <li><a href="about.php" class="<?= $current_page == 'about.php' ? 'active-link' : '' ?>"><?= __('nav_about') ?></a></li>
+                            <li><a href="gallery.php" class="<?= $current_page == 'gallery.php' ? 'active-link' : '' ?>"><?= __('nav_gallery') ?></a></li>
+                            <li><a href="contact.php" class="<?= $current_page == 'contact.php' ? 'active-link' : '' ?>"><?= __('nav_contact') ?></a></li>
                             <?php if ($is_logged_in): ?>
-                                <li><a href="my_profile.php">My Profile</a></li>
+                                <li><a href="my_profile.php" class="<?= $current_page == 'my_profile.php' ? 'active-link' : '' ?>"><?= __('nav_profile') ?></a></li>
                             <?php endif; ?>
                         </ul>
                     </nav>
@@ -70,14 +70,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <div class="col-xl-5 col-lg-5">
                     <div class="header-right-part d-flex justify-content-end align-items-center">
+                        <div class="lang-selector mr-4 d-flex align-items-center" style="gap: 8px;">
+                            <a href="<?= get_lang_url('en') ?>" style="color: <?= $lang_code == 'en' ? '#C5A880' : 'rgba(255,255,255,0.6)' ?>; font-weight: 700; font-size: 13px; text-decoration: none; border-bottom: <?= $lang_code == 'en' ? '2px solid #C5A880' : 'none' ?>; padding-bottom: 2px;">EN</a>
+                            <span style="color: rgba(255,255,255,0.3); font-size: 13px;">|</span>
+                            <a href="<?= get_lang_url('ms') ?>" style="color: <?= $lang_code == 'ms' ? '#C5A880' : 'rgba(255,255,255,0.6)' ?>; font-weight: 700; font-size: 13px; text-decoration: none; border-bottom: <?= $lang_code == 'ms' ? '2px solid #C5A880' : 'none' ?>; padding-bottom: 2px;">BM</a>
+                        </div>
                         <ul class="social-icons-head d-flex list-unstyled m-0 mr-4">
                             <li class="mr-3"><a href="https://www.facebook.com/profile.php?id=100092359781203" target="_blank" style="color:white;"><i class="fa-brands fa-facebook-f"></i></a></li>
                             <li><a href="https://www.tiktok.com/@easystayhomestay" target="_blank" style="color:white;"><i class="fa-brands fa-tiktok"></i></a></li>
                         </ul>
                         <?php if ($is_logged_in): ?>
-                            <a href="logout.php" class="auth-btn">Logout</a>
+                            <a href="logout.php" class="auth-btn"><?= __('nav_logout') ?></a>
                         <?php else: ?>
-                            <a href="login.php" class="auth-btn">Login / Register</a>
+                            <a href="login.php" class="auth-btn"><?= __('nav_login') ?></a>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -90,24 +95,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="mb-4">
                     <img src="img/logo.png?v=2" alt="EasyStay Logo" style="height: 100px; width: auto; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));">
                 </div>
-                <h1 class="welcome-title">Welcome to EasyStay</h1>
-                <p class="welcome-subtitle">A Digital Platform for Fast and Efficient Homestay Reservation</p>
-                <p class="welcome-description">Escape to our serene paradise nestled in Terengganu.</p>
+                <h1 class="welcome-title"><?= __('home_title') ?></h1>
+                <p class="welcome-subtitle"><?= __('home_subtitle') ?></p>
+                <p class="welcome-description"><?= __('home_description') ?></p>
 
                 <div class="row justify-content-center mt-4">
                     <div class="col-lg-10">
                         <form action="" method="post" class="check-form glass-effect">
                             <div class="row align-items-end">
                                 <div class="col-md-4">
-                                    <label>CHECK-IN</label>
+                                    <label><?= __('home_checkin') ?></label>
                                     <input type="date" name="check_in_date" class="form-control" required value="<?php echo isset($_POST['check_in_date']) ? $_POST['check_in_date'] : ''; ?>">
                                 </div>
                                 <div class="col-md-4">
-                                    <label>CHECK-OUT</label>
+                                    <label><?= __('home_checkout') ?></label>
                                     <input type="date" name="check_out_date" class="form-control" required value="<?php echo isset($_POST['check_out_date']) ? $_POST['check_out_date'] : ''; ?>">
                                 </div>
                                 <div class="col-md-4">
-                                    <button type="submit" class="btn-check">Check Availability</button>
+                                    <button type="submit" class="btn-check"><?= __('home_check_btn') ?></button>
                                 </div>
                             </div>
                         </form>
@@ -121,8 +126,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <!-- ===== VISUAL SHOWCASE SECTION ===== -->
         <section class="visual-showcase">
             <div class="showcase-header">
-                <span class="showcase-tag">Experience EasyStay</span>
-                <h2 class="showcase-title">Where Every Moment<br><em>Becomes a Memory</em></h2>
+                <span class="showcase-tag"><?= __('showcase_tag') ?></span>
+                <h2 class="showcase-title"><?= __('showcase_title') ?></h2>
             </div>
 
             <div class="showcase-grid">
@@ -132,8 +137,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="showcase-overlay">
                         <div class="showcase-content">
                             <div class="showcase-icon"><i class="fas fa-home"></i></div>
-                            <h3>Cozy Private Homestay</h3>
-                            <p>Charming village retreat with a private pool</p>
+                            <h3><?= __('showcase_homestay_title') ?></h3>
+                            <p><?= __('showcase_homestay_desc') ?></p>
                             <span class="showcase-cta">Explore <i class="fas fa-arrow-right"></i></span>
                         </div>
                     </div>
@@ -146,8 +151,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="showcase-overlay">
                             <div class="showcase-content">
                                 <div class="showcase-icon"><i class="fas fa-moon"></i></div>
-                                <h3>Luxury by Night</h3>
-                                <p>Magical evenings under the stars</p>
+                                <h3><?= __('showcase_night_title') ?></h3>
+                                <p><?= __('showcase_night_desc') ?></p>
                                 <span class="showcase-cta">Explore <i class="fas fa-arrow-right"></i></span>
                             </div>
                         </div>
@@ -157,8 +162,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="showcase-overlay">
                             <div class="showcase-content">
                                 <div class="showcase-icon"><i class="fas fa-swimming-pool"></i></div>
-                                <h3>Private Pool & Recreation</h3>
-                                <p>Your own slice of paradise</p>
+                                <h3><?= __('showcase_pool_title') ?></h3>
+                                <p><?= __('showcase_pool_desc') ?></p>
                                 <span class="showcase-cta">Explore <i class="fas fa-arrow-right"></i></span>
                             </div>
                         </div>
@@ -168,8 +173,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="showcase-overlay">
                             <div class="showcase-content">
                                 <div class="showcase-icon"><i class="fas fa-star"></i></div>
-                                <h3>Night Paradise</h3>
-                                <p>Glowing pool under starry skies</p>
+                                <h3><?= __('showcase_nightpool_title') ?></h3>
+                                <p><?= __('showcase_nightpool_desc') ?></p>
                                 <span class="showcase-cta">Explore <i class="fas fa-arrow-right"></i></span>
                             </div>
                         </div>
@@ -179,7 +184,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="showcase-footer">
                 <a href="gallery.php" class="showcase-gallery-btn">
-                    <i class="fas fa-images mr-2"></i> View Full Gallery
+                    <i class="fas fa-images mr-2"></i> <?= __('showcase_gallery_btn') ?>
                 </a>
             </div>
         </section>
@@ -394,8 +399,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <section class="testimonials-section">
             <div class="container">
                 <div class="section-title mb-5">
-                    <h2>What Our Guests Say</h2>
-                    <p>Real experiences shared by our visitors.</p>
+                    <h2><?= __('testi_title') ?></h2>
+                    <p><?= __('testi_subtitle') ?></p>
                 </div>
                 <div class="row">
                     <?php while ($testi = $testi_result->fetch_assoc()): 
@@ -421,7 +426,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <div class="author-avatar"><?= $avatar_letter ?></div>
                                     <div class="author-info">
                                         <h5 style="text-transform: capitalize;"><?= htmlspecialchars(strtolower($testi['full_name'])) ?></h5>
-                                        <small>Stayed in <?= htmlspecialchars($testi['package_name']) ?></small>
+                                        <small><?= __('testi_stayed') ?> <?= htmlspecialchars($testi['package_name']) ?></small>
                                     </div>
                                 </div>
                             </div>
@@ -438,37 +443,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="row">
                 <div class="col-lg-3 col-md-6 mb-4">
                     <h3>EASYSTAY</h3>
-                    <p>Lot 8012, Kampung Binjai Kertas,</p>
-                    <p>21700 Kuala Berang, Terengganu.</p>
+                    <p><?= __('footer_desc') ?></p>
                     <div class="footer-social-icons">
                         <a href="https://www.facebook.com/profile.php?id=100092359781203" target="_blank"><i class="fab fa-facebook"></i></a>
                         <a href="https://www.tiktok.com/@easystayhomestay" target="_blank"><i class="fab fa-tiktok"></i></a>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-4">
-                    <h3>CONTACT US</h3>
+                    <h3><?= __('footer_contact') ?></h3>
                     <p><i class="fas fa-phone-alt mr-2"></i> +60 19 211 9223</p>
                     <p><i class="fas fa-envelope mr-2"></i> reservation@easystay.com</p>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-4">
-                    <h3>NAVIGATION</h3>
-                    <a href="index.php">Home</a>
-                    <a href="package.php">Package</a>
-                    <a href="about.php">About</a>
-                    <a href="gallery.php">Gallery</a>
-                    <a href="contact.php">Contact</a>
+                    <h3><?= __('footer_nav') ?></h3>
+                    <a href="index.php"><?= __('nav_home') ?></a>
+                    <a href="package.php"><?= __('nav_package') ?></a>
+                    <a href="about.php"><?= __('nav_about') ?></a>
+                    <a href="gallery.php"><?= __('nav_gallery') ?></a>
+                    <a href="contact.php"><?= __('nav_contact') ?></a>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-4">
-                    <h3>NEWSLETTER</h3>
-                    <p>Subscribe to get latest offers.</p>
+                    <h3><?= __('footer_newsletter') ?></h3>
+                    <p><?= __('footer_subscribe') ?></p>
                     <div class="newsletter-box">
-                        <input type="email" placeholder="Your email">
-                        <button type="button">Sign Up</button>
+                        <input type="email" placeholder="<?= __('footer_newsletter_placeholder') ?>">
+                        <button type="button"><?= __('footer_signup') ?></button>
                     </div>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>Copyright EasyStay &copy; 2025. All rights reserved.</p>
+                <p><?= __('footer_copyright') ?></p>
             </div>
         </div>
     </footer>

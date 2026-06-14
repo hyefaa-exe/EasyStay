@@ -49,6 +49,9 @@ if ($update->execute()) {
 
         $checkin  = date('d M Y', strtotime($res['checkin_date']));
         $checkout = date('d M Y', strtotime($res['checkout_date']));
+        
+        $days_to_checkin = (strtotime($res['checkin_date']) - time()) / (60 * 60 * 24);
+        $refund_status = ($days_to_checkin >= 7) ? "<span style='color:green;font-weight:bold;'>ELIGIBLE FOR REFUND (Cancelled >7 days before check-in)</span>" : "<span style='color:red;font-weight:bold;'>FORFEITED (Cancelled <7 days before check-in)</span>";
 
         $emailBody = "
             <h2 style='color:#e74c3c;'>⚠️ Booking Cancelled by Customer</h2>
@@ -60,6 +63,7 @@ if ($update->execute()) {
                 <tr><td style='padding:8px; background:#f9f9f9; font-weight:bold;'>Check-in</td><td style='padding:8px;'>$checkin</td></tr>
                 <tr><td style='padding:8px; background:#f9f9f9; font-weight:bold;'>Check-out</td><td style='padding:8px;'>$checkout</td></tr>
                 <tr><td style='padding:8px; background:#f9f9f9; font-weight:bold;'>Total Price</td><td style='padding:8px;'>RM " . number_format($res['total_price'], 2) . "</td></tr>
+                <tr><td style='padding:8px; background:#f9f9f9; font-weight:bold;'>Refund Status</td><td style='padding:8px;'>$refund_status</td></tr>
             </table>
             <p style='margin-top:16px; color:#666;'>The customer has cancelled this booking from their profile. Please review and update your records accordingly.</p>
             <a href='http://localhost/EasyStay/admin/manage_bookings.php' style='display:inline-block; margin-top:16px; padding:10px 20px; background:#1d1d1f; color:white; text-decoration:none; border-radius:8px;'>View Booking Records</a>

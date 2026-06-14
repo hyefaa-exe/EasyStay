@@ -16,19 +16,19 @@ if (isset($_POST['register'])) {
 
     // === VALIDASI ===
     if (empty($full_name) || empty($username) || empty($email) || empty($phone) || empty($password)) {
-        $error_msg = "Sila isi semua maklumat yang diperlukan.";
+        $error_msg = __('register_err_required');
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error_msg = "Format email tidak sah.";
+        $error_msg = __('register_err_email');
     } elseif (!preg_match('/^(01[0-9])\d{7,8}$/', $phone)) {
-        $error_msg = "Format nombor telefon tidak sah. Contoh: 0123456789";
+        $error_msg = __('register_err_phone');
     } elseif (strlen($password) < 8) {
-        $error_msg = "Kata laluan mesti sekurang-kurangnya 8 aksara.";
+        $error_msg = __('register_err_pass_length');
     } elseif (!preg_match('/[A-Z]/', $password)) {
-        $error_msg = "Kata laluan mesti mengandungi sekurang-kurangnya 1 huruf besar.";
+        $error_msg = __('register_err_pass_upper');
     } elseif (!preg_match('/[0-9]/', $password)) {
-        $error_msg = "Kata laluan mesti mengandungi sekurang-kurangnya 1 nombor.";
+        $error_msg = __('register_err_pass_num');
     } elseif ($password !== $confirm_password) {
-        $error_msg = "Kata laluan tidak sepadan. Sila semak semula.";
+        $error_msg = __('register_err_pass_match');
     } else {
         // Semak username/email duplikat
         $check_stmt = $conn->prepare("SELECT user_id FROM users WHERE username = ? OR email = ?");
@@ -37,7 +37,7 @@ if (isset($_POST['register'])) {
         $check_result = $check_stmt->get_result();
 
         if ($check_result->num_rows > 0) {
-            $error_msg = "Username atau Email sudah didaftarkan!";
+            $error_msg = __('register_err_duplicate');
         } else {
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
             $stmt = $conn->prepare("INSERT INTO users (full_name, username, email, phone, password) VALUES (?, ?, ?, ?, ?)");
@@ -52,11 +52,11 @@ if (isset($_POST['register'])) {
                     header("Location: index.php");
                     exit();
                 } else {
-                    $error_msg = "Pendaftaran gagal. Sila cuba lagi.";
+                    $error_msg = __('register_err_failed');
                 }
                 $stmt->close();
             } else {
-                $error_msg = "Ralat pangkalan data.";
+                $error_msg = __('register_err_db');
             }
         }
         $check_stmt->close();
@@ -70,7 +70,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
 <head>
     <meta charset="utf-8">
-    <title>Register | EasyStay</title>
+    <title><?= __('register_title') ?> | EasyStay</title>
     <meta name="description" content="EasyStay - A Digital Platform for Fast and Efficient Homestay Reservation">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png?v=2">
@@ -222,8 +222,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
         <div class="login-logo">
             <a href="index.php"><img src="img/logo.png?v=2" alt="EasyStay Logo"></a>
         </div>
-        <h2 class="login-title">Create Account</h2>
-        <p class="login-subtitle">Join us for a better experience</p>
+        <h2 class="login-title"><?= __('register_title') ?></h2>
+        <p class="login-subtitle"><?= __('register_subtitle') ?></p>
 
         <?php if (!empty($error_msg)): ?>
             <div class="alert-custom">
@@ -233,50 +233,62 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
         <form method="POST">
             <div class="form-group">
-                <label class="form-label">Full Name</label>
-                <input type="text" name="full_name" class="form-control-ios" placeholder="Enter your full name" required>
+                <label class="form-label"><?= __('register_fullname') ?></label>
+                <input type="text" name="full_name" class="form-control-ios" placeholder="<?= __('register_fullname_placeholder') ?>" required>
             </div>
 
             <div class="form-group">
-                <label class="form-label">Username</label>
-                <input type="text" name="username" class="form-control-ios" placeholder="Choose a username" required>
+                <label class="form-label"><?= __('register_username') ?></label>
+                <input type="text" name="username" class="form-control-ios" placeholder="<?= __('register_username_placeholder') ?>" required>
             </div>
 
             <div class="form-group">
-                <label class="form-label">Email Address</label>
-                <input type="email" name="email" class="form-control-ios" placeholder="name@example.com" required>
+                <label class="form-label"><?= __('register_email') ?></label>
+                <input type="email" name="email" class="form-control-ios" placeholder="<?= __('register_email_placeholder') ?>" required>
             </div>
 
             <div class="form-group">
-                <label class="form-label">Phone Number</label>
-                <input type="text" name="phone" class="form-control-ios" placeholder="e.g. 0123456789" required>
+                <label class="form-label"><?= __('register_phone') ?></label>
+                <input type="text" name="phone" class="form-control-ios" placeholder="<?= __('register_phone_placeholder') ?>" required>
             </div>
 
             <div class="form-group">
-                <label class="form-label">Password</label>
-                <input type="password" name="password" id="password" class="form-control-ios" placeholder="Min. 8 aksara, 1 huruf besar, 1 nombor" required>
+                <label class="form-label"><?= __('register_password') ?></label>
+                <input type="password" name="password" id="password" class="form-control-ios" placeholder="<?= __('register_password_placeholder') ?>" required>
                 <div id="pwd-strength" style="font-size:11px; margin-top:5px; color:#888;"></div>
             </div>
 
             <div class="form-group">
-                <label class="form-label">Confirm Password</label>
-                <input type="password" name="confirm_password" id="confirm_password" class="form-control-ios" placeholder="Taip semula kata laluan" required>
+                <label class="form-label"><?= __('register_confirm_password') ?></label>
+                <input type="password" name="confirm_password" id="confirm_password" class="form-control-ios" placeholder="<?= __('register_confirm_password_placeholder') ?>" required>
                 <div id="pwd-match" style="font-size:11px; margin-top:5px;"></div>
             </div>
 
-            <button type="submit" name="register" class="btn-login-ios">Register Now</button>
+            <button type="submit" name="register" class="btn-login-ios"><?= __('register_btn') ?></button>
         </form>
 
         <div class="register-link">
-            Already have an account? <a href="login.php">Sign In</a>
+            <?= __('register_already_account') ?> <a href="login.php"><?= __('register_sign_in') ?></a>
         </div>
 
-        <a href="index.php" class="back-home"><i class="fas fa-arrow-left mr-1"></i> Back to Home</a>
+        <a href="index.php" class="back-home"><i class="fas fa-arrow-left mr-1"></i> <?= __('login_back') ?></a>
     </div>
 
     <script src="js/vendor/jquery-1.12.4.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script>
+        // Localized JS variables
+        const labelWeak = <?= json_encode(__('js_strength_weak')) ?>;
+        const labelMedium = <?= json_encode(__('js_strength_medium')) ?>;
+        const labelGood = <?= json_encode(__('js_strength_good')) ?>;
+        const labelStrong = <?= json_encode(__('js_strength_strong')) ?>;
+        const labelNeed = <?= json_encode(__('js_strength_need')) ?>;
+        const labelMinChar = <?= json_encode(__('js_strength_min_char')) ?>;
+        const labelUppercase = <?= json_encode(__('js_strength_uppercase')) ?>;
+        const labelNumber = <?= json_encode(__('js_strength_number')) ?>;
+        const labelMatch = <?= json_encode(__('js_pass_match')) ?>;
+        const labelNotMatch = <?= json_encode(__('js_pass_not_match')) ?>;
+
         // Password Strength Checker
         document.getElementById('password').addEventListener('input', function() {
             const val = this.value;
@@ -284,15 +296,15 @@ $current_page = basename($_SERVER['PHP_SELF']);
             let score = 0;
             let tips  = [];
 
-            if (val.length >= 8)          score++; else tips.push('min. 8 aksara');
-            if (/[A-Z]/.test(val))        score++; else tips.push('1 huruf besar');
-            if (/[0-9]/.test(val))        score++; else tips.push('1 nombor');
+            if (val.length >= 8)          score++; else tips.push(labelMinChar);
+            if (/[A-Z]/.test(val))        score++; else tips.push(labelUppercase);
+            if (/[0-9]/.test(val))        score++; else tips.push(labelNumber);
             if (/[^A-Za-z0-9]/.test(val)) score++;
 
-            const labels = ['', '⚠️ Lemah', '⚠️ Sederhana', '✅ Baik', '✅ Sangat Kuat'];
+            const labels = ['', '⚠️ ' + labelWeak, '⚠️ ' + labelMedium, '✅ ' + labelGood, '✅ ' + labelStrong];
             const colors = ['', '#e74c3c', '#f39c12', '#27ae60', '#1e8449'];
             el.style.color = colors[score] || '#888';
-            el.innerHTML = score > 0 ? labels[score] + (tips.length ? ' — perlu: ' + tips.join(', ') : '') : '';
+            el.innerHTML = score > 0 ? labels[score] + (tips.length ? ' — ' + labelNeed + ': ' + tips.join(', ') : '') : '';
 
             checkMatch();
         });
@@ -305,10 +317,10 @@ $current_page = basename($_SERVER['PHP_SELF']);
             if (!conf) { el.innerHTML = ''; return; }
             if (pwd === conf) {
                 el.style.color = '#27ae60';
-                el.innerHTML   = '✅ Kata laluan sepadan';
+                el.innerHTML   = '✅ ' + labelMatch;
             } else {
                 el.style.color = '#e74c3c';
-                el.innerHTML   = '❌ Kata laluan tidak sepadan';
+                el.innerHTML   = '❌ ' + labelNotMatch;
             }
         }
         document.getElementById('confirm_password').addEventListener('input', checkMatch);

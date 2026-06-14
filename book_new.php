@@ -208,13 +208,13 @@ while ($row = $result_cal->fetch_assoc()) {
                 <div class="col-xl-5 col-lg-5 d-none d-lg-block">
                     <nav>
                         <ul id="navigation">
-                            <li><a href="index.php">Home</a></li>
-                            <li><a href="package.php" class="active-link">Package</a></li>
-                            <li><a href="about.php">About</a></li>
-                            <li><a href="gallery.php">Gallery</a></li>
-                            <li><a href="contact.php">Contact</a></li>
+                            <li><a href="index.php" class="<?= $current_page == 'index.php' ? 'active-link' : '' ?>"><?= __('nav_home') ?></a></li>
+                            <li><a href="package.php" class="<?= $current_page == 'package.php' ? 'active-link' : '' ?>"><?= __('nav_package') ?></a></li>
+                            <li><a href="about.php" class="<?= $current_page == 'about.php' ? 'active-link' : '' ?>"><?= __('nav_about') ?></a></li>
+                            <li><a href="gallery.php" class="<?= $current_page == 'gallery.php' ? 'active-link' : '' ?>"><?= __('nav_gallery') ?></a></li>
+                            <li><a href="contact.php" class="<?= $current_page == 'contact.php' ? 'active-link' : '' ?>"><?= __('nav_contact') ?></a></li>
                             <?php if ($is_logged_in): ?>
-                                <li><a href="my_profile.php">My Profile</a></li>
+                                <li><a href="my_profile.php" class="<?= $current_page == 'my_profile.php' ? 'active-link' : '' ?>"><?= __('nav_profile') ?></a></li>
                             <?php endif; ?>
                         </ul>
                     </nav>
@@ -224,14 +224,19 @@ while ($row = $result_cal->fetch_assoc()) {
                 </div>
                 <div class="col-xl-5 col-lg-5">
                     <div class="header-right-part d-flex justify-content-end align-items-center">
+                        <div class="lang-selector mr-4 d-flex align-items-center" style="gap: 8px;">
+                            <a href="<?= get_lang_url('en') ?>" style="color: <?= $lang_code == 'en' ? '#C5A880' : 'rgba(255,255,255,0.6)' ?>; font-weight: 700; font-size: 13px; text-decoration: none; border-bottom: <?= $lang_code == 'en' ? '2px solid #C5A880' : 'none' ?>; padding-bottom: 2px;">EN</a>
+                            <span style="color: rgba(255,255,255,0.3); font-size: 13px;">|</span>
+                            <a href="<?= get_lang_url('ms') ?>" style="color: <?= $lang_code == 'ms' ? '#C5A880' : 'rgba(255,255,255,0.6)' ?>; font-weight: 700; font-size: 13px; text-decoration: none; border-bottom: <?= $lang_code == 'ms' ? '2px solid #C5A880' : 'none' ?>; padding-bottom: 2px;">BM</a>
+                        </div>
                         <ul class="social-icons-head d-flex list-unstyled m-0 mr-4">
                             <li class="mr-3"><a href="https://www.facebook.com/profile.php?id=100092359781203" target="_blank" style="color:white;"><i class="fa-brands fa-facebook-f"></i></a></li>
                             <li><a href="https://www.tiktok.com/@easystayhomestay" target="_blank" style="color:white;"><i class="fa-brands fa-tiktok"></i></a></li>
                         </ul>
                         <?php if ($is_logged_in): ?>
-                            <a href="logout.php" class="auth-btn">Logout</a>
+                            <a href="logout.php" class="auth-btn"><?= __('nav_logout') ?></a>
                         <?php else: ?>
-                            <a href="login.php" class="auth-btn">Login / Register</a>
+                            <a href="login.php" class="auth-btn"><?= __('nav_login') ?></a>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -241,7 +246,7 @@ while ($row = $result_cal->fetch_assoc()) {
 
     <main class="main-content">
         <div class="container">
-            <a href="package.php" class="back-btn"><i class="fa fa-arrow-left mr-2"></i> Back to Packages</a>
+            <a href="package.php" class="back-btn"><i class="fa fa-arrow-left mr-2"></i> <?= __('book_back_btn') ?></a>
 
             <div class="booking-container">
                 <div class="package-info-card">
@@ -264,12 +269,12 @@ while ($row = $result_cal->fetch_assoc()) {
                         </div>
 
                         <div class="price-row mb-4">
-                            <span class="price-label">Price per night:</span>
+                            <span class="price-label"><?= __('pkg_price_label') ?>:</span>
                             <div class="price-tag-box">RM <?= number_format($package_rs['price'], 2) ?></div>
                         </div>
 
                         <div class="booking-features-list">
-                            <h5>Package Inclusions</h5>
+                            <h5><?= __('book_inclusions') ?></h5>
                             <ul class="list-unstyled">
                                 <?php foreach ($pkg_features['inclusions'] as $inc): ?>
                                     <li>
@@ -283,7 +288,7 @@ while ($row = $result_cal->fetch_assoc()) {
                         <!-- Inline Availability Calendar -->
                         <div class="availability-calendar-box mt-4 pt-3 border-top">
                             <h5 class="mb-3" style="font-size: 14px; font-weight: 700; color: #1c1c1c; letter-spacing: -0.2px;">
-                                <i class="fa-solid fa-calendar-days mr-2" style="color: #C5A880;"></i>Availability Calendar
+                                <i class="fa-solid fa-calendar-days mr-2" style="color: #C5A880;"></i><?= __('book_availability_cal') ?>
                             </h5>
                             <div class="inline-calendar-container" style="background: #ffffff; border-radius: 12px; padding: 10px; border: 1px solid rgba(0, 0, 0, 0.05); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);">
                                 <div id="inline_calendar"></div>
@@ -291,13 +296,13 @@ while ($row = $result_cal->fetch_assoc()) {
                             <div class="calendar-legend d-flex justify-content-start mt-2 px-1" style="font-size: 11px; color: #6e6e73; gap: 15px;">
                                 <div class="d-flex align-items-center">
                                     <span style="display: inline-block; width: 10px; height: 10px; background: #f0fdf4; border: 1px solid #dcfce7; border-radius: 2px; margin-right: 5px;"></span>
-                                    Available
+                                    <?= __('book_avail_legend') ?>
                                 </div>
                                 <div class="d-flex align-items-center">
                                     <span style="display: inline-block; width: 10px; height: 10px; background: #fff5f5; border: 1px solid #fed7d7; border-radius: 2px; position: relative; overflow: hidden; margin-right: 5px;">
                                         <span style="position: absolute; top: 50%; left: 0; right: 0; border-top: 1px dashed #e53e3e; transform: rotate(-45deg);"></span>
                                     </span>
-                                    Booked
+                                    <?= __('book_booked_legend') ?>
                                 </div>
                             </div>
                         </div>
@@ -305,8 +310,8 @@ while ($row = $result_cal->fetch_assoc()) {
                 </div>
 
                 <div class="reservation-form-card">
-                    <h3 class="font-weight-bold mb-1">Reservation Details</h3>
-                    <p class="text-muted mb-4">Please fill in your check-in dates and details below.</p>
+                    <h3 class="font-weight-bold mb-1"><?= __('book_title') ?></h3>
+                    <p class="text-muted mb-4"><?= __('book_desc') ?></p>
 
                     <form id="bookingForm" action="booking_process.php" method="POST" enctype="multipart/form-data">
                         <input type="hidden" name="package_id" value="<?= $package_id ?>">
@@ -315,42 +320,42 @@ while ($row = $result_cal->fetch_assoc()) {
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="font-weight-bold small">Check-in Date</label>
-                                <input type="text" id="checkin_date" name="checkin_date" class="form-control" placeholder="Select date" readonly required value="<?= htmlspecialchars($check_in_val) ?>">
+                                <label class="font-weight-bold small"><?= __('book_checkin') ?></label>
+                                <input type="text" id="checkin_date" name="checkin_date" class="form-control" placeholder="<?= __('book_select_date_placeholder') ?>" readonly required value="<?= htmlspecialchars($check_in_val) ?>">
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="font-weight-bold small">Check-out Date</label>
-                                <input type="text" id="checkout_date" name="checkout_date" class="form-control" placeholder="Select date" readonly required value="<?= htmlspecialchars($check_out_val) ?>">
+                                <label class="font-weight-bold small"><?= __('book_checkout') ?></label>
+                                <input type="text" id="checkout_date" name="checkout_date" class="form-control" placeholder="<?= __('book_select_date_placeholder') ?>" readonly required value="<?= htmlspecialchars($check_out_val) ?>">
                             </div>
                         </div>
 
                         <div class="row mt-2">
                             <div class="col-md-6 mb-3">
-                                <label class="font-weight-bold small">Adults</label>
+                                <label class="font-weight-bold small"><?= __('book_adults') ?></label>
                                 <input type="number" name="adults" class="form-control" value="1" min="1">
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="font-weight-bold small">Children</label>
+                                <label class="font-weight-bold small"><?= __('book_children') ?></label>
                                 <input type="number" name="children" class="form-control" value="0" min="0">
                             </div>
                         </div>
 
                         <div class="total-pay-box">
-                            <small>Booking Deposit (Required Now)</small>
+                            <small><?= __('book_deposit_req') ?></small>
                             <h2 class="mb-2">RM 50.00</h2>
                             
                             <div class="booking-breakdown-box">
                                 <div class="breakdown-row">
-                                    <span>Total Room Price:</span>
+                                    <span><?= __('book_total_room') ?>:</span>
                                     <strong>RM <span id="display_room_total">0.00</span></strong>
                                 </div>
                                 <div class="breakdown-row mt-1">
-                                    <span>Remaining Balance (Payable at Check-in):</span>
+                                    <span><?= __('book_remaining') ?>:</span>
                                     <strong>RM <span id="display_room_balance">0.00</span></strong>
                                 </div>
                                 <div class="breakdown-row mt-1">
-                                    <span>Security Deposit (Refunded after Check-out):</span>
-                                    <span class="text-success font-weight-bold">RM 50.00 (Included in Deposit above)</span>
+                                    <span><?= __('book_security') ?>:</span>
+                                    <span class="text-success font-weight-bold"><?= __('book_sec_inc') ?></span>
                                 </div>
                             </div>
                         </div>
@@ -360,20 +365,20 @@ while ($row = $result_cal->fetch_assoc()) {
 
                         <!-- Payment Mode Toggles -->
                         <div class="payment-method-selector mb-4">
-                            <label class="font-weight-bold small mb-2 d-block text-dark">Select Payment Option</label>
+                            <label class="font-weight-bold small mb-2 d-block text-dark"><?= __('book_select_payment') ?></label>
                             <div class="d-flex flex-column flex-sm-row gap-2" style="gap: 12px;">
                                 <div class="payment-option-card active" id="opt_gateway" onclick="selectPaymentMethod('gateway')">
                                     <div class="option-icon"><i class="fa-solid fa-credit-card"></i></div>
                                     <div class="option-details">
-                                        <strong>Instant Online Payment</strong>
-                                        <span>FPX / Visa / Mastercard</span>
+                                        <strong><?= __('book_instant_pay') ?></strong>
+                                        <span><?= __('book_instant_desc') ?></span>
                                     </div>
                                 </div>
                                 <div class="payment-option-card" id="opt_manual" onclick="selectPaymentMethod('manual')">
                                     <div class="option-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
                                     <div class="option-details">
-                                        <strong>Manual Bank Transfer</strong>
-                                        <span>Upload Bank Receipt</span>
+                                        <strong><?= __('book_manual_pay') ?></strong>
+                                        <span><?= __('book_manual_desc') ?></span>
                                     </div>
                                 </div>
                             </div>
@@ -387,9 +392,9 @@ while ($row = $result_cal->fetch_assoc()) {
                                         <i class="fa-solid fa-circle-check"></i>
                                     </div>
                                     <div class="alert-body">
-                                        <h6 class="alert-title font-weight-bold mb-1 text-success">Instant Booking Confirmation</h6>
+                                        <h6 class="alert-title font-weight-bold mb-1 text-success"><?= __('book_instant_title') ?></h6>
                                         <p class="alert-text mb-0 text-dark small" style="line-height: 1.5;">
-                                            By paying the deposit of <span class="highlight-deposit" style="font-weight:700; color:#C5A880;">RM 50.00</span> through our secure online payment portal, your stay will be <strong>instantly booked and accepted</strong> in our system! No manual verification required.
+                                            <?= __('book_instant_alert') ?>
                                         </p>
                                     </div>
                                 </div>
@@ -398,13 +403,13 @@ while ($row = $result_cal->fetch_assoc()) {
 
                         <!-- 2. Manual Bank Info Section -->
                         <div id="section_manual" class="bank-info-section" style="display: none;">
-                            <h6 class="font-weight-bold mb-3 text-dark" style="font-size: 14px;"><i class="fa fa-university mr-2 text-warning"></i> Bank Transfer Information</h6>
+                            <h6 class="font-weight-bold mb-3 text-dark" style="font-size: 14px;"><i class="fa fa-university mr-2 text-warning"></i> <?= __('book_bank_info') ?></h6>
                             <div class="d-flex justify-content-between mb-1">
-                                <span class="text-muted small">Bank Name:</span>
+                                <span class="text-muted small"><?= __('book_bank_name') ?>:</span>
                                 <span class="font-weight-bold small text-dark">PUBLIC BANK BERHAD</span>
                             </div>
                             <div class="d-flex justify-content-between mb-3">
-                                <span class="text-muted small">Account No:</span>
+                                <span class="text-muted small"><?= __('book_acc_no') ?>:</span>
                                 <span class="font-weight-bold text-dark">8763780979</span>
                             </div>
 
@@ -414,20 +419,27 @@ while ($row = $result_cal->fetch_assoc()) {
                                         <i class="fa-solid fa-triangle-exclamation"></i>
                                     </div>
                                     <div class="alert-body">
-                                        <h6 class="alert-title font-weight-bold mb-1" style="color: #856404;">Requires Manual Review</h6>
+                                        <h6 class="alert-title font-weight-bold mb-1" style="color: #856404;"><?= __('book_manual_title') ?></h6>
                                         <p class="alert-text mb-0 text-dark small" style="line-height: 1.5;">
-                                            Transfer exactly <span class="highlight-deposit" style="font-weight:700; color:#C5A880;">RM 50.00</span> to the bank details above. You must upload the receipt slip below. The booking will remain <strong>Pending</strong> until an administrator manually verifies it.
+                                            <?= __('book_manual_alert') ?>
                                         </p>
                                     </div>
                                 </div>
                             </div>
 
-                            <label class="font-weight-bold small text-dark mb-2">Proof of Payment (Image/PDF)</label>
+                            <label class="font-weight-bold small text-dark mb-2"><?= __('book_proof') ?></label>
                             <input type="file" id="payment_receipt" name="payment_receipt" class="form-control-file" accept="image/*,.pdf">
                         </div>
 
+                        <div class="custom-control custom-checkbox mt-4 mb-2">
+                            <input type="checkbox" class="custom-control-input" id="tnc_agree" name="tnc_agree" required onchange="validateForm()">
+                            <label class="custom-control-label small text-dark" for="tnc_agree" style="font-weight: 600; line-height: 1.5; cursor: pointer;">
+                                <?= __('book_tnc_agree') ?>
+                            </label>
+                        </div>
+
                         <button type="submit" id="submitBtn" class="btn-confirm" disabled style="margin-top: 15px;">
-                            <i class="fa fa-lock mr-2"></i> Confirm & Book Securely
+                            <i class="fa fa-lock mr-2"></i> <?= __('book_confirm_btn') ?>
                         </button>
                     </form>
                 </div>
@@ -440,41 +452,36 @@ while ($row = $result_cal->fetch_assoc()) {
             <div class="row">
                 <div class="col-lg-3 col-md-6 mb-4">
                     <h3>EASYSTAY</h3>
-                    <p>Lot 8012, Kampung Binjai Kertas,</p>
-                    <p>21700 Kuala Berang, Terengganu.</p>
+                    <p><?= __('footer_desc') ?></p>
                     <div class="footer-social-icons">
-                        <a href="https://www.facebook.com/profile.php?id=100092359781203"><i class="fab fa-facebook"></i></a>
-                        <a href="https://www.tiktok.com/@easystayhomestay"><i class="fab fa-tiktok"></i></a>
+                        <a href="https://www.facebook.com/profile.php?id=100092359781203" target="_blank"><i class="fab fa-facebook"></i></a>
+                        <a href="https://www.tiktok.com/@easystayhomestay" target="_blank"><i class="fab fa-tiktok"></i></a>
                     </div>
                 </div>
-
                 <div class="col-lg-3 col-md-6 mb-4">
-                    <h3>CONTACT US</h3>
+                    <h3><?= __('footer_contact') ?></h3>
                     <p><i class="fas fa-phone-alt mr-2"></i> +60 19 211 9223</p>
                     <p><i class="fas fa-envelope mr-2"></i> reservation@easystay.com</p>
                 </div>
-
                 <div class="col-lg-3 col-md-6 mb-4">
-                    <h3>NAVIGATION</h3>
-                    <a href="index.php">Home</a>
-                    <a href="package.php">Package</a>
-                    <a href="about.php">About</a>
-                    <a href="gallery.php">Gallery</a>
-                    <a href="contact.php">Contact</a>
+                    <h3><?= __('footer_nav') ?></h3>
+                    <a href="index.php"><?= __('nav_home') ?></a>
+                    <a href="package.php"><?= __('nav_package') ?></a>
+                    <a href="about.php"><?= __('nav_about') ?></a>
+                    <a href="gallery.php"><?= __('nav_gallery') ?></a>
+                    <a href="contact.php"><?= __('nav_contact') ?></a>
                 </div>
-
                 <div class="col-lg-3 col-md-6 mb-4">
-                    <h3>NEWSLETTER</h3>
-                    <p>Subscribe to get latest offers.</p>
+                    <h3><?= __('footer_newsletter') ?></h3>
+                    <p><?= __('footer_subscribe') ?></p>
                     <div class="newsletter-box">
-                        <input type="email" placeholder="Your email">
-                        <button type="button">Sign Up</button>
+                        <input type="email" placeholder="<?= __('footer_newsletter_placeholder') ?>">
+                        <button type="button"><?= __('footer_signup') ?></button>
                     </div>
                 </div>
             </div>
-
             <div class="footer-bottom">
-                <p>Copyright EasyStay &copy; 2025. All rights reserved.</p>
+                <p><?= __('footer_copyright') ?></p>
             </div>
         </div>
     </footer>
@@ -485,24 +492,24 @@ while ($row = $result_cal->fetch_assoc()) {
             <div class="modal-content border-0" style="border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.25); overflow: hidden;">
                 <!-- Header -->
                 <div class="modal-header bg-dark text-white border-0 py-3 px-4 d-flex justify-content-between align-items-center">
-                    <h5 class="modal-title font-weight-bold" style="font-size: 16px; letter-spacing: -0.3px; color: white;"><i class="fa-solid fa-shield-halved mr-2 text-warning"></i> Secure Gateway Checkout</h5>
+                    <h5 class="modal-title font-weight-bold" style="font-size: 16px; letter-spacing: -0.3px; color: white;"><i class="fa-solid fa-shield-halved mr-2 text-warning"></i> <?= __('modal_secure_checkout') ?></h5>
                     <button type="button" class="close text-white opacity-80" data-dismiss="modal" aria-label="Close" style="background:transparent; border:none; outline:none; font-size: 20px; color: white;">&times;</button>
                 </div>
                 
                 <!-- Modal Body -->
                 <div class="modal-body p-4" style="background: #fcfcfc;">
                     <div class="text-center mb-4 pb-3 border-bottom">
-                        <span class="text-muted small uppercase font-weight-bold d-block mb-1">EasyStay Deposit Payment</span>
+                        <span class="text-muted small uppercase font-weight-bold d-block mb-1"><?= __('modal_deposit_pay') ?></span>
                         <h2 class="font-weight-bold mb-0 text-dark">RM 50.00</h2>
                     </div>
 
                     <!-- Payment Mode Tabs -->
                     <ul class="nav nav-pills nav-fill mb-3" id="pills-tab" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <a class="nav-link active font-weight-bold small py-2" id="pills-card-tab" data-toggle="pill" href="#pills-card" role="tab" style="border-radius: 8px;"><i class="fa-solid fa-credit-card mr-2"></i> Credit / Debit Card</a>
+                            <a class="nav-link active font-weight-bold small py-2" id="pills-card-tab" data-toggle="pill" href="#pills-card" role="tab" style="border-radius: 8px;"><i class="fa-solid fa-credit-card mr-2"></i> <?= __('modal_card_tab') ?></a>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <a class="nav-link font-weight-bold small py-2" id="pills-fpx-tab" data-toggle="pill" href="#pills-fpx" role="tab" style="border-radius: 8px;"><i class="fa-solid fa-building-columns mr-2"></i> FPX Online Banking</a>
+                            <a class="nav-link font-weight-bold small py-2" id="pills-fpx-tab" data-toggle="pill" href="#pills-fpx" role="tab" style="border-radius: 8px;"><i class="fa-solid fa-building-columns mr-2"></i> <?= __('modal_fpx_tab') ?></a>
                         </li>
                     </ul>
 
@@ -511,7 +518,7 @@ while ($row = $result_cal->fetch_assoc()) {
                         <div class="tab-pane fade show active" id="pills-card" role="tabpanel">
                             <div class="card-form-wrapper">
                                 <div class="form-group mb-3">
-                                    <label class="small font-weight-bold mb-1 text-dark">Card Number</label>
+                                    <label class="small font-weight-bold mb-1 text-dark"><?= __('modal_card_num') ?></label>
                                     <div class="input-group">
                                         <input type="text" id="cc_number" class="form-control" placeholder="4111 2222 3333 4444" maxlength="19" style="height: 42px; border-radius: 8px; font-size: 14px;">
                                         <div class="input-group-append">
@@ -521,17 +528,17 @@ while ($row = $result_cal->fetch_assoc()) {
                                 </div>
                                 <div class="row">
                                     <div class="col-7 form-group mb-3">
-                                        <label class="small font-weight-bold mb-1 text-dark">Expiry Date</label>
+                                        <label class="small font-weight-bold mb-1 text-dark"><?= __('modal_card_expiry') ?></label>
                                         <input type="text" id="cc_expiry" class="form-control" placeholder="MM/YY" maxlength="5" style="height: 42px; border-radius: 8px; font-size: 14px;">
                                     </div>
                                     <div class="col-5 form-group mb-3">
-                                        <label class="small font-weight-bold mb-1 text-dark">CVV</label>
+                                        <label class="small font-weight-bold mb-1 text-dark"><?= __('modal_card_cvv') ?></label>
                                         <input type="password" id="cc_cvv" class="form-control" placeholder="123" maxlength="3" style="height: 42px; border-radius: 8px; font-size: 14px;">
                                     </div>
                                 </div>
                                 <div class="form-group mb-3">
-                                    <label class="small font-weight-bold mb-1 text-dark">Cardholder Name</label>
-                                    <input type="text" id="cc_name" class="form-control" placeholder="e.g. John Doe" style="height: 42px; border-radius: 8px; font-size: 14px;">
+                                    <label class="small font-weight-bold mb-1 text-dark"><?= __('modal_card_holder') ?></label>
+                                    <input type="text" id="cc_name" class="form-control" placeholder="<?= __('modal_card_holder_placeholder') ?>" style="height: 42px; border-radius: 8px; font-size: 14px;">
                                 </div>
                             </div>
                         </div>
@@ -539,9 +546,9 @@ while ($row = $result_cal->fetch_assoc()) {
                         <!-- FPX Online Banking Tab -->
                         <div class="tab-pane fade" id="pills-fpx" role="tabpanel">
                             <div class="form-group mb-3">
-                                <label class="small font-weight-bold mb-1 text-dark">Choose Bank</label>
+                                <label class="small font-weight-bold mb-1 text-dark"><?= __('modal_fpx_choose') ?></label>
                                 <select id="fpx_bank" class="form-control" style="height: 42px; border-radius: 8px; font-size: 14px;">
-                                    <option value="">-- Select Bank --</option>
+                                    <option value=""><?= __('modal_fpx_select') ?></option>
                                     <option value="maybank">Maybank2U</option>
                                     <option value="cimb">CIMB Clicks</option>
                                     <option value="public">Public Bank</option>
@@ -552,14 +559,14 @@ while ($row = $result_cal->fetch_assoc()) {
                                 </select>
                             </div>
                             <div class="alert alert-info py-2 px-3 mb-0" style="border-radius: 8px; font-size: 12px; line-height: 1.4;">
-                                <i class="fa-solid fa-info-circle mr-1"></i> You will be redirected to the secure banking simulation page to authorize the transaction.
+                                <i class="fa-solid fa-info-circle mr-1"></i> <?= __('modal_fpx_redirect_alert') ?>
                             </div>
                         </div>
                     </div>
 
                     <!-- Payment Button -->
                     <button type="button" id="payNowBtn" class="btn btn-primary btn-block py-2 mt-4 font-weight-bold" style="background: var(--primary-orange); border: none; border-radius: 10px; font-size: 14px; height: 46px;">
-                        Pay RM 50.00 Securely
+                        <?= __('modal_pay_securely') ?>
                     </button>
                 </div>
             </div>
@@ -572,8 +579,8 @@ while ($row = $result_cal->fetch_assoc()) {
             <div id="processingIconContainer" class="mb-3">
                 <div id="processingSpinner" class="spinner-border text-warning" role="status" style="width: 3.5rem; height: 3.5rem;"></div>
             </div>
-            <h4 class="font-weight-bold" id="processingTitle" style="color: white; margin-bottom: 8px;">Processing Payment</h4>
-            <p class="text-muted small" id="processingStatus" style="font-size: 13px;">Establishing secure handshake...</p>
+            <h4 class="font-weight-bold" id="processingTitle" style="color: white; margin-bottom: 8px;"><?= __('modal_processing_title') ?></h4>
+            <p class="text-muted small" id="processingStatus" style="font-size: 13px;"><?= __('modal_status_handshake') ?></p>
         </div>
     </div>
 
@@ -587,11 +594,18 @@ while ($row = $result_cal->fetch_assoc()) {
         const receiptInput = document.getElementById('payment_receipt');
         const totalPriceInput = document.getElementById('total_price_input');
 
+        // Localized JS variables
+        const msgCardComplete = <?= json_encode(__('modal_alert_card_complete')) ?>;
+        const msgFpxSelect = <?= json_encode(__('modal_alert_fpx_select')) ?>;
+        const msgProcessingAuthenticating = <?= json_encode(__('modal_status_authenticating')) ?>;
+        const msgProcessingApproved = <?= json_encode(__('modal_status_approved')) ?>;
+
         function validateForm() {
             const inDate = document.getElementById('checkin_date').value;
             const outDate = document.getElementById('checkout_date').value;
             const paymentMethod = document.getElementById('payment_method_input').value;
             const hasFile = receiptInput.files.length > 0;
+            const isTncChecked = document.getElementById('tnc_agree').checked;
 
             let nights = 0;
             if (inDate && outDate) {
@@ -600,7 +614,7 @@ while ($row = $result_cal->fetch_assoc()) {
                 nights = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
             }
 
-            if (nights > 0) {
+            if (nights > 0 && isTncChecked) {
                 if (paymentMethod === 'gateway') {
                     submitBtn.disabled = false;
                 } else {
@@ -681,13 +695,13 @@ while ($row = $result_cal->fetch_assoc()) {
                 const ccName = document.getElementById('cc_name').value.trim();
                 
                 if (ccNum.length < 19 || ccExp.length < 5 || ccCvv.length < 3 || ccName === '') {
-                    alert('Please fill in complete and valid credit card details.');
+                    alert(msgCardComplete);
                     return;
                 }
             } else {
                 const bank = document.getElementById('fpx_bank').value;
                 if (!bank) {
-                    alert('Please select your bank for FPX online banking.');
+                    alert(msgFpxSelect);
                     return;
                 }
             }
@@ -702,11 +716,11 @@ while ($row = $result_cal->fetch_assoc()) {
             const status = document.getElementById('processingStatus');
             
             setTimeout(() => {
-                status.innerText = "Authenticating with payment gateway...";
+                status.innerText = msgProcessingAuthenticating;
             }, 1000);
 
             setTimeout(() => {
-                status.innerText = "Payment of RM 50.00 approved! Creating your booking...";
+                status.innerText = msgProcessingApproved;
                 document.getElementById('processingIconContainer').innerHTML = '<i class="fa-solid fa-circle-check text-success fa-3x animate__animated animate__zoomIn"></i>';
             }, 2300);
 

@@ -18,7 +18,7 @@ if (!$book_id) {
 }
 
 // 1. Ambil data booking untuk rujukan admin
-$stmt = $conn->prepare("SELECT b.book_id, u.full_name, b.total_price, b.status FROM bookings b JOIN users u ON b.user_id = u.user_id WHERE b.book_id = ?");
+$stmt = $conn->prepare("SELECT b.book_id, u.full_name, b.total_price, b.status, b.payment_status FROM bookings b JOIN users u ON b.user_id = u.user_id WHERE b.book_id = ?");
 $stmt->bind_param("i", $book_id);
 $stmt->execute();
 $booking = $stmt->get_result()->fetch_assoc();
@@ -41,16 +41,16 @@ if (isset($_POST['submit_upload'])) {
         if (move_uploaded_file($_FILES["balance_file"]["tmp_name"], $target_file)) {
             
             /** * PENAMBAHBAIKAN:
-             * Status ditukar kepada 'Completed' supaya amaun Deposit & Balance 
-             * dalam view_payments.php menjadi RM 0.00 secara automatik.
+             * Status payment ditukar kepada 'Fully Paid', manakala status tempahan
+             * kekal sebagai 'Accepted' sehingga pelanggan betul-betul check-out.
              **/
-            $update_stmt = $conn->prepare("UPDATE bookings SET balance_receipt = ?, status = 'Completed' WHERE book_id = ?");
+            $update_stmt = $conn->prepare("UPDATE bookings SET balance_receipt = ?, payment_status = 'Fully Paid' WHERE book_id = ?");
             $update_stmt->bind_param("si", $new_filename, $book_id);
             
             if ($update_stmt->execute()) {
-                $message = "Success! Balance receipt uploaded and booking is now COMPLETED.";
+                $message = "Success! Balance receipt uploaded and payment is now FULLY PAID.";
                 $messageType = "success";
-                $booking['status'] = 'Completed'; // Update paparan status dalam card
+                $booking['payment_status'] = 'Fully Paid'; // Update paparan status
             } else {
                 $message = "Database update failed.";
                 $messageType = "danger";
@@ -207,8 +207,8 @@ if (isset($_POST['submit_upload'])) {
         <?php endif; ?>
 
         <div class="info-preview">
-            <span class="status-tag <?= (strtolower($booking['status']) == 'completed') ? 'status-completed-tag' : ''; ?>">
-                <?= $booking['status']; ?>
+            <span class="status-tag <?= (strtolower($booking['payment_status']) == 'fully paid') ? 'status-completed-tag' : ''; ?>">
+                <?= $booking['payment_status']; ?>
             </span>
             <div><strong>Booking ID:</strong> #<?= $booking['book_id']; ?></div>
             <div><strong>Customer:</strong> <?= htmlspecialchars($booking['full_name']); ?></div>
@@ -221,9 +221,9 @@ if (isset($_POST['submit_upload'])) {
             </div>
             
             <button type="submit" name="submit_upload" class="btn-submit" 
-                <?= (strtolower($booking['status']) == 'completed') ? 'disabled' : ''; ?>>
+                <?= (strtolower($booking['payment_status']) == 'fully paid') ? 'disabled' : ''; ?>>
                 <i class="fas fa-cloud-upload-alt"></i> 
-                <?= (strtolower($booking['status']) == 'completed') ? 'Already Uploaded' : 'Confirm & Upload'; ?>
+                <?= (strtolower($booking['payment_status']) == 'fully paid') ? 'Already Uploaded' : 'Confirm & Upload'; ?>
             </button>
         </form>
 

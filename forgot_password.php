@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_reset'])) {
     $email = trim($_POST['email']);
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $msg      = "Format email tidak sah.";
+        $msg      = __('forgot_err_email');
         $msg_type = "error";
     } else {
         // Semak sama ada email wujud dalam database
@@ -59,16 +59,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_reset'])) {
                         </div>
                     ";
                     sendBookingStatusEmail($email, $user['full_name'], $emailBody);
-                    $msg      = "✅ Email reset kata laluan telah dihantar ke <strong>$email</strong>. Sila semak inbox anda (dan folder Spam).";
+                    $msg      = sprintf(__('forgot_success_sent'), htmlspecialchars($email));
                     $msg_type = "success";
                 } catch (Exception $e) {
-                    $msg      = "Gagal menghantar email. Sila hubungi admin.";
+                    $msg      = __('forgot_err_failed');
                     $msg_type = "error";
                 }
             }
         } else {
             // Sengaja tunjuk mesej yang sama (keselamatan — jangan dedah email mana wujud)
-            $msg      = "✅ Jika email ini berdaftar, kami akan menghantar pautan reset. Sila semak inbox anda.";
+            $msg      = __('forgot_success_generic');
             $msg_type = "success";
         }
     }
@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_reset'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forgot Password | EasyStay</title>
+    <title><?= __('forgot_title') ?> | EasyStay</title>
     <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png?v=2">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
@@ -109,8 +109,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_reset'])) {
         <div class="logo">
             <a href="index.php"><img src="img/logo.png?v=2" alt="EasyStay Logo"></a>
         </div>
-        <h2>Forgot Password?</h2>
-        <p class="sub">No worries! Enter your email address and we'll send you a link to reset your password.</p>
+        <h2><?= __('forgot_title') ?></h2>
+        <p class="sub"><?= __('forgot_subtitle') ?></p>
 
         <?php if ($msg): ?>
             <div class="alert alert-<?= $msg_type ?>"><?= $msg ?></div>
@@ -119,17 +119,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_reset'])) {
         <?php if ($msg_type !== 'success'): ?>
         <form method="POST">
             <div class="form-group">
-                <label for="email">Email Address</label>
+                <label for="email"><?= __('forgot_email_label') ?></label>
                 <input type="email" id="email" name="email" placeholder="name@example.com" required>
             </div>
             <button type="submit" name="request_reset" class="btn">
-                <i class="fas fa-paper-plane" style="margin-right:8px;"></i> Send Reset Link
+                <i class="fas fa-paper-plane" style="margin-right:8px;"></i> <?= __('forgot_send_btn') ?>
             </button>
         </form>
         <?php endif; ?>
 
         <div class="links" style="margin-top: 20px;">
-            <a href="login.php"><i class="fas fa-arrow-left"></i> Back to Login</a>
+            <a href="login.php"><i class="fas fa-arrow-left"></i> <?= __('forgot_back_login') ?></a>
         </div>
     </div>
 </body>

@@ -13,6 +13,32 @@ if (empty($_SESSION['csrf_token'])) {
 }
 
 // -----------------------------------------
+// DUAL LANGUAGE SYSTEM SETUP
+// -----------------------------------------
+if (isset($_GET['lang'])) {
+    $selected_lang = $_GET['lang'] === 'ms' ? 'ms' : 'en';
+    $_SESSION['lang'] = $selected_lang;
+}
+$lang_code = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'en';
+
+require_once __DIR__ . '/lang.php';
+$translations = get_translations($lang_code);
+
+function __($key) {
+    global $translations;
+    return isset($translations[$key]) ? $translations[$key] : $key;
+}
+
+function get_lang_url($lang) {
+    $params = $_GET;
+    $params['lang'] = $lang;
+    return '?' . http_build_query($params);
+}
+
+$current_page = basename($_SERVER['PHP_SELF']);
+$is_logged_in = isset($_SESSION['user_id']);
+
+// -----------------------------------------
 // DATABASE CONNECTION
 // -----------------------------------------
 require_once __DIR__ . '/config.php';
@@ -30,7 +56,7 @@ if ($conn->connect_error) {
 function get_package_features($package_id) {
     $features = [
         12 => [
-            'capacity' => 'MAX 3 Pax (Add-on extra bed RM20)',
+            'capacity' => __('cap_chalet'),
             'inclusions' => [
                 'Aircond',
                 'Private Bathroom (Bilik Air)',
@@ -47,7 +73,7 @@ function get_package_features($package_id) {
             ]
         ],
         13 => [
-            'capacity' => 'MAX 15 Pax (Add-on extra bed RM20)',
+            'capacity' => __('cap_homestay'),
             'inclusions' => [
                 '3 Bedrooms + 3 Bathrooms + 2 Extra Beds',
                 'Fully Airconditioned (Bilik & Ruang Tamu)',
@@ -62,7 +88,7 @@ function get_package_features($package_id) {
             ]
         ],
         14 => [
-            'capacity' => 'MAX 30 Pax (Entire Property)',
+            'capacity' => __('cap_entire'),
             'inclusions' => [
                 '3-Bedroom Homestay',
                 '3 Cozy Chalet Units',

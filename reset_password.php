@@ -26,7 +26,7 @@ $stmt->execute();
 $reset = $stmt->get_result()->fetch_assoc();
 
 if (!$reset) {
-    $msg      = "Pautan reset telah luput atau tidak sah. Sila minta pautan baru.";
+    $msg      = __('reset_err_token');
     $msg_type = "error";
 } else {
     $valid = true;
@@ -38,16 +38,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reset_password']) && 
     $confirm_password = $_POST['confirm_password'];
 
     if (strlen($new_password) < 8) {
-        $msg      = "Kata laluan mesti sekurang-kurangnya 8 aksara.";
+        $msg      = __('reset_err_length');
         $msg_type = "error";
     } elseif (!preg_match('/[A-Z]/', $new_password)) {
-        $msg      = "Kata laluan mesti mengandungi sekurang-kurangnya 1 huruf besar.";
+        $msg      = __('reset_err_uppercase');
         $msg_type = "error";
     } elseif (!preg_match('/[0-9]/', $new_password)) {
-        $msg      = "Kata laluan mesti mengandungi sekurang-kurangnya 1 nombor.";
+        $msg      = __('reset_err_number');
         $msg_type = "error";
     } elseif ($new_password !== $confirm_password) {
-        $msg      = "Kata laluan tidak sepadan.";
+        $msg      = __('reset_err_match');
         $msg_type = "error";
     } else {
         $hashed = password_hash($new_password, PASSWORD_DEFAULT);
@@ -63,22 +63,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reset_password']) && 
             $del->bind_param("i", $user_id);
             $del->execute();
 
-            $msg      = "✅ Kata laluan berjaya dikemaskini! Anda boleh log masuk sekarang.";
+            $msg      = __('reset_success');
             $msg_type = "success";
             $valid    = false; // Sorokkan form
         } else {
-            $msg      = "Ralat semasa kemaskini kata laluan. Sila cuba lagi.";
+            $msg      = __('reset_err_failed');
             $msg_type = "error";
         }
     }
 }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= $lang_code ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reset Password | EasyStay</title>
+    <title><?= __('reset_title') ?> | EasyStay</title>
     <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png?v=2">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
@@ -108,9 +108,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reset_password']) && 
         <div class="logo">
             <a href="index.php"><img src="img/logo.png?v=2" alt="EasyStay Logo"></a>
         </div>
-        <h2>Set New Password</h2>
+        <h2><?= __('reset_heading') ?></h2>
         <?php if ($valid): ?>
-            <p class="sub">Hi, <strong><?= htmlspecialchars($reset['full_name']) ?></strong>! Create a new strong password for your account.</p>
+            <p class="sub"><?= sprintf(__('reset_sub_hi'), htmlspecialchars($reset['full_name'])) ?></p>
         <?php endif; ?>
 
         <?php if ($msg): ?>
@@ -120,51 +120,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reset_password']) && 
         <?php if ($valid): ?>
         <form method="POST">
             <div class="form-group">
-                <label>New Password</label>
-                <input type="password" name="new_password" id="pwd" placeholder="Min. 8 aksara, 1 huruf besar, 1 nombor" required>
+                <label><?= __('reset_new_password') ?></label>
+                <input type="password" name="new_password" id="pwd" placeholder="<?= __('reset_password_placeholder') ?>" required>
                 <div id="pwd-strength" class="strength"></div>
             </div>
             <div class="form-group">
-                <label>Confirm New Password</label>
-                <input type="password" name="confirm_password" id="cpwd" placeholder="Taip semula kata laluan" required>
+                <label><?= __('reset_confirm_password') ?></label>
+                <input type="password" name="confirm_password" id="cpwd" placeholder="<?= __('reset_confirm_password_placeholder') ?>" required>
                 <div id="pwd-match" class="strength"></div>
             </div>
             <button type="submit" name="reset_password" class="btn">
-                <i class="fas fa-key" style="margin-right:8px;"></i> Reset Password
+                <i class="fas fa-key" style="margin-right:8px;"></i> <?= __('reset_btn') ?>
             </button>
         </form>
         <?php elseif ($msg_type === 'success'): ?>
             <a href="login.php" class="btn" style="display:block; text-decoration:none; margin-top:8px;">
-                <i class="fas fa-sign-in-alt" style="margin-right:8px;"></i> Go to Login
+                <i class="fas fa-sign-in-alt" style="margin-right:8px;"></i> <?= __('reset_go_login') ?>
             </a>
         <?php else: ?>
             <a href="forgot_password.php" class="btn" style="display:block; text-decoration:none; margin-top:8px;">
-                Request New Reset Link
+                <?= __('reset_request_new') ?>
             </a>
         <?php endif; ?>
 
-        <div class="links"><a href="login.php"><i class="fas fa-arrow-left"></i> Back to Login</a></div>
+        <div class="links"><a href="login.php"><i class="fas fa-arrow-left"></i> <?= __('reset_back_login') ?></a></div>
     </div>
 
     <script>
+        // Localized JS variables
+        const labelWeak = <?= json_encode(__('js_strength_weak')) ?>;
+        const labelMedium = <?= json_encode(__('js_strength_medium')) ?>;
+        const labelGood = <?= json_encode(__('js_strength_good')) ?>;
+        const labelStrong = <?= json_encode(__('js_strength_strong')) ?>;
+        const labelNeed = <?= json_encode(__('js_strength_need')) ?>;
+        const labelMinChar = <?= json_encode(__('js_strength_min_char')) ?>;
+        const labelUppercase = <?= json_encode(__('js_strength_uppercase')) ?>;
+        const labelNumber = <?= json_encode(__('js_strength_number')) ?>;
+        const labelMatch = <?= json_encode(__('js_pass_match')) ?>;
+        const labelNotMatch = <?= json_encode(__('js_pass_not_match')) ?>;
+
         const pwdEl = document.getElementById('pwd');
         const cpwdEl = document.getElementById('cpwd');
         if (pwdEl) {
             pwdEl.addEventListener('input', function() {
                 const v = this.value, el = document.getElementById('pwd-strength');
                 let s = 0, tips = [];
-                if (v.length >= 8) s++; else tips.push('8+ aksara');
-                if (/[A-Z]/.test(v)) s++; else tips.push('huruf besar');
-                if (/[0-9]/.test(v)) s++; else tips.push('nombor');
-                const lbl = ['','⚠️ Lemah','⚠️ Sederhana','✅ Baik','✅ Kuat'];
-                const col = ['','#e74c3c','#f39c12','#27ae60','#1e8449'];
-                el.style.color = col[s]; el.innerHTML = s > 0 ? lbl[s] + (tips.length ? ' — perlu: '+tips.join(', ') : '') : '';
+                if (v.length >= 8) s++; else tips.push(labelMinChar);
+                if (/[A-Z]/.test(v)) s++; else tips.push(labelUppercase);
+                if (/[0-9]/.test(v)) s++; else tips.push(labelNumber);
+                const lbl = ['', '⚠️ ' + labelWeak, '⚠️ ' + labelMedium, '✅ ' + labelGood, '✅ ' + labelStrong];
+                const col = ['', '#e74c3c', '#f39c12', '#27ae60', '#1e8449'];
+                el.style.color = col[s]; el.innerHTML = s > 0 ? lbl[s] + (tips.length ? ' — ' + labelNeed + ': ' + tips.join(', ') : '') : '';
             });
             cpwdEl.addEventListener('input', function() {
                 const el = document.getElementById('pwd-match');
                 if (!this.value) { el.innerHTML = ''; return; }
                 el.style.color = pwdEl.value === this.value ? '#27ae60' : '#e74c3c';
-                el.innerHTML = pwdEl.value === this.value ? '✅ Sepadan' : '❌ Tidak sepadan';
+                el.innerHTML = pwdEl.value === this.value ? '✅ ' + labelMatch : '❌ ' + labelNotMatch;
             });
         }
     </script>
