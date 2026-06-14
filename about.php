@@ -80,12 +80,37 @@ $current_page = basename($_SERVER['PHP_SELF']);
                             <div class="section_title">
                                 <h3 style="font-weight: 800; font-size: 32px; margin-bottom: 20px;">Cozy & Elegant <br> Chalets</h3>
                             </div>
-                            <p class="mb-3" style="font-size: 15px; color: #555; line-height: 1.6;">Experience ultimate peace in our beautifully designed individual chalets—the perfect blend of modern comfort and natural serenity.</p>
-                            <ul class="about-features list-unstyled">
-                                <li><i class="fa-solid fa-circle-check"></i> Designed for up to 3 guests (ideal for couples & small families)</li>
-                                <li><i class="fa-solid fa-circle-check"></i> Front row view directly facing the sparkling private pool</li>
-                                <li><i class="fa-solid fa-circle-check"></i> Cozy interior, private bathroom, & high-speed Wi-Fi access</li>
-                            </ul>
+                            <p class="mb-4" style="font-size: 15px; color: #555; line-height: 1.6;">Experience ultimate peace in our beautifully designed individual chalets—the perfect blend of modern comfort and natural serenity.</p>
+                            
+                            <div class="about-feature-item d-flex align-items-start mb-4" style="gap: 16px;">
+                                <div class="feature-icon" style="font-size: 18px; color: #C5A880; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; background: rgba(197, 168, 128, 0.08); border-radius: 10px; flex-shrink: 0;">
+                                    <i class="fa-solid fa-users"></i>
+                                </div>
+                                <div class="feature-details">
+                                    <h4 style="font-size: 15px; font-weight: 700; color: #1c1c1c; margin-bottom: 4px; font-family: 'Plus Jakarta Sans', sans-serif;">Cozy Capacity</h4>
+                                    <p style="font-size: 13px; color: #6e6e73; line-height: 1.5; margin: 0;">Designed for up to 3 guests per unit. Ideal for couples or small family getaways.</p>
+                                </div>
+                            </div>
+
+                            <div class="about-feature-item d-flex align-items-start mb-4" style="gap: 16px;">
+                                <div class="feature-icon" style="font-size: 18px; color: #C5A880; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; background: rgba(197, 168, 128, 0.08); border-radius: 10px; flex-shrink: 0;">
+                                    <i class="fa-solid fa-water"></i>
+                                </div>
+                                <div class="feature-details">
+                                    <h4 style="font-size: 15px; font-weight: 700; color: #1c1c1c; margin-bottom: 4px; font-family: 'Plus Jakarta Sans', sans-serif;">Poolside View</h4>
+                                    <p style="font-size: 13px; color: #6e6e73; line-height: 1.5; margin: 0;">Step out of your chalet directly facing our clean, refreshing central pool area.</p>
+                                </div>
+                            </div>
+
+                            <div class="about-feature-item d-flex align-items-start mb-4" style="gap: 16px;">
+                                <div class="feature-icon" style="font-size: 18px; color: #C5A880; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; background: rgba(197, 168, 128, 0.08); border-radius: 10px; flex-shrink: 0;">
+                                    <i class="fa-solid fa-wifi"></i>
+                                </div>
+                                <div class="feature-details">
+                                    <h4 style="font-size: 15px; font-weight: 700; color: #1c1c1c; margin-bottom: 4px; font-family: 'Plus Jakarta Sans', sans-serif;">Modern Amenities</h4>
+                                    <p style="font-size: 13px; color: #6e6e73; line-height: 1.5; margin: 0;">Equipped with high-speed Wi-Fi, private bathrooms, air conditioning, and tea stations.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="col-xl-7 col-lg-7">
@@ -120,12 +145,37 @@ $current_page = basename($_SERVER['PHP_SELF']);
                             <div class="section_title">
                                 <h3 style="font-weight: 800; font-size: 32px; margin-bottom: 20px;">Spacious Family Homestay & Private Group Events</h3>
                             </div>
-                            <p class="mb-3" style="font-size: 15px; color: #555; line-height: 1.6;">Perfect for larger family reunions, gatherings, or private events, offering absolute privacy and premium comfort for your group.</p>
-                            <ul class="about-features list-unstyled">
-                                <li><i class="fa-solid fa-circle-check"></i> <strong>Spacious Homestay</strong>: 3 bedrooms, 3 bathrooms (up to 15 guests)</li>
-                                <li><i class="fa-solid fa-circle-check"></i> <strong>Full Amenities</strong>: Equipped kitchen, laundry, and private BBQ area</li>
-                                <li><i class="fa-solid fa-circle-check"></i> <strong>Entire Property Booking</strong>: Accommodates up to 30 guests exclusively</li>
-                            </ul>
+                            <p class="mb-4" style="font-size: 15px; color: #555; line-height: 1.6;">Perfect for larger family reunions, gatherings, or private events, offering absolute privacy and premium comfort for your group.</p>
+
+                            <div class="about-feature-item d-flex align-items-start mb-4" style="gap: 16px;">
+                                <div class="feature-icon" style="font-size: 18px; color: #C5A880; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; background: rgba(197, 168, 128, 0.08); border-radius: 10px; flex-shrink: 0;">
+                                    <i class="fa-solid fa-house-user"></i>
+                                </div>
+                                <div class="feature-details">
+                                    <h4 style="font-size: 15px; font-weight: 700; color: #1c1c1c; margin-bottom: 4px; font-family: 'Plus Jakarta Sans', sans-serif;">Spacious Homestay</h4>
+                                    <p style="font-size: 13px; color: #6e6e73; line-height: 1.5; margin: 0;">A full 3-bedroom, 3-bathroom house layout that easily hosts up to 15 guests.</p>
+                                </div>
+                            </div>
+
+                            <div class="about-feature-item d-flex align-items-start mb-4" style="gap: 16px;">
+                                <div class="feature-icon" style="font-size: 18px; color: #C5A880; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; background: rgba(197, 168, 128, 0.08); border-radius: 10px; flex-shrink: 0;">
+                                    <i class="fa-solid fa-utensils"></i>
+                                </div>
+                                <div class="feature-details">
+                                    <h4 style="font-size: 15px; font-weight: 700; color: #1c1c1c; margin-bottom: 4px; font-family: 'Plus Jakarta Sans', sans-serif;">Premium Conveniences</h4>
+                                    <p style="font-size: 13px; color: #6e6e73; line-height: 1.5; margin: 0;">Includes a fully equipped kitchen, laundry machines, and a dedicated outdoor BBQ pit.</p>
+                                </div>
+                            </div>
+
+                            <div class="about-feature-item d-flex align-items-start mb-4" style="gap: 16px;">
+                                <div class="feature-icon" style="font-size: 18px; color: #C5A880; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; background: rgba(197, 168, 128, 0.08); border-radius: 10px; flex-shrink: 0;">
+                                    <i class="fa-solid fa-circle-nodes"></i>
+                                </div>
+                                <div class="feature-details">
+                                    <h4 style="font-size: 15px; font-weight: 700; color: #1c1c1c; margin-bottom: 4px; font-family: 'Plus Jakarta Sans', sans-serif;">Entire Property Exclusivity</h4>
+                                    <p style="font-size: 13px; color: #6e6e73; line-height: 1.5; margin: 0;">Option to book all chalets and homestay to host up to 30 guests with absolute privacy.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
