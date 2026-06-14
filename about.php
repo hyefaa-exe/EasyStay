@@ -66,7 +66,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <h1 class="welcome-title">About EasyStay</h1>
                     <p class="welcome-subtitle">Your Nature Retreat in Kuala Berang</p>
                     <p class="welcome-description mx-auto" style="max-width: 800px;">
-                        Escape the busy city life and discover peace at EasyStay. Surrounded by lush greenery and fresh air, it’s the ideal place for families, friends, and groups to relax and enjoy time together. With cozy chalets, a fully equipped homestay, a private pool, BBQ area, and complete facilities, every moment here is made for comfort and joy.
+                        Escape the hustle and bustle of city life and discover serene tranquility at EasyStay. Nestled amidst lush greenery and refreshing country air in Kuala Berang, our property is the premier getaway destination for families, corporate retreats, and group gatherings. Featuring private individual chalets, a spacious central homestay, a sparkling private pool, and complete BBQ facilities, we ensure your stay is defined by absolute comfort, luxury, and lasting memories.
                     </p>
                 </div>
             </div>
@@ -78,9 +78,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <div class="col-xl-5 col-lg-5">
                         <div class="about_info">
                             <div class="section_title">
-                                <h3 style="font-weight: 800; font-size: 32px; margin-bottom: 20px;">A Luxurious Chalet <br> with Nature</h3>
+                                <h3 style="font-weight: 800; font-size: 32px; margin-bottom: 20px;">Cozy & Elegant <br> Chalets</h3>
                             </div>
-                            <p>At EasyStay, we offer an exclusive package featuring three cozy chalets, each facing the pool and surrounded by nature, designed for up to three guests with a luxurious interior, a comfortable bed, private bathroom, and modern facilities.</p>
+                            <p>Experience ultimate peace in our beautifully designed individual chalets. Perfectly suited for couples or small families of up to 3 guests, each chalet offers a luxurious interior, private bathroom, high-speed Wi-Fi, and a scenic front view directly facing our clean, refreshing pool. It is the perfect blend of modern comfort and natural serenity.</p>
                         </div>
                     </div>
                     <div class="col-xl-7 col-lg-7">
@@ -113,9 +113,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <div class="col-xl-5 col-lg-5 order-1 order-lg-2">
                         <div class="about_info">
                             <div class="section_title">
-                                <h3 style="font-weight: 800; font-size: 32px; margin-bottom: 20px;">A Perfect Homestay Retreat Surrounded by Nature</h3>
+                                <h3 style="font-weight: 800; font-size: 32px; margin-bottom: 20px;">Spacious Family Homestay & Private Group Events</h3>
                             </div>
-                            <p>EasyStay also offers a spacious homestay included in the package, accommodating up to 30 people with breathtaking nature views, a private pool, and nearby chalets. The homestay features a fully equipped kitchen, BBQ area, three bedrooms, three bathrooms, and complete modern facilities.</p>
+                            <p>For larger groups, EasyStay features a spacious 3-bedroom, 3-bathroom homestay accommodating up to 15 guests, complete with a fully equipped kitchen, laundry facilities, and a BBQ area. Planning a massive family reunion or private gathering? You can book the entire property exclusively to accommodate up to 30 guests, giving your group private access to the entire pool area, the main homestay, and all three chalets with absolute privacy.</p>
                         </div>
                     </div>
                 </div>
