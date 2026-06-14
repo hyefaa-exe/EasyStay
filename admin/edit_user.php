@@ -63,152 +63,79 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_user'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit User | EasyStay Admin</title>
     <link rel="shortcut icon" type="image/x-icon" href="../img/favicon.png?v=2">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin_style.css">
     <style>
-/* --- HEADER --- */
-        
-        .logo-area h1 { font-size: 1.7rem; font-weight: 800; }
-        
-        
-        
-
-        
-        .nav-btn:hover { background: var(--ulu-orange); color: white; transform: translateY(-2px); }
-
-        /* --- CONTAINER --- */
-        
-        
-        .card {
-            background: var(--white);
-            border-radius: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
-            overflow: hidden;
-            border: 1px solid rgba(197, 168, 128, 0.1);
+        .input-wrapper {
+            position: relative;
         }
-
-        .card-header {
-            background: var(--garden-black);
-            color: white;
-            padding: 30px;
-            text-align: center;
+        .input-wrapper i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--slate-400);
+            z-index: 10;
         }
-
-        .card-
-
-        /* --- INFO GRID --- */
+        .input-wrapper .form-control {
+            padding-left: 42px !important;
+        }
         .info-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 24px;
         }
-
         .info-item {
-            background: #fdfdfd;
-            padding: 15px 20px;
-            border-radius: 15px;
-            border: 1px solid #f0f0f0;
+            background: var(--slate-50);
+            padding: 16px 20px;
+            border-radius: var(--radius);
+            border: 1px solid var(--slate-200);
         }
-
         .info-label {
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-gray);
+            letter-spacing: 0.8px;
+            color: var(--slate-400);
             font-weight: 700;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
-
-        .info-value { font-weight: 700; font-size: 1.1rem; color: var(--garden-black); }
-        .highlight { color: var(--ulu-orange); }
-
-        /* --- FORM --- */
+        .info-value {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--slate-800);
+        }
+        .highlight {
+            color: var(--gold);
+        }
         .form-section {
-            background: #fafafa;
-            padding: 25px;
-            border-radius: 20px;
-            margin-top: 10px;
-        }
-
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-weight: 700; margin-bottom: 10px; color: var(--garden-black); font-size: 0.9rem; }
-
-        .input-wrapper { position: relative; }
-        .input-wrapper i {
-            position: absolute; left: 15px; top: 50%;
-            transform: translateY(-50%); color: var(--text-gray);
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 15px 15px 15px 45px;
-            border-radius: 12px;
-            border: 2px solid #eee;
-            font-size: 1rem;
-            font-weight: 600;
-            outline: none;
-            transition: 0.3s;
-        }
-        .form-control:focus { border-color: var(--ulu-orange); background: #fff; }
-
-        .btn-submit {
-            width: 100%;
-            background: var(--ulu-orange);
-            color: white;
-            border: none;
-            padding: 15px;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        .btn-submit:hover { opacity: 0.9; transform: translateY(-2px); }
-
-        .alert {
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            font-weight: 700;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        .alert-success { background: #D1FAE5; color: #065F46; }
-        .alert-error { background: #FEE2E2; color: #991B1B; }
-
-        @media (max-width: 600px) {
-            .info-grid { grid-template-columns: 1fr; }
-            
+            background: var(--slate-50);
+            padding: 24px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--slate-200);
         }
     </style>
-    <link rel="stylesheet" href="css/admin_style.css">
 </head>
 <body>
 
-    <header class="header">
-        <div class="logo-area">
-            <a href="admin_dashboard.php" style="text-decoration: none;">
-                <h1><span class="logo-ulu">Easy</span><span class="logo-garden">Stay</span></h1>
-            </a>
-            <span class="brand-sub">Management Portal</span>
+<?php include 'sidebar.php'; ?>
+
+<div class="admin-wrapper">
+    <!-- Topbar -->
+    <div class="topbar">
+        <div class="topbar-left">
+            <div class="topbar-title">Edit User Settings</div>
+            <div class="topbar-breadcrumb">Manage information for Customer #<?php echo $user['user_id']; ?></div>
         </div>
-        <div class="nav-actions">
-            <a href="view_users.php" class="nav-btn">
+        <div class="topbar-right">
+            <a href="view_users.php" class="btn btn-outline btn-sm">
                 <i class="fas fa-arrow-left"></i> Back to List
             </a>
         </div>
-    </header>
+    </div>
 
-    <main class="container">
+    <div class="admin-content" style="max-width: 680px;">
         <?php if ($success_message): ?>
             <div class="alert alert-success">
                 <i class="fas fa-check-circle"></i> <?php echo $success_message; ?>
@@ -216,15 +143,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_user'])) {
         <?php endif; ?>
 
         <?php if ($error_message): ?>
-            <div class="alert alert-error">
+            <div class="alert alert-danger">
                 <i class="fas fa-exclamation-triangle"></i> <?php echo $error_message; ?>
             </div>
         <?php endif; ?>
 
+        <!-- User Settings Banner Card -->
+        <div class="card" style="margin-bottom:20px;">
+            <div style="background: var(--slate-900); padding: 32px; text-align: center; border-radius: var(--radius-lg) var(--radius-lg) 0 0;">
+                <div style="width:64px; height:64px; background:var(--gold-light); border-radius:16px; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; font-size:1.8rem; color:var(--gold);">
+                    <i class="fas fa-user-cog"></i>
+                </div>
+                <h2 style="font-size:1.3rem; font-weight:800; color:var(--white); margin-bottom:4px;"><?= htmlspecialchars($user['full_name']) ?></h2>
+                <p style="color:var(--slate-400); font-size:0.82rem;">Registered Customer</p>
+            </div>
+        </div>
+
         <div class="card">
             <div class="card-header">
-                <h2 style="font-weight: 800; letter-spacing: 1px;">USER SETTINGS</h2>
-                <p style="opacity: 0.7; font-size: 0.9rem;">Account ID: #<?php echo $user['user_id']; ?></p>
+                <h3><i class="fas fa-edit"></i> Edit User Information</h3>
             </div>
 
             <div class="card-body">
@@ -244,7 +181,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_user'])) {
                         <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
                         
                         <div class="form-group">
-                            <label for="fullname">Full Name</label>
+                            <label class="form-label" for="fullname">Full Name</label>
                             <div class="input-wrapper">
                                 <i class="fas fa-user"></i>
                                 <input type="text" name="fullname" id="fullname" class="form-control" 
@@ -253,7 +190,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_user'])) {
                         </div>
 
                         <div class="form-group">
-                            <label for="email">Email Address</label>
+                            <label class="form-label" for="email">Email Address</label>
                             <div class="input-wrapper">
                                 <i class="fas fa-envelope"></i>
                                 <input type="email" name="email" id="email" class="form-control" 
@@ -262,7 +199,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_user'])) {
                         </div>
 
                         <div class="form-group">
-                            <label for="phone">Phone Number</label>
+                            <label class="form-label" for="phone">Phone Number</label>
                             <div class="input-wrapper">
                                 <i class="fas fa-phone"></i>
                                 <input type="text" name="phone_no" id="phone" class="form-control" 
@@ -270,22 +207,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_user'])) {
                             </div>
                         </div>
 
-                        <button type="submit" name="update_user" class="btn-submit" id="submitBtn">
+                        <button type="submit" name="update_user" class="btn-save" id="submitBtn" style="margin-top: 8px;">
                             <i class="fas fa-save"></i> UPDATE USER DATA
                         </button>
                     </form>
                 </div>
             </div>
         </div>
-    </main>
+    </div>
+</div>
 
-    <script>
-        // Loading effect on submit
-        document.getElementById('editForm').onsubmit = function() {
-            const btn = document.getElementById('submitBtn');
-            btn.style.opacity = '0.7';
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> UPDATING...';
-        };
-    </script>
+<script>
+    // Loading effect on submit
+    document.getElementById('editForm').onsubmit = function() {
+        const btn = document.getElementById('submitBtn');
+        btn.style.opacity = '0.7';
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> UPDATING...';
+    };
+</script>
 </body>
 </html>

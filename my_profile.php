@@ -174,126 +174,174 @@ $bookings = $stmt_b->get_result();
 
     <style>
         body {
-            background-color: #F5F7FA;
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #FAF9F6;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: #2D2D2D;
         }
 
+        /* Sidebar Styling */
         .profile-sidebar {
             background: white;
-            border-radius: 16px;
-            padding: 30px 20px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.03);
-            text-align: center;
+            border-radius: 20px;
+            padding: 35px 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(197, 168, 128, 0.1);
         }
 
         .avatar-box {
-            width: 90px;
-            height: 90px;
-            background: #FAF6F0;
+            width: 100px;
+            height: 100px;
+            background: #FAF9F6;
             color: #C5A880;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 36px;
-            margin: 0 auto 15px;
-            border: 3px solid #ffffff;
-            box-shadow: 0 3px 10px rgba(197, 168, 128, 0.2);
+            font-size: 40px;
+            margin: 0 auto 20px;
+            border: 2px solid #C5A880;
+            box-shadow: 0 8px 20px rgba(197, 168, 128, 0.15);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .profile-sidebar:hover .avatar-box {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(197, 168, 128, 0.25);
         }
 
         .user-name {
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 2px;
+            font-weight: 800;
+            color: #121212;
+            margin-bottom: 4px;
+            font-size: 18px;
+            line-height: 1.3;
         }
 
         .user-email {
-            color: #888;
-            font-size: 14px;
-            margin-bottom: 25px;
+            color: #7A7A7A;
+            font-size: 13px;
+            margin-bottom: 30px;
         }
 
         .nav-pills-custom .nav-link {
             color: #555;
-            font-weight: 600;
+            font-weight: 700;
             padding: 12px 20px;
-            border-radius: 10px;
-            margin-bottom: 8px;
-            transition: 0.2s;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             text-align: left;
             display: flex;
             align-items: center;
+            border: 1px solid transparent;
+            font-size: 14px;
         }
 
         .nav-pills-custom .nav-link i {
-            width: 30px;
-            font-size: 18px;
+            width: 28px;
+            font-size: 16px;
+            transition: transform 0.3s ease;
         }
 
         .nav-pills-custom .nav-link:hover {
-            background-color: #F8F9FA;
+            background-color: #FAF9F6;
             color: #C5A880;
+            border-color: rgba(197, 168, 128, 0.15);
+        }
+        .nav-pills-custom .nav-link:hover i {
+            transform: translateX(2px);
         }
 
         .nav-pills-custom .nav-link.active {
             background-color: #C5A880;
             color: white;
-            box-shadow: 0 4px 12px rgba(197, 168, 128, 0.3);
+            box-shadow: 0 8px 20px rgba(197, 168, 128, 0.2);
+            border-color: #C5A880;
         }
 
+        .nav-pills-custom a.text-danger {
+            margin-top: 25px !important;
+            border: 1px solid rgba(198, 40, 40, 0.15) !important;
+            background: rgba(198, 40, 40, 0.02) !important;
+            color: #C62828 !important;
+            font-weight: 700;
+            justify-content: center;
+            border-radius: 12px;
+        }
+        .nav-pills-custom a.text-danger:hover {
+            background: #C62828 !important;
+            color: white !important;
+            border-color: #C62828 !important;
+            box-shadow: 0 6px 15px rgba(198, 40, 40, 0.15);
+        }
+
+        /* Content Panel */
         .content-panel {
             background: white;
-            border-radius: 16px;
-            padding: 35px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.03);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(197, 168, 128, 0.08);
             min-height: 550px;
         }
 
         .panel-title {
             font-weight: 800;
-            color: #1a1a1a;
+            color: #121212;
             margin-bottom: 25px;
             font-size: 24px;
+            letter-spacing: -0.5px;
         }
 
+        /* Stat Cards */
         .stat-card {
-            padding: 25px;
-            border-radius: 14px;
+            padding: 28px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
         }
 
         .stat-card.orange {
-            background: #FAF6F0;
+            background: rgba(197, 168, 128, 0.08);
             color: #A48256;
+            border-color: rgba(197, 168, 128, 0.15);
         }
 
         .stat-card.blue {
-            background: #F5F5F5;
-            color: #121212;
+            background: #121212;
+            color: #C5A880;
+            border-color: #121212;
         }
 
         .stat-value {
-            font-size: 32px;
+            font-size: 36px;
             font-weight: 800;
             line-height: 1;
+            margin-bottom: 4px;
         }
 
         .stat-label {
-            font-size: 14px;
+            font-size: 12px;
             opacity: 0.8;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
         }
 
+        /* Booking Cards */
         .booking-card {
             border: 1px solid #EEEEEE;
-            border-radius: 14px;
+            border-radius: 16px;
             padding: 25px;
             margin-bottom: 20px;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             background: white;
             display: flex;
             justify-content: space-between;
@@ -304,74 +352,147 @@ $bookings = $stmt_b->get_result();
 
         .booking-card:hover {
             border-color: #C5A880;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(197, 168, 128, 0.15);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(197, 168, 128, 0.12);
         }
 
         .booking-info h5 {
-            font-weight: 700;
-            margin-bottom: 5px;
-            color: #1a1a1a;
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: #121212;
+            font-size: 16px;
         }
 
         .booking-dates {
             display: inline-flex;
             align-items: center;
-            background: #F8F9FA;
-            padding: 6px 12px;
+            background: #FAF9F6;
+            padding: 6px 14px;
             border-radius: 8px;
             font-size: 13px;
             color: #555;
-            font-weight: 500;
+            font-weight: 600;
+            border: 1px solid rgba(197, 168, 128, 0.1);
+            gap: 6px;
         }
 
         .booking-price {
-            font-weight: 700;
+            font-weight: 800;
             color: #C5A880;
-            font-size: 15px;
-            margin-top: 8px;
+            font-size: 16px;
+            margin-top: 10px;
         }
 
+        /* Badges */
         .status-badge {
-            padding: 6px 12px;
+            padding: 6px 14px;
             border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
+            font-size: 11px;
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
         }
 
         .badge-success-soft {
-            background: rgba(46, 125, 50, 0.1);
+            background: rgba(46, 125, 50, 0.08);
             color: #2E7D32;
-            border: 1px solid rgba(46, 125, 50, 0.2);
+            border: 1px solid rgba(46, 125, 50, 0.15);
         }
 
         .badge-danger-soft {
-            background: rgba(198, 40, 40, 0.1);
+            background: rgba(198, 40, 40, 0.08);
             color: #C62828;
-            border: 1px solid rgba(198, 40, 40, 0.2);
+            border: 1px solid rgba(198, 40, 40, 0.15);
         }
 
         .badge-warning-soft {
-            background: rgba(249, 168, 37, 0.1);
+            background: rgba(249, 168, 37, 0.08);
             color: #F9A825;
-            border: 1px solid rgba(249, 168, 37, 0.2);
+            border: 1px solid rgba(249, 168, 37, 0.15);
         }
 
         .badge-info-soft {
-            background: rgba(0, 104, 168, 0.1);
+            background: rgba(0, 104, 168, 0.08);
             color: #0068A8;
-            border: 1px solid rgba(0, 104, 168, 0.2);
+            border: 1px solid rgba(0, 104, 168, 0.15);
         }
 
         .badge-muted {
-            background: rgba(136, 136, 136, 0.1);
-            color: #888;
-            border: 1px solid rgba(136, 136, 136, 0.2);
+            background: rgba(136, 136, 136, 0.08);
+            color: #666;
+            border: 1px solid rgba(136, 136, 136, 0.15);
             text-decoration: none !important;
         }
 
+        /* Booking Cards Buttons Override */
+        .booking-card .btn-info {
+            background-color: transparent !important;
+            border: 1.5px solid #C5A880 !important;
+            color: #C5A880 !important;
+            font-weight: 700 !important;
+            font-size: 12px !important;
+            padding: 8px 18px !important;
+            border-radius: 30px !important;
+            box-shadow: none !important;
+            transition: all 0.2s ease !important;
+        }
+        .booking-card .btn-info:hover {
+            background-color: #C5A880 !important;
+            color: white !important;
+            box-shadow: 0 4px 10px rgba(197, 168, 128, 0.2) !important;
+        }
+
+        .booking-card .btn-success {
+            background-color: #2E7D32 !important;
+            border: none !important;
+            color: white !important;
+            font-weight: 700 !important;
+            font-size: 12px !important;
+            padding: 8px 18px !important;
+            border-radius: 30px !important;
+            box-shadow: 0 4px 10px rgba(46, 125, 50, 0.2) !important;
+            transition: all 0.2s ease !important;
+        }
+        .booking-card .btn-success:hover {
+            background-color: #1b5e20 !important;
+            box-shadow: 0 6px 15px rgba(46, 125, 50, 0.3) !important;
+            transform: translateY(-1px) !important;
+        }
+
+        .booking-card .btn-outline-danger {
+            border: 1.5px solid rgba(198, 40, 40, 0.3) !important;
+            color: #C62828 !important;
+            font-weight: 700 !important;
+            font-size: 12px !important;
+            padding: 8px 18px !important;
+            border-radius: 30px !important;
+            background: transparent !important;
+            transition: all 0.2s ease !important;
+        }
+        .booking-card .btn-outline-danger:hover {
+            background-color: #C62828 !important;
+            color: white !important;
+            border-color: #C62828 !important;
+            box-shadow: 0 4px 10px rgba(198, 40, 40, 0.2) !important;
+        }
+
+        .booking-card .btn-outline-dark {
+            border: 1.5px solid #121212 !important;
+            color: #121212 !important;
+            font-weight: 700 !important;
+            font-size: 12px !important;
+            padding: 8px 18px !important;
+            border-radius: 30px !important;
+            background: transparent !important;
+            transition: all 0.2s ease !important;
+        }
+        .booking-card .btn-outline-dark:hover {
+            background-color: #121212 !important;
+            color: white !important;
+            box-shadow: 0 4px 10px rgba(18, 18, 18, 0.2) !important;
+        }
+
+        /* Star Rating */
         .star-rating {
             display: flex;
             flex-direction: row-reverse;
@@ -397,7 +518,7 @@ $bookings = $stmt_b->get_result();
             display: none;
         }
 
-        /* Reka Bentuk Borang Tetapan (Settings Form) */
+        /* Settings Form Styling */
         .form-label-custom {
             font-size: 11px;
             font-weight: 700;
@@ -418,7 +539,7 @@ $bookings = $stmt_b->get_result();
             left: 20px;
             top: 50%;
             transform: translateY(-50%);
-            color: #C5A880; /* Gold */
+            color: #C5A880;
             font-size: 16px;
             transition: 0.3s;
             pointer-events: none;
@@ -428,7 +549,7 @@ $bookings = $stmt_b->get_result();
             height: 52px;
             border-radius: 12px;
             border: 1.5px solid #EAEAEA;
-            padding: 0 20px 0 52px; /* Pad kiri ekstra untuk ikon */
+            padding: 0 20px 0 52px;
             font-size: 15px;
             width: 100%;
             transition: all 0.3s ease;
@@ -445,7 +566,7 @@ $bookings = $stmt_b->get_result();
         }
 
         .form-control-custom:focus ~ .input-icon-custom {
-            color: #A48256; /* Darker Gold on focus */
+            color: #A48256;
         }
 
         .btn-save-custom {
@@ -479,26 +600,188 @@ $bookings = $stmt_b->get_result();
             transform: translateY(0);
         }
 
-        /* Modal Info */
+        /* Modal Overhaul */
+        .modal-content {
+            border-radius: 20px !important;
+            border: 1px solid rgba(197, 168, 128, 0.15) !important;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1) !important;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #f0f0f0 !important;
+            padding: 22px 28px !important;
+            align-items: center;
+            background-color: white !important;
+        }
+
+        .modal-header.bg-danger {
+            background-color: white !important;
+            color: #121212 !important;
+        }
+        .modal-header.bg-danger .modal-title {
+            color: #C62828 !important;
+        }
+        .modal-header.bg-danger .close {
+            color: #121212 !important;
+            text-shadow: none !important;
+            opacity: 0.5 !important;
+        }
+
+        .modal-header.bg-success {
+            background-color: white !important;
+            color: #121212 !important;
+        }
+        .modal-header.bg-success .modal-title {
+            color: #2E7D32 !important;
+        }
+        .modal-header.bg-success .close {
+            color: #121212 !important;
+            text-shadow: none !important;
+            opacity: 0.5 !important;
+        }
+
+        .modal-title {
+            font-weight: 800 !important;
+            font-size: 18px !important;
+            color: #121212 !important;
+        }
+
+        .modal-body {
+            padding: 28px !important;
+        }
+
+        .modal-footer {
+            border-top: 1px solid #f0f0f0 !important;
+            padding: 20px 28px !important;
+        }
+
         .info-row {
             display: flex;
             justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px dashed #eee;
-        }
-
-        .info-row:last-child {
-            border-bottom: none;
-        }
-
-        .info-label {
-            color: #888;
+            padding: 12px 0 !important;
+            border-bottom: 1px solid #f0f0f0 !important;
             font-size: 14px;
         }
 
+        .info-row:last-child {
+            border-bottom: none !important;
+        }
+
+        .info-label {
+            color: #7A7A7A !important;
+            font-weight: 500;
+        }
+
         .info-val {
-            font-weight: 600;
-            color: #333;
+            font-weight: 700 !important;
+            color: #121212 !important;
+        }
+
+        .info-val.text-warning {
+            color: #C5A880 !important;
+            font-size: 16px;
+        }
+
+        .modal .btn-block {
+            border-radius: 10px !important;
+            font-weight: 700 !important;
+            font-size: 13px !important;
+            padding: 12px 20px !important;
+            transition: all 0.2s !important;
+        }
+
+        .btn-outline-primary {
+            border: 1.5px solid #C5A880 !important;
+            color: #C5A880 !important;
+            background: transparent !important;
+        }
+        .btn-outline-primary:hover {
+            background: #C5A880 !important;
+            color: white !important;
+            box-shadow: 0 4px 12px rgba(197, 168, 128, 0.2) !important;
+        }
+
+        .btn-outline-success {
+            border: 1.5px solid #2E7D32 !important;
+            color: #2E7D32 !important;
+            background: transparent !important;
+        }
+        .btn-outline-success:hover {
+            background: #2E7D32 !important;
+            color: white !important;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2) !important;
+        }
+
+        .modal-footer .btn-secondary {
+            background-color: #FAF9F6 !important;
+            color: #555 !important;
+            border: 1.5px solid #ddd !important;
+            font-weight: 700 !important;
+            padding: 10px 24px !important;
+            font-size: 13px !important;
+            border-radius: 30px !important;
+            transition: all 0.2s !important;
+        }
+        .modal-footer .btn-secondary:hover {
+            background-color: #f0f0f0 !important;
+            color: #121212 !important;
+        }
+
+        .modal-footer .btn-danger {
+            background-color: #C62828 !important;
+            border: none !important;
+            color: white !important;
+            font-weight: 700 !important;
+            padding: 10px 24px !important;
+            font-size: 13px !important;
+            border-radius: 30px !important;
+            box-shadow: 0 4px 12px rgba(198, 40, 40, 0.2) !important;
+            transition: all 0.2s !important;
+        }
+        .modal-footer .btn-danger:hover {
+            background-color: #b71c1c !important;
+            box-shadow: 0 6px 15px rgba(198, 40, 40, 0.3) !important;
+            transform: translateY(-1px);
+        }
+
+        .modal-footer .btn-success {
+            background-color: #2E7D32 !important;
+            border: none !important;
+            color: white !important;
+            font-weight: 700 !important;
+            padding: 12px 24px !important;
+            font-size: 13px !important;
+            border-radius: 30px !important;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2) !important;
+            transition: all 0.2s !important;
+        }
+        .modal-footer .btn-success:hover {
+            background-color: #1b5e20 !important;
+            box-shadow: 0 6px 15px rgba(46, 125, 50, 0.3) !important;
+            transform: translateY(-1px);
+        }
+
+        .form-group.p-3.border.rounded.bg-light {
+            background-color: #FAF9F6 !important;
+            border: 1.5px dashed rgba(197, 168, 128, 0.25) !important;
+            border-radius: 12px !important;
+            padding: 24px !important;
+            transition: all 0.3s;
+        }
+        .form-group.p-3.border.rounded.bg-light:hover {
+            border-color: #C5A880 !important;
+        }
+        .form-group.p-3.border.rounded.bg-light label {
+            color: #C5A880 !important;
+            font-size: 14px;
+        }
+        .form-group.p-3.border.rounded.bg-light input[type="file"] {
+            border: none !important;
+            background: transparent !important;
+            padding: 10px 0;
+            width: 100%;
+            cursor: pointer;
         }
 
         .modal {
@@ -702,9 +985,19 @@ $bookings = $stmt_b->get_result();
                                         </div>
                                     </div>
 
-                                    <div class="row">
-                                        <div class="col-md-12 mb-4">
-                                            <label class="form-label-custom">Profile Picture</label>
+                                    <div class="row align-items-center">
+                                        <div class="col-md-3 text-center mb-4">
+                                            <div class="current-avatar-preview" style="width: 80px; height: 80px; border-radius: 50%; overflow: hidden; margin: 0 auto 10px; border: 2px solid #C5A880; box-shadow: 0 4px 10px rgba(197,168,128,0.15); background: #FAF9F6; display: flex; align-items: center; justify-content: center;">
+                                                <?php if (!empty($user['profile_pic']) && file_exists("uploads/profile/" . $user['profile_pic'])): ?>
+                                                    <img src="uploads/profile/<?= htmlspecialchars($user['profile_pic']) ?>?v=<?= time() ?>" alt="Current Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+                                                <?php else: ?>
+                                                    <i class="fas fa-user" style="font-size: 30px; color: #C5A880;"></i>
+                                                <?php endif; ?>
+                                            </div>
+                                            <span style="font-size: 10px; font-weight: 700; color: #C5A880; text-transform: uppercase; letter-spacing: 0.5px;">Current Photo</span>
+                                        </div>
+                                        <div class="col-md-9 mb-4">
+                                            <label class="form-label-custom">Upload New Profile Picture</label>
                                             <div class="input-wrapper-custom">
                                                 <i class="fas fa-image input-icon-custom"></i>
                                                 <input type="file" name="profile_pic" class="form-control-custom" accept="image/*" style="padding-top: 13px; padding-left: 52px;">

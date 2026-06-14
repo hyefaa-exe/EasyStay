@@ -128,12 +128,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="showcase-grid">
                 <!-- Panel 1 — Large Left -->
                 <a href="gallery.php" class="showcase-panel panel-large">
-                    <div class="showcase-img" style="background-image: url('img/chalet day.jpg');"></div>
+                    <div class="showcase-img" style="background-image: url('img/chalet_day_hd.png');"></div>
                     <div class="showcase-overlay">
                         <div class="showcase-content">
                             <div class="showcase-icon"><i class="fas fa-home"></i></div>
-                            <h3>Peaceful Nature Setting</h3>
-                            <p>Surrounded by lush tropical greenery</p>
+                            <h3>Cozy Private Homestay</h3>
+                            <p>Charming village retreat with a private pool</p>
                             <span class="showcase-cta">Explore <i class="fas fa-arrow-right"></i></span>
                         </div>
                     </div>
@@ -142,7 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <!-- Right column — 3 stacked -->
                 <div class="showcase-right">
                     <a href="gallery.php" class="showcase-panel panel-sm">
-                        <div class="showcase-img" style="background-image: url('img/chalet night.jpg');"></div>
+                        <div class="showcase-img" style="background-image: url('img/chalet_night_hd.png');"></div>
                         <div class="showcase-overlay">
                             <div class="showcase-content">
                                 <div class="showcase-icon"><i class="fas fa-moon"></i></div>
@@ -153,7 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     </a>
                     <a href="gallery.php" class="showcase-panel panel-sm">
-                        <div class="showcase-img" style="background-image: url('img/poolday.jpg');"></div>
+                        <div class="showcase-img" style="background-image: url('img/pool_day_hd.png');"></div>
                         <div class="showcase-overlay">
                             <div class="showcase-content">
                                 <div class="showcase-icon"><i class="fas fa-swimming-pool"></i></div>
@@ -164,7 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     </a>
                     <a href="gallery.php" class="showcase-panel panel-sm">
-                        <div class="showcase-img" style="background-image: url('img/poolnight.jpg');"></div>
+                        <div class="showcase-img" style="background-image: url('img/pool_night_hd.png');"></div>
                         <div class="showcase-overlay">
                             <div class="showcase-content">
                                 <div class="showcase-icon"><i class="fas fa-star"></i></div>

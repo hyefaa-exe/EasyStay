@@ -13,3 +13,7 @@ Thumbs.db
 # Project secrets
 admin/email_config.php
 config.php
+
+# User uploads and receipts
+admin/uploads/receipts/
+uploads/

@@ -99,129 +99,194 @@ if (isset($_GET['book_id'])) {
             </div>
         <?php endif; ?>
 
-        <div style="display: grid; grid-template-columns: 1fr 380px; gap: 20px; align-items: start;">
+        <div class="details-grid">
 
             <!-- Left: Guest Info + Receipts -->
             <div>
                 <!-- Guest Info Card -->
-                <div class="card" style="margin-bottom:16px;">
-                    <div class="card-header">
-                        <h3><i class="fas fa-user"></i> Guest Information</h3>
-                        <span class="badge status-<?= $booking['status'] ?>"><?= $booking['status'] ?></span>
+                <div class="card" style="margin-bottom: 24px; border: 1px solid rgba(197, 168, 128, 0.15); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);">
+                    <div class="card-header" style="background: rgba(197, 168, 128, 0.03); padding: 18px 24px; border-bottom: 1px solid rgba(197, 168, 128, 0.1);">
+                        <h3 style="font-size: 1.05rem; display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--slate-800);">
+                            <span style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: var(--gold-light); color: var(--gold); font-size: 0.95rem;">
+                                <i class="fas fa-user-circle"></i>
+                            </span>
+                            Booking Profile
+                        </h3>
+                        <?php
+                        $st = $booking['status'];
+                        $badge_class = 'badge-pending';
+                        if ($st === 'Accepted') $badge_class = 'badge-accepted';
+                        if ($st === 'Rejected') $badge_class = 'badge-danger';
+                        ?>
+                        <span class="badge <?= $badge_class ?>" style="padding: 6px 14px; border-radius: 6px; font-weight: 700; font-size: 0.72rem; letter-spacing: 0.5px;"><?= strtoupper($st) ?></span>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" style="padding: 24px;">
                         <div class="info-grid">
                             <div class="info-item">
-                                <div class="info-item-label">Full Name</div>
-                                <div class="info-item-value"><?= htmlspecialchars($booking['full_name']) ?></div>
+                                <div class="info-item-label">Customer Name</div>
+                                <div class="info-item-value" style="text-transform: uppercase;"><?= htmlspecialchars($booking['full_name']) ?></div>
                             </div>
                             <div class="info-item">
-                                <div class="info-item-label">Package</div>
-                                <div class="info-item-value" style="color:var(--gold);"><?= htmlspecialchars($booking['package_name']) ?></div>
+                                <div class="info-item-label">Selected Package</div>
+                                <div class="info-item-value" style="color: var(--gold-dark);"><?= htmlspecialchars($booking['package_name']) ?></div>
                             </div>
                             <div class="info-item">
-                                <div class="info-item-label">Email</div>
-                                <div class="info-item-value" style="font-size:0.82rem;"><?= htmlspecialchars($booking['email']) ?></div>
+                                <div class="info-item-label">Email Address</div>
+                                <div class="info-item-value" style="font-weight: 600; color: var(--slate-700);"><?= htmlspecialchars($booking['email']) ?></div>
                             </div>
                             <div class="info-item">
-                                <div class="info-item-label">Phone</div>
+                                <div class="info-item-label">Contact Number</div>
                                 <div class="info-item-value"><?= htmlspecialchars($booking['phone'] ?? 'N/A') ?></div>
                             </div>
                             <div class="info-item">
-                                <div class="info-item-label">Check-in</div>
-                                <div class="info-item-value"><?= date('d M Y', strtotime($booking['checkin_date'])) ?></div>
+                                <div class="info-item-label">Check-in Date</div>
+                                <div class="info-item-value" style="display: flex; align-items: center; gap: 8px;">
+                                    <i class="far fa-calendar-alt" style="color: var(--gold);"></i> <?= date('d M Y', strtotime($booking['checkin_date'])) ?>
+                                </div>
                             </div>
                             <div class="info-item">
-                                <div class="info-item-label">Check-out</div>
-                                <div class="info-item-value"><?= date('d M Y', strtotime($booking['checkout_date'])) ?></div>
+                                <div class="info-item-label">Check-out Date</div>
+                                <div class="info-item-value" style="display: flex; align-items: center; gap: 8px;">
+                                    <i class="far fa-calendar-alt" style="color: var(--gold);"></i> <?= date('d M Y', strtotime($booking['checkout_date'])) ?>
+                                </div>
                             </div>
                         </div>
-                        <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 16px; background:var(--gold-light); border-radius:8px; border:1px solid rgba(197,168,128,0.2);">
+
+                        <!-- Dark/Gold Gradient Banner for Total Price -->
+                        <div style="background: linear-gradient(135deg, #1A1A1A 0%, #111 100%); border-radius: 12px; padding: 22px 28px; display: flex; align-items: center; justify-content: space-between; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
                             <div>
-                                <div style="font-size:0.7rem; text-transform:uppercase; letter-spacing:0.8px; font-weight:700; color:var(--gold-dark); margin-bottom:2px;">Total Amount</div>
-                                <div style="font-size:1.4rem; font-weight:800; color:var(--slate-900);">RM <?= number_format($booking['total_price'], 2) ?></div>
+                                <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 800; color: rgba(197, 168, 128, 0.8); margin-bottom: 4px;">Total Amount Payable</div>
+                                <div style="font-size: 1.8rem; font-weight: 800; color: var(--white); font-family: 'Plus Jakarta Sans', sans-serif;">RM <?= number_format($booking['total_price'], 2) ?></div>
                             </div>
                             <?php
                             $ps  = $booking['payment_status'] ?? 'Pending Deposit';
                             $cls = str_replace(' ', '-', $ps);
                             ?>
-                            <span class="badge bg-<?= $cls ?>"><?= $ps ?></span>
+                            <div style="display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.08); padding: 8px 16px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.05);">
+                                <i class="fas fa-tag" style="color: var(--gold); font-size: 0.82rem;"></i>
+                                <span style="font-size: 0.78rem; font-weight: 700; color: var(--white); text-transform: uppercase; letter-spacing: 0.5px;"><?= $ps ?></span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Receipt Proofs Card -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3><i class="fas fa-file-invoice-dollar"></i> Payment Receipts</h3>
+                <!-- Submitted Documents Card -->
+                <div class="card" style="border: 1px solid rgba(197, 168, 128, 0.15); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);">
+                    <div class="card-header" style="background: rgba(197, 168, 128, 0.03); padding: 18px 24px; border-bottom: 1px solid rgba(197, 168, 128, 0.1);">
+                        <h3 style="font-size: 1.05rem; display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--slate-800);">
+                            <span style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: var(--gold-light); color: var(--gold); font-size: 0.95rem;">
+                                <i class="fas fa-file-invoice-dollar"></i>
+                            </span>
+                            Submitted Documents
+                        </h3>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" style="padding: 24px;">
                         <!-- Deposit Receipt -->
-                        <div class="proof-card deposit">
-                            <div>
-                                <div class="proof-card-label">Deposit Receipt</div>
-                                <div class="proof-card-status" style="color: <?= $booking['receipt_path'] ? 'var(--success)' : 'var(--danger)' ?>;">
-                                    <i class="fas <?= $booking['receipt_path'] ? 'fa-check-circle' : 'fa-times-circle' ?>"></i>
-                                    <?= $booking['receipt_path'] ? 'Uploaded' : 'Not Uploaded Yet' ?>
+                        <div class="proof-card" style="border: 1px solid #E2E8F0; border-radius: 12px; padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; background: #fff; border-left: 4px solid var(--gold);">
+                            <div style="display: flex; align-items: center; gap: 16px;">
+                                <span style="display: inline-flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 8px; background: rgba(197, 168, 128, 0.08); color: var(--gold); font-size: 1.2rem;">
+                                    <i class="fas fa-receipt"></i>
+                                </span>
+                                <div>
+                                    <div class="proof-card-label" style="font-size: 0.95rem; font-weight: 700; color: var(--slate-800); margin-bottom: 4px;">Deposit Receipt</div>
+                                    <div class="proof-card-status" style="font-size: 0.78rem; font-weight: 600; color: <?= $booking['receipt_path'] ? '#10B981' : '#EF4444' ?>; display: flex; align-items: center; gap: 6px;">
+                                        <i class="fas <?= $booking['receipt_path'] ? 'fa-check-circle' : 'fa-times-circle' ?>"></i>
+                                        <?= $booking['receipt_path'] ? 'Document Uploaded' : 'Not Uploaded Yet' ?>
+                                    </div>
                                 </div>
                             </div>
                             <?php if ($booking['receipt_path']): ?>
-                                <a href="../admin/uploads/receipts/<?= $booking['receipt_path'] ?>" target="_blank" class="btn-view">
-                                    <i class="fas fa-eye"></i> View
+                                <a href="../admin/uploads/receipts/<?= $booking['receipt_path'] ?>" target="_blank" class="btn" style="background: var(--slate-900); color: #fff; padding: 8px 20px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                    <i class="fas fa-external-link-alt"></i> View
                                 </a>
+                            <?php else: ?>
+                                <span class="btn-disabled" style="background: #F1F5F9; color: #94A3B8; padding: 8px 20px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 8px; cursor: not-allowed; border: 1px solid #E2E8F0;">
+                                    No File
+                                </span>
                             <?php endif; ?>
                         </div>
 
                         <!-- Balance Receipt -->
-                        <div class="proof-card balance">
-                            <div>
-                                <div class="proof-card-label">Balance Receipt</div>
-                                <div class="proof-card-status" style="color: <?= $booking['balance_receipt'] ? 'var(--success)' : 'var(--danger)' ?>;">
-                                    <i class="fas <?= $booking['balance_receipt'] ? 'fa-check-circle' : 'fa-times-circle' ?>"></i>
-                                    <?= $booking['balance_receipt'] ? 'Uploaded' : 'Not Uploaded Yet' ?>
+                        <div class="proof-card" style="border: 1px solid #E2E8F0; border-radius: 12px; padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; background: #fff; border-left: 4px solid var(--info);">
+                            <div style="display: flex; align-items: center; gap: 16px;">
+                                <span style="display: inline-flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 8px; background: rgba(59, 130, 246, 0.08); color: var(--info); font-size: 1.2rem;">
+                                    <i class="fas fa-file-invoice"></i>
+                                </span>
+                                <div>
+                                    <div class="proof-card-label" style="font-size: 0.95rem; font-weight: 700; color: var(--slate-800); margin-bottom: 4px;">Balance Receipt</div>
+                                    <div class="proof-card-status" style="font-size: 0.78rem; font-weight: 600; color: <?= $booking['balance_receipt'] ? '#10B981' : '#64748B' ?>; display: flex; align-items: center; gap: 6px;">
+                                        <i class="fas <?= $booking['balance_receipt'] ? 'fa-check-circle' : 'fa-clock' ?>"></i>
+                                        <?= $booking['balance_receipt'] ? 'Document Uploaded' : 'Not Required Yet / Pending' ?>
+                                    </div>
                                 </div>
                             </div>
                             <?php if ($booking['balance_receipt']): ?>
-                                <a href="../admin/uploads/receipts/<?= $booking['balance_receipt'] ?>" target="_blank" class="btn-view">
-                                    <i class="fas fa-eye"></i> View
+                                <a href="../admin/uploads/receipts/<?= $booking['balance_receipt'] ?>" target="_blank" class="btn" style="background: var(--slate-900); color: #fff; padding: 8px 20px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                    <i class="fas fa-external-link-alt"></i> View
                                 </a>
+                            <?php else: ?>
+                                <span class="btn-disabled" style="background: #F1F5F9; color: #94A3B8; padding: 8px 20px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 8px; cursor: not-allowed; border: 1px solid #E2E8F0;">
+                                    No File
+                                </span>
                             <?php endif; ?>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Right: Update Form -->
-            <div class="card" style="position:sticky; top:calc(var(--topbar-h) + 16px);">
-                <div class="card-header">
-                    <h3><i class="fas fa-edit"></i> Update Status</h3>
+            <!-- Right: Update Form (Action Center) -->
+            <div class="card" style="position: sticky; top: calc(var(--topbar-h) + 20px); border: 1px solid rgba(197, 168, 128, 0.15); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);">
+                <div class="card-header" style="background: rgba(197, 168, 128, 0.03); padding: 18px 24px; border-bottom: 1px solid rgba(197, 168, 128, 0.1);">
+                    <h3 style="font-size: 1.05rem; display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--slate-800);">
+                        <span style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: var(--gold-light); color: var(--gold); font-size: 0.95rem;">
+                            <i class="fas fa-sliders-h"></i>
+                        </span>
+                        Action Center
+                    </h3>
                 </div>
-                <div class="card-body">
+                <div class="card-body" style="padding: 24px;">
                     <form method="POST">
-                        <div class="form-group">
-                            <label class="form-label">Booking Status</label>
-                            <select name="status">
-                                <option value="Pending"  <?= $booking['status']=='Pending' ?'selected':'' ?>>⏳ Pending</option>
-                                <option value="Accepted" <?= $booking['status']=='Accepted'?'selected':'' ?>>✅ Accepted</option>
-                                <option value="Rejected" <?= $booking['status']=='Rejected'?'selected':'' ?>>❌ Rejected</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Payment Status</label>
-                            <select name="payment_status">
-                                <option value="Pending Deposit" <?= ($booking['payment_status']??'')==='Pending Deposit'?'selected':'' ?>>💳 Pending Deposit</option>
-                                <option value="Deposit Paid"    <?= ($booking['payment_status']??'')==='Deposit Paid'   ?'selected':'' ?>>✔ Deposit Paid</option>
-                                <option value="Pending Balance" <?= ($booking['payment_status']??'')==='Pending Balance'?'selected':'' ?>>⏳ Pending Balance</option>
-                                <option value="Fully Paid"      <?= ($booking['payment_status']??'')==='Fully Paid'     ?'selected':'' ?>>💰 Fully Paid</option>
-                            </select>
-                        </div>
-                        <div style="background:var(--info-bg); border:1px solid rgba(59,130,246,0.15); border-radius:8px; padding:10px 12px; margin-bottom:16px;">
-                            <div style="font-size:0.72rem; color:var(--info); font-weight:700; display:flex; align-items:center; gap:5px;">
-                                <i class="fas fa-envelope"></i> Email notification will be sent automatically.
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label class="form-label" style="font-size: 0.72rem; color: var(--slate-500); font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px;">Booking Decision</label>
+                            <div style="position: relative;">
+                                <select name="status" style="width: 100%; padding: 12px 16px 12px 40px; border: 1px solid #E2E8F0; border-radius: 10px; font-family: inherit; font-size: 0.92rem; font-weight: 600; color: var(--slate-800); background: #fff; transition: all 0.2s; outline: none; appearance: none; cursor: pointer;">
+                                    <option value="Pending"  <?= $booking['status']=='Pending' ?'selected':'' ?>>⏳ Pending Review</option>
+                                    <option value="Accepted" <?= $booking['status']=='Accepted'?'selected':'' ?>>✅ Accept Booking</option>
+                                    <option value="Rejected" <?= $booking['status']=='Rejected'?'selected':'' ?>>❌ Reject Booking</option>
+                                </select>
+                                <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--gold); font-size: 0.95rem;">
+                                    <i class="fas fa-gavel"></i>
+                                </span>
+                                <span style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--slate-400); font-size: 0.85rem; pointer-events: none;">
+                                    <i class="fas fa-chevron-down"></i>
+                                </span>
                             </div>
                         </div>
-                        <button type="submit" class="btn-save">
-                            <i class="fas fa-save"></i> Update Records
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label class="form-label" style="font-size: 0.72rem; color: var(--slate-500); font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px;">Payment Progress</label>
+                            <div style="position: relative;">
+                                <select name="payment_status" style="width: 100%; padding: 12px 16px 12px 40px; border: 1px solid #E2E8F0; border-radius: 10px; font-family: inherit; font-size: 0.92rem; font-weight: 600; color: var(--slate-800); background: #fff; transition: all 0.2s; outline: none; appearance: none; cursor: pointer;">
+                                    <option value="Pending Deposit" <?= ($booking['payment_status']??'')==='Pending Deposit'?'selected':'' ?>>💳 Pending Deposit</option>
+                                    <option value="Deposit Paid"    <?= ($booking['payment_status']??'')==='Deposit Paid'   ?'selected':'' ?>>✔ Deposit Paid</option>
+                                    <option value="Pending Balance" <?= ($booking['payment_status']??'')==='Pending Balance'?'selected':'' ?>>⏳ Pending Balance</option>
+                                    <option value="Fully Paid"      <?= ($booking['payment_status']??'')==='Fully Paid'     ?'selected':'' ?>>💰 Fully Paid</option>
+                                </select>
+                                <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--gold); font-size: 0.95rem;">
+                                    <i class="fas fa-credit-card"></i>
+                                </span>
+                                <span style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--slate-400); font-size: 0.85rem; pointer-events: none;">
+                                    <i class="fas fa-chevron-down"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div style="background: rgba(59,130,246,0.06); border: 1px solid rgba(59,130,246,0.1); border-radius: 8px; padding: 14px 16px; margin-bottom: 24px; display: flex; gap: 12px; align-items: flex-start;">
+                            <i class="fas fa-info-circle" style="color: var(--info); font-size: 0.95rem; margin-top: 2px;"></i>
+                            <div style="font-size: 0.78rem; color: #1E40AF; font-weight: 500; line-height: 1.4;">
+                                An automated email will be sent to the customer instantly with the updated invoice and status.
+                            </div>
+                        </div>
+                        <button type="submit" class="btn" style="background: var(--gold); color: #fff; width: 100%; padding: 14px; border-radius: 10px; font-weight: 700; font-size: 0.92rem; display: flex; align-items: center; justify-content: center; gap: 10px; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px var(--gold-glow);">
+                            <i class="fas fa-check"></i> Save Changes & Notify
                         </button>
                     </form>
                 </div>
