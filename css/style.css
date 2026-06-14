@@ -1003,3 +1003,23 @@ body.register-page {
     border: 1px solid rgba(136, 136, 136, 0.2);
     text-decoration: none !important;
 }
+
+/* About page list features */
+.about-features {
+    margin-top: 20px;
+    padding-left: 0;
+}
+.about-features li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14.5px;
+    color: #444444;
+    margin-bottom: 12px;
+    line-height: 1.6;
+}
+.about-features li i {
+    color: #C5A880; /* Premium Gold */
+    font-size: 16px;
+    flex-shrink: 0;
+}

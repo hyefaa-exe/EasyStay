@@ -80,7 +80,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
                             <div class="section_title">
                                 <h3 style="font-weight: 800; font-size: 32px; margin-bottom: 20px;">Cozy & Elegant <br> Chalets</h3>
                             </div>
-                            <p>Experience ultimate peace in our beautifully designed individual chalets. Perfectly suited for couples or small families of up to 3 guests, each chalet offers a luxurious interior, private bathroom, high-speed Wi-Fi, and a scenic front view directly facing our clean, refreshing pool. It is the perfect blend of modern comfort and natural serenity.</p>
+                            <p class="mb-3" style="font-size: 15px; color: #555; line-height: 1.6;">Experience ultimate peace in our beautifully designed individual chalets—the perfect blend of modern comfort and natural serenity.</p>
+                            <ul class="about-features list-unstyled">
+                                <li><i class="fa-solid fa-circle-check"></i> Designed for up to 3 guests (ideal for couples & small families)</li>
+                                <li><i class="fa-solid fa-circle-check"></i> Front row view directly facing the sparkling private pool</li>
+                                <li><i class="fa-solid fa-circle-check"></i> Cozy interior, private bathroom, & high-speed Wi-Fi access</li>
+                            </ul>
                         </div>
                     </div>
                     <div class="col-xl-7 col-lg-7">
@@ -115,7 +120,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
                             <div class="section_title">
                                 <h3 style="font-weight: 800; font-size: 32px; margin-bottom: 20px;">Spacious Family Homestay & Private Group Events</h3>
                             </div>
-                            <p>For larger groups, EasyStay features a spacious 3-bedroom, 3-bathroom homestay accommodating up to 15 guests, complete with a fully equipped kitchen, laundry facilities, and a BBQ area. Planning a massive family reunion or private gathering? You can book the entire property exclusively to accommodate up to 30 guests, giving your group private access to the entire pool area, the main homestay, and all three chalets with absolute privacy.</p>
+                            <p class="mb-3" style="font-size: 15px; color: #555; line-height: 1.6;">Perfect for larger family reunions, gatherings, or private events, offering absolute privacy and premium comfort for your group.</p>
+                            <ul class="about-features list-unstyled">
+                                <li><i class="fa-solid fa-circle-check"></i> <strong>Spacious Homestay</strong>: 3 bedrooms, 3 bathrooms (up to 15 guests)</li>
+                                <li><i class="fa-solid fa-circle-check"></i> <strong>Full Amenities</strong>: Equipped kitchen, laundry, and private BBQ area</li>
+                                <li><i class="fa-solid fa-circle-check"></i> <strong>Entire Property Booking</strong>: Accommodates up to 30 guests exclusively</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
