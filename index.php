@@ -401,23 +401,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <?php while ($testi = $testi_result->fetch_assoc()): 
                         $avatar_letter = strtoupper(substr(trim($testi['full_name']), 0, 1));
                     ?>
-                        <div class="col-md-4 mb-4">
-                            <div class="testimonial-card">
+                        <div class="col-md-4 mb-4 d-flex">
+                            <div class="testimonial-card w-100">
                                 <div>
-                                    <div class="testimonial-stars">
-                                        <?php for ($i = 0; $i < $testi['rating']; $i++): ?>
-                                            <i class="fas fa-star"></i>
-                                        <?php endfor; ?>
-                                        <?php for ($i = $testi['rating']; $i < 5; $i++): ?>
-                                            <i class="far fa-star"></i>
-                                        <?php endfor; ?>
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <div class="testimonial-stars" style="margin-bottom: 0;">
+                                            <?php for ($i = 0; $i < $testi['rating']; $i++): ?>
+                                                <i class="fas fa-star"></i>
+                                            <?php endfor; ?>
+                                            <?php for ($i = $testi['rating']; $i < 5; $i++): ?>
+                                                <i class="far fa-star"></i>
+                                            <?php endfor; ?>
+                                        </div>
+                                        <i class="fa-solid fa-quote-right" style="color: rgba(197, 168, 128, 0.25); font-size: 22px;"></i>
                                     </div>
                                     <p class="testimonial-text">"<?= htmlspecialchars($testi['comment']) ?>"</p>
                                 </div>
                                 <div class="testimonial-author">
                                     <div class="author-avatar"><?= $avatar_letter ?></div>
                                     <div class="author-info">
-                                        <h5><?= htmlspecialchars($testi['full_name']) ?></h5>
+                                        <h5 style="text-transform: capitalize;"><?= htmlspecialchars(strtolower($testi['full_name'])) ?></h5>
                                         <small>Stayed in <?= htmlspecialchars($testi['package_name']) ?></small>
                                     </div>
                                 </div>
