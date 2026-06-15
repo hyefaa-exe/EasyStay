@@ -8,9 +8,14 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-// 2. Semak Method & Process Booking flag
+// 2. Semak Method & Process Booking flag & CSRF
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['process_booking'])) {
     header("Location: package.php");
+    exit();
+}
+
+if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+    header("Location: package.php?msg=SecurityError");
     exit();
 }
 

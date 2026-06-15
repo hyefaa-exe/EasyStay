@@ -35,6 +35,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt->bind_param("ssdiss", $package_name, $description, $price, $availability, $image_name, $status);
 
             if ($stmt->execute()) {
+                $package_id = $conn->insert_id;
+                require_once 'admin_logger.php';
+                logAdminAction($conn, $_SESSION['admin_id'], 'ADD_PACKAGE', "Added package '$package_name'", $package_id, 'package');
                 $success_message = "Package added successfully!";
                 header("refresh:2;url=manage_packages.php");
             } else {

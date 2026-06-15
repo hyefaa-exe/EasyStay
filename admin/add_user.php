@@ -34,6 +34,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bind_param("ssssss", $fullname, $email, $phone_no, $hashed_password, $created_at, $username);
 
         if ($stmt->execute()) {
+            $new_user_id = $conn->insert_id;
+            require_once 'admin_logger.php';
+            logAdminAction($conn, $_SESSION['admin_id'], 'ADD_USER', "Added new user account '$username'", $new_user_id, 'user');
             $success_message = "Customer added successfully!";
             // Clear form data
             $_POST = array();

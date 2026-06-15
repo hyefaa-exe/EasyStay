@@ -63,6 +63,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $update_stmt->bind_param("ssdisi", $package_name, $description, $price, $availability, $image_name, $package_id);
 
             if ($update_stmt->execute()) {
+                require_once 'admin_logger.php';
+                logAdminAction($conn, $_SESSION['admin_id'], 'UPDATE_PACKAGE', "Updated package '$package_name'", $package_id, 'package');
                 $success_message = "Package updated successfully!";
                 header("refresh:2;url=manage_packages.php");
             } else {

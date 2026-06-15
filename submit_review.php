@@ -24,8 +24,8 @@ if ($rating < 1 || $rating > 5) {
     exit();
 }
 
-// 3. Pastikan booking ini milik user yang login
-$ownership = $conn->prepare("SELECT book_id FROM bookings WHERE book_id = ? AND user_id = ? AND status = 'Accepted'");
+// 3. Pastikan booking ini milik user yang login dan bertaraf Completed
+$ownership = $conn->prepare("SELECT book_id FROM bookings WHERE book_id = ? AND user_id = ? AND status = 'Completed'");
 $ownership->bind_param("ii", $booking_id, $user_id);
 $ownership->execute();
 if ($ownership->get_result()->num_rows === 0) {

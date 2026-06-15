@@ -314,6 +314,7 @@ while ($row = $result_cal->fetch_assoc()) {
                     <p class="text-muted mb-4"><?= __('book_desc') ?></p>
 
                     <form id="bookingForm" action="booking_process.php" method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                         <input type="hidden" name="package_id" value="<?= $package_id ?>">
                         <input type="hidden" name="process_booking" value="1">
                         <input type="hidden" id="total_price_input" name="total_price" value="0">

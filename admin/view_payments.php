@@ -18,6 +18,8 @@ if (isset($_GET['book_id'])) {
         $stmt = $conn->prepare("UPDATE bookings SET status=?, payment_status=? WHERE book_id=?");
         $stmt->bind_param("ssi", $new_status, $new_pay_status, $book_id);
         if ($stmt->execute()) {
+            require_once 'admin_logger.php';
+            logAdminAction($conn, $admin_id, 'UPDATE_PAYMENT', "Updated booking #$book_id status to '$new_status' ($new_pay_status)", $book_id, 'booking');
             $msg = "Status berjaya dikemaskini!";
             $user_sql = "SELECT b.*, u.full_name, u.email, p.package_name 
                          FROM bookings b 

@@ -20,6 +20,8 @@ $stmt = $conn->prepare("DELETE FROM users WHERE user_id = ?");
 $stmt->bind_param("i", $user_id);
 
 if ($stmt->execute()) {
+    require_once 'admin_logger.php';
+    logAdminAction($conn, $_SESSION['admin_id'], 'DELETE_USER', "Deleted user ID #$user_id", $user_id, 'user');
     // Redirect ke manage_package selepas berjaya delete
     echo "<script>alert('User deleted successfully!'); window.location.href='view_users.php';</script>";
 } else {

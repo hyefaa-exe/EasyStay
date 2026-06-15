@@ -41,6 +41,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
             $error_msg = __('profile_err_phone');
         } elseif (!empty($password) && strlen($password) < 8) {
             $error_msg = __('profile_err_password');
+        } elseif (!empty($password) && !preg_match('/[A-Z]/', $password)) {
+            $error_msg = __('register_err_pass_upper');
+        } elseif (!empty($password) && !preg_match('/[0-9]/', $password)) {
+            $error_msg = __('register_err_pass_num');
         } else {
 
         $profile_pic  = null;
@@ -127,19 +131,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_review'])) {
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         $error_msg = __('profile_err_csrf');
     } else {
-        $booking_id = $_POST['booking_id'];
-        $package_id = $_POST['package_id'];
-        $rating = $_POST['rating'];
-        $comment = trim($_POST['comment']);
+        $booking_id = intval($_POST['booking_id']);
+        $package_id = intval($_POST['package_id']);
+        $rating     = intval($_POST['rating']);
+        $comment    = strip_tags(trim($_POST['comment']));
 
-        $stmt_rev = $conn->prepare("INSERT INTO reviews (user_id, booking_id, package_id, rating, comment) VALUES (?, ?, ?, ?, ?)");
-        $stmt_rev->bind_param("iiiis", $user_id, $booking_id, $package_id, $rating, $comment);
-
-        if ($stmt_rev->execute()) {
-            header("Location: my_profile.php?msg=ReviewSuccess&tab=booking");
-            exit();
+        // 1. Verify ownership and Checked Out status
+        $ownership = $conn->prepare("SELECT book_id FROM bookings WHERE book_id = ? AND user_id = ? AND status = 'Completed'");
+        $ownership->bind_param("ii", $booking_id, $user_id);
+        $ownership->execute();
+        if ($ownership->get_result()->num_rows === 0) {
+            $error_msg = "Anda hanya boleh meninggalkan ulasan untuk tempahan yang telah selesai (Checked Out).";
         } else {
-            $error_msg = __('profile_msg_review_error');
+            // 2. Check duplicate
+            $dup = $conn->prepare("SELECT review_id FROM reviews WHERE booking_id = ? AND user_id = ?");
+            $dup->bind_param("ii", $booking_id, $user_id);
+            $dup->execute();
+            if ($dup->get_result()->num_rows > 0) {
+                $error_msg = "Anda telah pun menghantar ulasan untuk tempahan ini.";
+            } else {
+                $stmt_rev = $conn->prepare("INSERT INTO reviews (user_id, booking_id, package_id, rating, comment) VALUES (?, ?, ?, ?, ?)");
+                $stmt_rev->bind_param("iiiis", $user_id, $booking_id, $package_id, $rating, $comment);
+
+                if ($stmt_rev->execute()) {
+                    header("Location: my_profile.php?msg=ReviewSuccess&tab=booking");
+                    exit();
+                } else {
+                    $error_msg = __('profile_msg_review_error');
+                }
+            }
         }
     }
 }
@@ -1139,8 +1159,9 @@ $bookings = $stmt_b->get_result();
                                             <label class="form-label-custom"><?= __('settings_password') ?></label>
                                             <div class="input-wrapper-custom">
                                                 <i class="fas fa-lock input-icon-custom"></i>
-                                                <input type="password" name="password" class="form-control-custom" placeholder="<?= __('settings_pass_placeholder') ?>">
+                                                <input type="password" name="password" id="profile_password" class="form-control-custom" placeholder="<?= __('settings_pass_placeholder') ?>">
                                             </div>
+                                            <div id="pwd-strength-profile" style="font-size:11px; margin-top:5px; color:#888;"></div>
                                         </div>
                                     </div>
 
@@ -1369,6 +1390,34 @@ $bookings = $stmt_b->get_result();
         if (tabParam) {
             $('.nav-pills a[href="#' + tabParam + '"]').tab('show');
         }
+
+        // Password Strength Checker for Profile Update
+        const labelWeak = <?= json_encode(__('js_strength_weak')) ?>;
+        const labelMedium = <?= json_encode(__('js_strength_medium')) ?>;
+        const labelGood = <?= json_encode(__('js_strength_good')) ?>;
+        const labelStrong = <?= json_encode(__('js_strength_strong')) ?>;
+        const labelNeed = <?= json_encode(__('js_strength_need')) ?>;
+        const labelMinChar = <?= json_encode(__('js_strength_min_char')) ?>;
+        const labelUppercase = <?= json_encode(__('js_strength_uppercase')) ?>;
+        const labelNumber = <?= json_encode(__('js_strength_number')) ?>;
+
+        document.getElementById('profile_password').addEventListener('input', function() {
+            const val = this.value;
+            const el  = document.getElementById('pwd-strength-profile');
+            if (val === '') { el.innerHTML = ''; return; }
+            let score = 0;
+            let tips  = [];
+
+            if (val.length >= 8)          score++; else tips.push(labelMinChar);
+            if (/[A-Z]/.test(val))        score++; else tips.push(labelUppercase);
+            if (/[0-9]/.test(val))        score++; else tips.push(labelNumber);
+            if (/[^A-Za-z0-9]/.test(val)) score++;
+
+            const labels = ['', '⚠️ ' + labelWeak, '⚠️ ' + labelMedium, '✅ ' + labelGood, '✅ ' + labelStrong];
+            const colors = ['', '#e74c3c', '#f39c12', '#27ae60', '#1e8449'];
+            el.style.color = colors[score] || '#888';
+            el.innerHTML = score > 0 ? labels[score] + (tips.length ? ' — ' + labelNeed + ': ' + tips.join(', ') : '') : '';
+        });
     </script>
 </body>
 

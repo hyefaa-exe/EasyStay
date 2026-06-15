@@ -20,6 +20,8 @@ $stmt = $conn->prepare("DELETE FROM packages WHERE package_id = ?");
 $stmt->bind_param("i", $package_id);
 
 if ($stmt->execute()) {
+    require_once 'admin_logger.php';
+    logAdminAction($conn, $_SESSION['admin_id'], 'DELETE_PACKAGE', "Deleted package ID #$package_id", $package_id, 'package');
     // Redirect ke manage_package selepas berjaya delete
     echo "<script>alert('Package deleted successfully!'); window.location.href='manage_packages.php';</script>";
 } else {

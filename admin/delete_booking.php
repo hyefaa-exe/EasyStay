@@ -19,6 +19,8 @@ $stmt = $conn->prepare("DELETE FROM bookings WHERE book_id = ?");
 $stmt->bind_param("i", $book_id);
 
 if ($stmt->execute()) {
+    require_once 'admin_logger.php';
+    logAdminAction($conn, $_SESSION['admin_id'], 'DELETE_BOOKING', "Deleted booking ID #$book_id", $book_id, 'booking');
     echo "<script>alert('Booking deleted successfully.'); window.location.href='manage_bookings.php';</script>";
 } else {
     echo "Error deleting booking: " . $conn->error;

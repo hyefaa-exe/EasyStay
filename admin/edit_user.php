@@ -43,6 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_user'])) {
         $update->bind_param("sssi", $fullname, $email, $phone_no, $user_id);
 
         if ($update->execute()) {
+            require_once 'admin_logger.php';
+            logAdminAction($conn, $_SESSION['admin_id'], 'UPDATE_USER', "Updated information for user '$fullname'", $user_id, 'user');
             $success_message = "User information updated successfully!";
             // Update local data for immediate display
             $user['full_name'] = $fullname;
