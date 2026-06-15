@@ -23,7 +23,7 @@ $user_id    = $_SESSION['user_id'];
 $package_id = intval($_POST['package_id']);
 
 // 3. Ambil harga pakej dari DATABASE (bukan dari POST — keselamatan!)
-$pkg_stmt = $conn->prepare("SELECT price FROM packages WHERE package_id = ?");
+$pkg_stmt = $conn->prepare("SELECT price, availability FROM packages WHERE package_id = ?");
 $pkg_stmt->bind_param("i", $package_id);
 $pkg_stmt->execute();
 $pkg_data = $pkg_stmt->get_result()->fetch_assoc();
@@ -64,16 +64,49 @@ $total_price = $price_per_night * $nights;
 $adults   = max(1, intval($_POST['adults']   ?? 1));
 $children = max(0, intval($_POST['children'] ?? 0));
 
-// 7. Semak Kekosongan (Double Check)
-$check_sql = "SELECT book_id FROM bookings 
+// 7. Semak Kekosongan (Double Check dengan Kuantiti Availability)
+$availability = intval($pkg_data['availability']);
+
+$check_sql = "SELECT checkin_date, checkout_date FROM bookings 
               WHERE package_id = ? 
               AND status NOT IN ('Cancelled', 'Rejected') 
               AND (checkin_date < ? AND checkout_date > ?)";
 $stmt_check = $conn->prepare($check_sql);
 $stmt_check->bind_param("iss", $package_id, $checkout, $checkin);
 $stmt_check->execute();
+$res_check = $stmt_check->get_result();
 
-if ($stmt_check->get_result()->num_rows > 0) {
+// Semak bertindih malam demi malam
+$requested_start = new DateTime($checkin);
+$requested_end   = new DateTime($checkout);
+$interval = new DateInterval('P1D');
+$period   = new DatePeriod($requested_start, $interval, $requested_end);
+
+$date_counts = [];
+while ($row = $res_check->fetch_assoc()) {
+    $b_start = new DateTime($row['checkin_date']);
+    $b_end   = new DateTime($row['checkout_date']);
+    $b_period = new DatePeriod($b_start, $interval, $b_end);
+    foreach ($b_period as $d) {
+        $d_str = $d->format('Y-m-d');
+        if (!isset($date_counts[$d_str])) {
+            $date_counts[$d_str] = 0;
+        }
+        $date_counts[$d_str]++;
+    }
+}
+
+$overbooked = false;
+foreach ($period as $d) {
+    $d_str = $d->format('Y-m-d');
+    $current_bookings = $date_counts[$d_str] ?? 0;
+    if ($current_bookings >= $availability) {
+        $overbooked = true;
+        break;
+    }
+}
+
+if ($overbooked) {
     header("Location: book_new.php?package_id=$package_id&msg=DateUnavailable");
     exit();
 }

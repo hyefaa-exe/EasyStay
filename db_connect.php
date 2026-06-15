@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('Asia/Kuala_Lumpur');
 // Mulakan session jika belum bermula
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -49,6 +50,9 @@ $conn = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
+
+// Auto-complete past accepted stays
+$conn->query("UPDATE bookings SET status = 'Completed' WHERE status = 'Accepted' AND checkout_date < CURDATE()");
 
 // -----------------------------------------
 // CENTRALIZED PACKAGE FEATURES

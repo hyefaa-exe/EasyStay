@@ -35,12 +35,58 @@ if (!$package_rs) {
     exit;
 }
 
-// Ambil tarikh yang telah ditempah untuk disable dalam kalendar
+// Ambil tarikh yang telah ditempah untuk disable dalam kalendar (mengikut kuantiti availability)
+$availability = intval($package_rs['availability']);
 $sqlBooked = "SELECT checkin_date, checkout_date FROM bookings WHERE package_id = $package_id AND status NOT IN ('Cancelled', 'Rejected')";
 $result_cal = $conn->query($sqlBooked);
-$booked_ranges = [];
+
+$date_counts = [];
 while ($row = $result_cal->fetch_assoc()) {
-    $booked_ranges[] = ['from' => $row['checkin_date'], 'to' => $row['checkout_date']];
+    $start = new DateTime($row['checkin_date']);
+    $end = new DateTime($row['checkout_date']);
+    
+    // Gelung setiap malam tempahan (dari check-in hingga checkout - 1)
+    $interval = new DateInterval('P1D');
+    $period = new DatePeriod($start, $interval, $end);
+    
+    foreach ($period as $date) {
+        $date_str = $date->format('Y-m-d');
+        if (!isset($date_counts[$date_str])) {
+            $date_counts[$date_str] = 0;
+        }
+        $date_counts[$date_str]++;
+    }
+}
+
+// Cari tarikh yang telah ditempah sepenuhnya (tempahan >= kuantiti availability)
+$fully_booked_dates = [];
+foreach ($date_counts as $date_str => $count) {
+    if ($count >= $availability) {
+        $fully_booked_dates[] = $date_str;
+    }
+}
+sort($fully_booked_dates);
+
+// Kumpulkan tarikh berturutan ke dalam format Flatpickr range
+$booked_ranges = [];
+if (!empty($fully_booked_dates)) {
+    $range_start = $fully_booked_dates[0];
+    $range_end = $fully_booked_dates[0];
+    
+    for ($i = 1; $i < count($fully_booked_dates); $i++) {
+        $prev_date = new DateTime($fully_booked_dates[$i - 1]);
+        $curr_date = new DateTime($fully_booked_dates[$i]);
+        $diff = $curr_date->diff($prev_date)->days;
+        
+        if ($diff === 1) {
+            $range_end = $fully_booked_dates[$i];
+        } else {
+            $booked_ranges[] = ['from' => $range_start, 'to' => $range_end];
+            $range_start = $fully_booked_dates[$i];
+            $range_end = $fully_booked_dates[$i];
+        }
+    }
+    $booked_ranges[] = ['from' => $range_start, 'to' => $range_end];
 }
 ?>
 
