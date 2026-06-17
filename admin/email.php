@@ -6,7 +6,22 @@ use PHPMailer\PHPMailer\Exception;
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 // Muat fail konfigurasi rahsia
-require_once __DIR__ . '/email_config.php';
+if (file_exists(__DIR__ . '/email_config.php')) {
+    require_once __DIR__ . '/email_config.php';
+}
+
+if (!defined('SMTP_HOST')) {
+    define('SMTP_HOST', getenv('SMTP_HOST') ?: 'smtp-relay.brevo.com');
+}
+if (!defined('SMTP_PORT')) {
+    define('SMTP_PORT', getenv('SMTP_PORT') ?: 587);
+}
+if (!defined('SMTP_USER')) {
+    define('SMTP_USER', getenv('SMTP_USER') ?: '');
+}
+if (!defined('SMTP_PASS')) {
+    define('SMTP_PASS', getenv('SMTP_PASS') ?: '');
+}
 
 function sendBookingStatusEmail($toEmail, $toName, $emailContent, $bookingId = null) {
     $mail = new PHPMailer(true);
