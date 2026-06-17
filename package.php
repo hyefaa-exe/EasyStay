@@ -567,9 +567,21 @@ $result = $stmt->get_result();
                         ?>
                             <div class="col-xl-6 col-lg-6 col-md-6 mb-4">
                                 <div class="package-card">
-                                    <div class="package-img-box">
-                                        <img src="admin/uploads/<?= htmlspecialchars($row['image']) ?>?v=<?= time() ?>" alt="<?= htmlspecialchars($row['package_name']) ?>">
-                                    </div>
+                                     <div class="package-img-box">
+                                         <?php
+                                         $pkg_image = '';
+                                         if ($row['package_id'] == 12) {
+                                             $pkg_image = 'img/packej chalet.jpg';
+                                         } elseif ($row['package_id'] == 13) {
+                                             $pkg_image = 'img/homestay package.jpg';
+                                         } elseif ($row['package_id'] == 14) {
+                                             $pkg_image = 'img/pakej privacy.jpg';
+                                         } else {
+                                             $pkg_image = 'admin/uploads/' . htmlspecialchars($row['image']);
+                                         }
+                                         ?>
+                                         <img src="<?= $pkg_image ?>?v=<?= time() ?>" alt="<?= htmlspecialchars($row['package_name']) ?>">
+                                     </div>
                                     <div class="package-content">
 
                                         <h4>

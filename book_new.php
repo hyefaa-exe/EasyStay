@@ -298,11 +298,19 @@ if (!empty($fully_booked_dates)) {
                 <div class="package-info-card">
                     <div class="package-poster">
                         <?php
-                        // Path gambar dari admin/uploads/
-                        $image_name = $package_rs['image'];
-                        $image_path = "admin/uploads/" . $image_name;
+                        // Path gambar dari img/ atau admin/uploads/
+                        $pkg_image = '';
+                        if ($package_id == 12) {
+                            $pkg_image = 'img/packej chalet.jpg';
+                        } elseif ($package_id == 13) {
+                            $pkg_image = 'img/homestay package.jpg';
+                        } elseif ($package_id == 14) {
+                            $pkg_image = 'img/pakej privacy.jpg';
+                        } else {
+                            $pkg_image = 'admin/uploads/' . $package_rs['image'];
+                        }
                         ?>
-                        <img src="<?= $image_path ?>?v=<?= time() ?>" alt="Package Poster" style="width: 100%; border-radius: 10px; object-fit: cover;">
+                        <img src="<?= $pkg_image ?>?v=<?= time() ?>" alt="Package Poster" style="width: 100%; border-radius: 10px; object-fit: cover;">
                     </div>
                     <div class="package-details-bottom">
                         <h2><?= htmlspecialchars($package_rs['package_name']) ?></h2>
