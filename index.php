@@ -105,11 +105,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <div class="row align-items-end">
                                 <div class="col-md-4">
                                     <label><?= __('home_checkin') ?></label>
-                                    <input type="date" name="check_in_date" class="form-control" required value="<?php echo isset($_POST['check_in_date']) ? $_POST['check_in_date'] : ''; ?>">
+                                    <input type="date" name="check_in_date" class="form-control" required min="<?= date('Y-m-d') ?>" value="<?php echo isset($_POST['check_in_date']) ? $_POST['check_in_date'] : ''; ?>">
                                 </div>
                                 <div class="col-md-4">
                                     <label><?= __('home_checkout') ?></label>
-                                    <input type="date" name="check_out_date" class="form-control" required value="<?php echo isset($_POST['check_out_date']) ? $_POST['check_out_date'] : ''; ?>">
+                                    <input type="date" name="check_out_date" class="form-control" required min="<?= date('Y-m-d', strtotime('+1 day')) ?>" value="<?php echo isset($_POST['check_out_date']) ? $_POST['check_out_date'] : ''; ?>">
                                 </div>
                                 <div class="col-md-4">
                                     <button type="submit" class="btn-check"><?= __('home_check_btn') ?></button>
