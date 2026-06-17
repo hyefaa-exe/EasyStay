@@ -573,7 +573,7 @@ $result = $stmt->get_result();
                                          if ($row['package_id'] == 12) {
                                              $pkg_image = 'img/packej chalet.jpg';
                                          } elseif ($row['package_id'] == 13) {
-                                             $pkg_image = 'img/homestay package.jpg';
+                                             $pkg_image = 'img/homestay day.jpg';
                                          } elseif ($row['package_id'] == 14) {
                                              $pkg_image = 'img/pakej privacy.jpg';
                                          } else {

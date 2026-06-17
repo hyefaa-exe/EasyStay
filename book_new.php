@@ -303,7 +303,7 @@ if (!empty($fully_booked_dates)) {
                         if ($package_id == 12) {
                             $pkg_image = 'img/packej chalet.jpg';
                         } elseif ($package_id == 13) {
-                            $pkg_image = 'img/homestay package.jpg';
+                            $pkg_image = 'img/homestay day.jpg';
                         } elseif ($package_id == 14) {
                             $pkg_image = 'img/pakej privacy.jpg';
                         } else {
