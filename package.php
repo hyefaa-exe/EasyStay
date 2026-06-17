@@ -571,7 +571,7 @@ $result = $stmt->get_result();
                                          <?php
                                          $pkg_image = '';
                                          if ($row['package_id'] == 12) {
-                                             $pkg_image = 'img/chalet night.jpg';
+                                             $pkg_image = 'img/chalet_night_hd.png';
                                          } elseif ($row['package_id'] == 13) {
                                              $pkg_image = 'img/homestay day.jpg';
                                          } elseif ($row['package_id'] == 14) {
