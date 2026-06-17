@@ -301,7 +301,7 @@ if (!empty($fully_booked_dates)) {
                         // Path gambar dari img/ atau admin/uploads/
                         $pkg_image = '';
                         if ($package_id == 12) {
-                            $pkg_image = 'img/packej chalet.jpg';
+                            $pkg_image = 'img/chalet night.jpg';
                         } elseif ($package_id == 13) {
                             $pkg_image = 'img/homestay day.jpg';
                         } elseif ($package_id == 14) {
