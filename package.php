@@ -575,7 +575,7 @@ $result = $stmt->get_result();
                                          } elseif ($row['package_id'] == 13) {
                                              $pkg_image = 'img/homestay day.jpg';
                                          } elseif ($row['package_id'] == 14) {
-                                             $pkg_image = 'img/pakej privacy.jpg';
+                                             $pkg_image = 'img/privacy_collage.png';
                                          } else {
                                              $pkg_image = 'admin/uploads/' . htmlspecialchars($row['image']);
                                          }

@@ -305,7 +305,7 @@ if (!empty($fully_booked_dates)) {
                         } elseif ($package_id == 13) {
                             $pkg_image = 'img/homestay day.jpg';
                         } elseif ($package_id == 14) {
-                            $pkg_image = 'img/pakej privacy.jpg';
+                            $pkg_image = 'img/privacy_collage.png';
                         } else {
                             $pkg_image = 'admin/uploads/' . $package_rs['image'];
                         }
