@@ -77,7 +77,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </div>
         </section>
 
-        <div class="about_area" style="padding-bottom: 60px;">
+        <div class="about_area" style="padding-top: 80px; padding-bottom: 60px;">
             <div class="container">
                 <div class="row align-items-center">
                     <div class="col-xl-5 col-lg-5">
@@ -132,7 +132,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </div>
         </div>
 
-        <div class="about_area" style="padding-bottom: 100px;">
+        <div class="about_area" style="padding-top: 80px; padding-bottom: 100px;">
             <div class="container">
                 <div class="row align-items-center">
                     <div class="col-xl-7 col-lg-7 order-2 order-lg-1">
