@@ -121,10 +121,10 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <div class="col-xl-7 col-lg-7">
                         <div class="about_thumb d-flex">
                             <div class="img_1 mr-2">
-                                <img src="img/chalet day.jpg" alt="Chalet Day" class="img-fluid" style="border-radius: 15px;">
+                                <img src="img/chalet day.jpg?v=<?= time() ?>" alt="Chalet Day" class="img-fluid" style="border-radius: 15px;">
                             </div>
                             <div class="img_2">
-                                <img src="img/chalet night.jpg" alt="Chalet Night" class="img-fluid" style="border-radius: 15px;">
+                                <img src="img/chalet night.jpg?v=<?= time() ?>" alt="Chalet Night" class="img-fluid" style="border-radius: 15px;">
                             </div>
                         </div>
                     </div>
@@ -138,10 +138,10 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <div class="col-xl-7 col-lg-7 order-2 order-lg-1">
                         <div class="about_thumb2 d-flex">
                             <div class="img_1 mr-2">
-                                <img src="img/homestay night.jpg" alt="Homestay Night" class="img-fluid" style="border-radius: 15px;">
+                                <img src="img/homestay night.jpg?v=<?= time() ?>" alt="Homestay Night" class="img-fluid" style="border-radius: 15px;">
                             </div>
                             <div class="img_2">
-                                <img src="img/homestay day.jpg" alt="Homestay Day" class="img-fluid" style="border-radius: 15px;">
+                                <img src="img/homestay day.jpg?v=<?= time() ?>" alt="Homestay Day" class="img-fluid" style="border-radius: 15px;">
                             </div>
                         </div>
                     </div>
