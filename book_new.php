@@ -401,8 +401,11 @@ if (!empty($fully_booked_dates)) {
                             
                             <div class="booking-breakdown-box">
                                 <div class="breakdown-row">
-                                    <span><?= __('book_total_room') ?>:</span>
                                     <strong>RM <span id="display_room_total">0.00</span></strong>
+                                </div>
+                                <div class="breakdown-row mt-1" id="coupon_discount_row" style="display: none;">
+                                    <span><?= __('book_coupon_discount') ?>:</span>
+                                    <strong class="text-danger">- RM <span id="display_coupon_discount">0.00</span></strong>
                                 </div>
                                 <div class="breakdown-row mt-1">
                                     <span><?= __('book_remaining') ?>:</span>
@@ -417,6 +420,18 @@ if (!empty($fully_booked_dates)) {
 
                         <!-- Hidden inputs -->
                         <input type="hidden" name="payment_method" id="payment_method_input" value="gateway">
+
+                        <!-- Coupon Code Input -->
+                        <div class="coupon-section mb-4">
+                            <label class="font-weight-bold small mb-2 d-block text-dark"><?= __('book_coupon_code') ?></label>
+                            <div class="input-group">
+                                <input type="text" id="coupon_code_input" name="coupon_code" class="form-control" placeholder="<?= __('book_coupon_placeholder') ?>" style="height: 44px; border-radius: 10px 0 0 10px; font-weight: 600; text-transform: uppercase;">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" id="apply_coupon_btn" style="border-radius: 0 10px 10px 0; border: 1.5px solid #C5A880; color: #C5A880; font-weight: 700; transition: all 0.2s; background: transparent;" onclick="applyCoupon()"><?= __('book_coupon_apply') ?></button>
+                                </div>
+                            </div>
+                            <div id="coupon_message" class="small mt-1 font-weight-bold" style="display: none;"></div>
+                        </div>
 
                         <!-- Payment Mode Toggles -->
                         <div class="payment-method-selector mb-4">
@@ -784,6 +799,105 @@ if (!empty($fully_booked_dates)) {
             }, 3300);
         });
 
+        let appliedCoupon = null;
+        let discountAmount = 0.00;
+
+        function applyCoupon() {
+            const code = document.getElementById('coupon_code_input').value.trim();
+            const totalVal = parseFloat(totalPriceInput.value) || 0.00;
+            const msgDiv = document.getElementById('coupon_message');
+
+            if (totalVal <= 0) {
+                msgDiv.style.display = 'block';
+                msgDiv.className = 'small mt-1 font-weight-bold text-danger';
+                msgDiv.innerText = 'Please select check-in and check-out dates first.';
+                return;
+            }
+
+            if (code === '') {
+                appliedCoupon = null;
+                discountAmount = 0.00;
+                msgDiv.style.display = 'none';
+                document.getElementById('coupon_discount_row').style.display = 'none';
+                calc();
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('coupon_code', code);
+            formData.append('total_price', totalVal);
+
+            fetch('check_coupon.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    appliedCoupon = data.coupon_code;
+                    discountAmount = parseFloat(data.discount_amount);
+                    msgDiv.style.display = 'block';
+                    msgDiv.className = 'small mt-1 font-weight-bold text-success';
+                    msgDiv.innerText = data.message;
+                    
+                    document.getElementById('coupon_discount_row').style.display = 'flex';
+                    document.getElementById('display_coupon_discount').innerText = discountAmount.toFixed(2);
+                    
+                    const finalBalance = (totalVal - discountAmount).toFixed(2);
+                    document.getElementById('display_room_balance').innerText = finalBalance;
+                    
+                    const elText = document.getElementById('display_room_balance_text');
+                    if (elText) elText.innerText = finalBalance;
+                } else {
+                    appliedCoupon = null;
+                    discountAmount = 0.00;
+                    msgDiv.style.display = 'block';
+                    msgDiv.className = 'small mt-1 font-weight-bold text-danger';
+                    msgDiv.innerText = data.message;
+                    
+                    document.getElementById('coupon_discount_row').style.display = 'none';
+                    calc();
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                msgDiv.style.display = 'block';
+                msgDiv.className = 'small mt-1 font-weight-bold text-danger';
+                msgDiv.innerText = 'Error applying coupon.';
+            });
+        }
+
+        function revalidateCouponSilently(code, totalVal) {
+            const formData = new FormData();
+            formData.append('coupon_code', code);
+            formData.append('total_price', totalVal);
+
+            fetch('check_coupon.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    discountAmount = parseFloat(data.discount_amount);
+                    document.getElementById('display_coupon_discount').innerText = discountAmount.toFixed(2);
+                    const finalBalance = (totalVal - discountAmount).toFixed(2);
+                    document.getElementById('display_room_balance').innerText = finalBalance;
+                    const elText = document.getElementById('display_room_balance_text');
+                    if (elText) elText.innerText = finalBalance;
+                } else {
+                    appliedCoupon = null;
+                    discountAmount = 0.00;
+                    document.getElementById('coupon_discount_row').style.display = 'none';
+                    document.getElementById('coupon_message').style.display = 'block';
+                    document.getElementById('coupon_message').className = 'small mt-1 font-weight-bold text-danger';
+                    document.getElementById('coupon_message').innerText = data.message;
+                    document.getElementById('coupon_code_input').value = '';
+                    calc();
+                }
+            });
+        }
+
         function calc() {
             const inDate = document.getElementById('checkin_date').value;
             const outDate = document.getElementById('checkout_date').value;
@@ -794,17 +908,38 @@ if (!empty($fully_booked_dates)) {
                 if (nights > 0) {
                     const totalAmount = (nights * price).toFixed(2);
                     document.getElementById('display_room_total').innerText = totalAmount;
-                    document.getElementById('display_room_balance').innerText = totalAmount;
-                    document.getElementById('display_room_balance_text').innerText = totalAmount;
-                    totalPriceInput.value = totalAmount;
+                    
+                    if (appliedCoupon) {
+                        const finalBalance = (totalAmount - discountAmount).toFixed(2);
+                        document.getElementById('display_room_balance').innerText = finalBalance;
+                        const elText = document.getElementById('display_room_balance_text');
+                        if (elText) elText.innerText = finalBalance;
+                        totalPriceInput.value = totalAmount;
+                        revalidateCouponSilently(appliedCoupon, totalAmount);
+                    } else {
+                        document.getElementById('display_room_balance').innerText = totalAmount;
+                        const elText = document.getElementById('display_room_balance_text');
+                        if (elText) elText.innerText = totalAmount;
+                        totalPriceInput.value = totalAmount;
+                    }
                 } else {
-                    document.getElementById('display_room_total').innerText = "0.00";
-                    document.getElementById('display_room_balance').innerText = "0.00";
-                    document.getElementById('display_room_balance_text').innerText = "0.00";
-                    totalPriceInput.value = "0.00";
+                    resetPricingDisplay();
                 }
             }
             validateForm();
+        }
+
+        function resetPricingDisplay() {
+            document.getElementById('display_room_total').innerText = "0.00";
+            document.getElementById('display_room_balance').innerText = "0.00";
+            const elText = document.getElementById('display_room_balance_text');
+            if (elText) elText.innerText = "0.00";
+            totalPriceInput.value = "0.00";
+            appliedCoupon = null;
+            discountAmount = 0.00;
+            document.getElementById('coupon_discount_row').style.display = 'none';
+            document.getElementById('coupon_message').style.display = 'none';
+            document.getElementById('coupon_code_input').value = '';
         }
 
         receiptInput.addEventListener('change', validateForm);

@@ -82,153 +82,150 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Package | EasyStay Admin</title>
     <link rel="shortcut icon" type="image/x-icon" href="../img/favicon.png?v=2">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin_style.css">
     <style>
-/* --- HEADER (IDENTIKAL DENGAN ADD_PACKAGE) --- */
-        
-
-        
-
-        
-        
-        
-        
-        
-
-        
-        
-
-        /* --- CONTAINER --- */
-        
-
-        .card {
-            background: var(--white);
-            border-radius: 35px;
-            overflow: hidden;
-            box-shadow: 0 15px 45px rgba(0,0,0,0.04);
+        .edit-layout {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 32px;
         }
-
-        .card-header {
-            background: var(--garden-black);
-            color: white;
-            padding: 22px;
-            text-align: center;
-            font-size: 1.3rem;
-            font-weight: 700;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 12px;
+        
+        .form-row-double {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
         }
-
-        .card-
-
-        /* --- FORM STYLING --- */
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .full-wid
-
-        .form-group label {
-            display: block;
-            font-weight: 800;
-            font-size: 0.7rem;
-            color: var(--garden-black);
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 15px 20px;
+        
+        .image-upload-card {
+            border: 2px dashed rgba(197, 168, 128, 0.25);
             border-radius: 12px;
-            border: 1.5px solid #F0F0F0;
-            background: #F9FAFB;
-            font-size: 0.95rem;
-            transition: 0.3s;
-        }
-        .form-control:focus { outline: none; border-color: var(--ulu-orange); background: white; }
-
-        textarea.form-control { min-height: 120px; resize: none; }
-
-        /* --- IMAGE SECTION --- */
-        .image-preview-area {
-            border: 2px dashed #E5E7EB;
-            border-radius: 15px;
-            padding: 20px;
+            padding: 24px;
             text-align: center;
-            background: #F9FAFB;
-            margin-top: 5px;
+            background: #FAFAFA;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 320px;
+            height: calc(100% - 28px);
+            transition: all 0.3s ease;
+        }
+        
+        .image-upload-card:hover {
+            border-color: var(--gold);
+            background: rgba(197, 168, 128, 0.02);
+        }
+        
+        .image-preview-container {
+            width: 100%;
+            height: 220px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 20px;
+            background: #FFF;
+            border: 1px solid var(--slate-100);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         #preview-img {
             max-width: 100%;
-            max-height: 250px;
-            border-radius: 12px;
-            margin-top: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            max-height: 100%;
             object-fit: cover;
+            transition: transform 0.3s ease;
         }
-
-        /* --- BUTTONS --- */
-        .button-group { display: flex; gap: 15px; margin-top: 25px; }
         
-        .btn {
-            flex: 1;
-            padding: 18px;
-            border-radius: 15px;
-            border: none;
-            font-weight: 800;
-            font-size: 1rem;
-            cursor: pointer;
+        .image-upload-card:hover #preview-img {
+            transform: scale(1.02);
+        }
+        
+        .upload-control-zone {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            gap: 12px;
-            transition: 0.3s;
-            text-transform: uppercase;
-            text-decoration: none;
+            gap: 10px;
+            width: 100%;
         }
-
-        .btn-cancel { background: #E9ECEF; color: #495057; }
-        .btn-cancel:hover { background: #DEE2E6; }
-
-        .btn-save { background: var(--ulu-orange); color: white; }
-        .btn-save:hover { 
-            background: #B3966F; 
-            transform: translateY(-3px); 
-            box-shadow: 0 10px 20px rgba(255,127,50,0.25); 
+        
+        .custom-file-upload {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--gold-light);
+            color: var(--gold-dark);
+            border: 1.5px solid rgba(197, 168, 128, 0.3);
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
-
-        /* --- ALERTS --- */
-        .alert { padding: 15px; border-radius: 12px; margin-bottom: 20px; font-weight: 700; text-align: center; }
-        .alert-success { background: #D1FAE5; color: #065F46; }
-        .alert-error { background: #FEE2E2; color: #991B1B; }
-
-        @media (max-width: 768px) {
-            
-            .form-grid { grid-template-columns: 1fr; }
-            .full-wid
+        
+        .custom-file-upload:hover {
+            background: var(--gold);
+            color: var(--white);
+            border-color: var(--gold);
+            box-shadow: 0 4px 10px rgba(197, 168, 128, 0.2);
+        }
+        
+        .upload-hint {
+            font-size: 11px;
+            color: var(--slate-400);
+            font-weight: 500;
+            margin: 0;
+        }
+        
+        .button-group {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 30px;
+            border-top: 1px solid var(--slate-100);
+            padding-top: 24px;
+        }
+        
+        .form-label i {
+            color: var(--gold);
+            margin-right: 6px;
+            font-size: 0.85rem;
+        }
+        
+        @media (max-width: 992px) {
+            .edit-layout {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            .image-upload-card {
+                height: auto;
+                min-height: auto;
+            }
         }
     </style>
-    <link rel="stylesheet" href="css/admin_style.css">
 </head>
 <body>
 
-    <header class="header">
-        <a href="admin_dashboard.php" class="logo-box">
-            <div class="logo-text">
-                <span class="logo-ulu">Easy</span><span class="logo-garden">Stay</span>
-            </div>
-            <div class="portal-sub">Management Portal</div>
-        </a>
+<?php include 'sidebar.php'; ?>
 
-        <a href="manage_packages.php" class="back-btn">
-            <i class="fas fa-arrow-left"></i> Back to List
-        </a>
-    </header>
+<div class="admin-wrapper">
+    <!-- Topbar -->
+    <div class="topbar">
+        <div class="topbar-left">
+            <div class="topbar-title">Edit Package</div>
+            <div class="topbar-breadcrumb">Modify properties and settings for Package #<?= $package_id ?></div>
+        </div>
+        <div class="topbar-right">
+            <a href="manage_packages.php" class="btn btn-outline btn-sm">
+                <i class="fas fa-arrow-left"></i> Back to List
+            </a>
+        </div>
+    </div>
 
-    <main class="container">
+    <div class="admin-content" style="max-width: 960px;">
         <?php if ($success_message): ?>
             <div class="alert alert-success">
                 <i class="fas fa-check-circle"></i> <?php echo $success_message; ?>
@@ -236,80 +233,92 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <?php endif; ?>
 
         <?php if ($error_message): ?>
-            <div class="alert alert-error">
+            <div class="alert alert-danger">
                 <i class="fas fa-exclamation-triangle"></i> <?php echo $error_message; ?>
             </div>
         <?php endif; ?>
 
         <div class="card">
             <div class="card-header">
-                <i class="fas fa-edit"></i> Edit Homestay Package
+                <h3><i class="fas fa-box-open"></i> Package Details</h3>
             </div>
-
-            <div class="card-body">
+            <div class="card-body" style="padding: 32px;">
                 <form method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="package_id" value="<?php echo $package_id; ?>">
                     
-                    <div class="form-grid">
-                        <div class="form-group full-width">
-                            <label><i class="fas fa-tag"></i> Package Name</label>
-                            <input type="text" name="package_name" class="form-control" value="<?php echo htmlspecialchars($package['package_name']); ?>" required>
+                    <div class="edit-layout">
+                        <!-- Left Column: Form Fields -->
+                        <div class="edit-fields-column">
+                            <div class="form-group">
+                                <label class="form-label"><i class="fas fa-tag"></i> Package Name</label>
+                                <input type="text" name="package_name" class="form-control" value="<?php echo htmlspecialchars($package['package_name']); ?>" required>
+                            </div>
+
+                            <div class="form-row-double">
+                                <div class="form-group">
+                                    <label class="form-label"><i class="fas fa-money-bill"></i> Price (RM)</label>
+                                    <input type="number" name="price" step="0.01" class="form-control" value="<?php echo $package['price']; ?>" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label"><i class="fas fa-boxes"></i> Availability (Units)</label>
+                                    <input type="number" name="availability" class="form-control" value="<?php echo $package['availability']; ?>" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label class="form-label"><i class="fas fa-align-left"></i> Description</label>
+                                <textarea name="description" class="form-control" required style="min-height: 150px; resize: none;"><?php echo htmlspecialchars($package['description']); ?></textarea>
+                            </div>
                         </div>
 
-                        <div class="form-group">
-                            <label><i class="fas fa-money-bill"></i> Price (RM)</label>
-                            <input type="number" name="price" step="0.01" class="form-control" value="<?php echo $package['price']; ?>" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label><i class="fas fa-boxes"></i> Availability (Units)</label>
-                            <input type="number" name="availability" class="form-control" value="<?php echo $package['availability']; ?>" required>
-                        </div>
-
-                        <div class="form-group full-width">
-                            <label><i class="fas fa-align-left"></i> Description</label>
-                            <textarea name="description" class="form-control" required><?php echo htmlspecialchars($package['description']); ?></textarea>
-                        </div>
-
-                        <div class="form-group full-width">
-                            <label><i class="fas fa-image"></i> Package Image</label>
-                            <input type="file" name="image" id="imageInput" class="form-control" accept="image/*">
+                        <!-- Right Column: Package Image Upload & Preview -->
+                        <div class="edit-image-column">
+                            <label class="form-label"><i class="fas fa-image"></i> Package Image</label>
                             
-                            <div class="image-preview-area">
-                                <p style="font-size: 0.7rem; color: #888; font-weight: 700; margin-bottom: 10px; text-transform: uppercase;">Current / New Preview:</p>
-                                <img id="preview-img" src="uploads/<?php echo $package['image']; ?>" alt="Package Image">
-                                <p style="font-size: 0.75rem; color: #BBB; margin-top: 10px;">PNG, JPG or JPEG (Max 5MB)</p>
+                            <div class="image-upload-card">
+                                <div class="image-preview-container">
+                                    <img id="preview-img" src="uploads/<?php echo $package['image']; ?>" alt="Package Image">
+                                </div>
+                                <div class="upload-control-zone">
+                                    <label for="imageInput" class="custom-file-upload">
+                                        <i class="fas fa-cloud-upload-alt"></i> Choose New Image
+                                    </label>
+                                    <input type="file" name="image" id="imageInput" accept="image/*" style="display: none;">
+                                    <p class="upload-hint">PNG, JPG or JPEG (Max 5MB)</p>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="button-group">
-                        <a href="manage_packages.php" class="btn btn-cancel">
+                        <a href="manage_packages.php" class="btn btn-outline">
                             <i class="fas fa-times"></i> Cancel
                         </a>
-                        <button type="submit" class="btn btn-save">
+                        <button type="submit" class="btn btn-primary">
                             <i class="fas fa-save"></i> Save Changes
                         </button>
                     </div>
                 </form>
             </div>
         </div>
-    </main>
+    </div>
+</div>
 
-    <script>
-        // Real-time Image Preview
-        document.getElementById('imageInput').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            const preview = document.getElementById('preview-img');
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                }
-                reader.readAsDataURL(file);
+<script>
+    // Real-time Image Preview
+    document.getElementById('imageInput').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        const preview = document.getElementById('preview-img');
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
             }
-        });
-    </script>
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
 
 </body>
 </html>

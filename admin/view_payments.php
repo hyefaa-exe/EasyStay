@@ -152,6 +152,16 @@ if (isset($_GET['book_id'])) {
                                     <i class="far fa-calendar-alt" style="color: var(--gold);"></i> <?= date('d M Y', strtotime($booking['checkout_date'])) ?>
                                 </div>
                             </div>
+                            <?php if (!empty($booking['coupon_code'])): ?>
+                                <div class="info-item">
+                                    <div class="info-item-label">Promo Code Used</div>
+                                    <div class="info-item-value" style="color: var(--success); font-weight: 700;"><?= htmlspecialchars($booking['coupon_code']) ?></div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-item-label">Coupon Discount</div>
+                                    <div class="info-item-value" style="color: var(--danger); font-weight: 700;">- RM <?= number_format($booking['discount_amount'], 2) ?></div>
+                                </div>
+                            <?php endif; ?>
                         </div>
 
                         <!-- Dark/Gold Gradient Banner for Total Price -->

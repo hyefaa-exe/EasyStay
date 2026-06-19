@@ -354,10 +354,21 @@ function get_translations($lang) {
             'reset_err_token' => 'Reset link has expired or is invalid. Please request a new link.',
             'reset_err_length' => 'Password must be at least 8 characters.',
             'reset_err_uppercase' => 'Password must contain at least 1 uppercase letter.',
-            'reset_err_number' => 'Password must contain at least 1 number.',
             'reset_err_match' => 'Passwords do not match.',
             'reset_success' => '✅ Password updated successfully! You can log in now.',
             'reset_err_failed' => 'Error updating password. Please try again.',
+            
+            // Coupons
+            'book_coupon_code' => 'Coupon / Promo Code',
+            'book_coupon_apply' => 'Apply',
+            'book_coupon_applied' => 'Coupon Applied!',
+            'book_coupon_discount' => 'Coupon Discount',
+            'book_coupon_invalid' => 'Invalid or expired coupon code.',
+            'book_coupon_min_spend' => 'Minimum spend of RM %s is required to use this coupon.',
+            'book_coupon_limit_exceeded' => 'This coupon has reached its maximum usage limit.',
+            'book_coupon_placeholder' => 'Enter promo code',
+            'profile_details_coupon' => 'Promo Code Used',
+            'profile_details_discount' => 'Discount Amount',
         ],
         'ms' => [
             // Navigation
@@ -712,10 +723,21 @@ function get_translations($lang) {
             'reset_err_token' => 'Pautan reset telah luput atau tidak sah. Sila minta pautan baru.',
             'reset_err_length' => 'Kata laluan mesti sekurang-kurangnya 8 aksara.',
             'reset_err_uppercase' => 'Kata laluan mesti mengandungi sekurang-kurangnya 1 huruf besar.',
-            'reset_err_number' => 'Kata laluan mesti mengandungi sekurang-kurangnya 1 nombor.',
             'reset_err_match' => 'Kata laluan tidak sepadan.',
             'reset_success' => '✅ Kata laluan berjaya dikemaskini! Anda boleh log masuk sekarang.',
             'reset_err_failed' => 'Ralat semasa kemaskini kata laluan. Sila cuba lagi.',
+            
+            // Coupons
+            'book_coupon_code' => 'Kod Kupon / Promo',
+            'book_coupon_apply' => 'Guna',
+            'book_coupon_applied' => 'Kupon Berjaya Digunakan!',
+            'book_coupon_discount' => 'Diskaun Kupon',
+            'book_coupon_invalid' => 'Kod kupon tidak sah atau telah luput.',
+            'book_coupon_min_spend' => 'Perbelanjaan minimum sebanyak RM %s diperlukan untuk kupon ini.',
+            'book_coupon_limit_exceeded' => 'Kupon ini telah mencapai had penggunaan maksimum.',
+            'book_coupon_placeholder' => 'Masukkan kod promo',
+            'profile_details_coupon' => 'Kod Promo Digunakan',
+            'profile_details_discount' => 'Jumlah Diskaun',
         ]
     ];
     return $dict[$lang];

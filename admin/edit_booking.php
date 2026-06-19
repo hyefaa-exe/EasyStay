@@ -128,6 +128,16 @@ if (!$booking) { echo "Booking not found."; exit(); }
                         <div class="info-item-label">Total Price</div>
                         <div class="info-item-value" style="color:var(--slate-900); font-size:1.1rem;">RM <?= number_format($booking['total_price'], 2) ?></div>
                     </div>
+                    <?php if (!empty($booking['coupon_code'])): ?>
+                        <div class="info-item">
+                            <div class="info-item-label">Coupon Code</div>
+                            <div class="info-item-value" style="color:var(--success); font-weight:700;"><?= htmlspecialchars($booking['coupon_code']) ?></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-item-label">Discount Amount</div>
+                            <div class="info-item-value" style="color:var(--danger); font-weight:700;">- RM <?= number_format($booking['discount_amount'], 2) ?></div>
+                        </div>
+                    <?php endif; ?>
                     <div class="info-item">
                         <div class="info-item-label">Email</div>
                         <div class="info-item-value" style="font-size:0.82rem;"><?= htmlspecialchars($booking['email']) ?></div>

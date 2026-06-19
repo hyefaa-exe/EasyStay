@@ -33,6 +33,7 @@ $nav_items = [
         'items' => [
             ['file' => 'manage_packages.php', 'icon' => 'fas fa-box-open',  'label' => 'Packages'],
             ['file' => 'view_gallery.php',    'icon' => 'fas fa-images',    'label' => 'Gallery'],
+            ['file' => 'manage_coupons.php',  'icon' => 'fas fa-ticket-alt', 'label' => 'Coupons'],
         ]
     ],
     [

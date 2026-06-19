@@ -60,6 +60,52 @@ if ($nights <= 0) {
 // 5. Kira harga SEBENAR di server (SELAMAT)
 $total_price = $price_per_night * $nights;
 
+// 5a. Proses Kupon (jika ada)
+$coupon_code = isset($_POST['coupon_code']) ? strtoupper(trim($_POST['coupon_code'])) : '';
+$discount_amount = 0.00;
+
+if (!empty($coupon_code)) {
+    $c_stmt = $conn->prepare("SELECT * FROM coupons WHERE UPPER(code) = ? LIMIT 1");
+    $c_stmt->bind_param("s", $coupon_code);
+    $c_stmt->execute();
+    $c_res = $c_stmt->get_result();
+    
+    if ($c_res->num_rows === 1) {
+        $coupon = $c_res->fetch_assoc();
+        $today = date('Y-m-d');
+        
+        // Semak status, tarikh luput, had penggunaan, & min spend
+        if ($coupon['status'] === 'ACTIVE' 
+            && $coupon['expiry_date'] >= $today 
+            && ($coupon['max_uses'] == 0 || $coupon['uses_count'] < $coupon['max_uses'])
+            && $total_price >= floatval($coupon['min_spend'])) {
+            
+            $val = floatval($coupon['discount_value']);
+            if ($coupon['discount_type'] === 'percentage') {
+                $discount_amount = $total_price * ($val / 100.00);
+            } else {
+                $discount_amount = $val;
+            }
+            
+            if ($discount_amount > $total_price) {
+                $discount_amount = $total_price;
+            }
+            
+            // Simpan coupon_code sebenar
+            $coupon_code = $coupon['code'];
+        } else {
+            $coupon_code = null;
+        }
+    } else {
+        $coupon_code = null;
+    }
+    $c_stmt->close();
+} else {
+    $coupon_code = null;
+}
+
+$final_total_price = $total_price - $discount_amount;
+
 // 6. Validate adults & children
 $adults   = max(1, intval($_POST['adults']   ?? 1));
 $children = max(0, intval($_POST['children'] ?? 0));
@@ -171,19 +217,26 @@ $customer_email = $u_data['email'];
 
 // 10. Simpan ke Database
 $sql_insert = "INSERT INTO bookings 
-               (user_id, full_name, customer_email, package_id, checkin_date, checkout_date, adults, children, total_price, receipt_path, original_filename, status, payment_status) 
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+               (user_id, full_name, customer_email, package_id, coupon_code, checkin_date, checkout_date, adults, children, total_price, discount_amount, receipt_path, original_filename, status, payment_status) 
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 $stmt = $conn->prepare($sql_insert);
 $stmt->bind_param(
-    "isssssiidssss",
-    $user_id, $full_name, $customer_email, $package_id,
+    "ississsiiddssss",
+    $user_id, $full_name, $customer_email, $package_id, $coupon_code,
     $checkin, $checkout, $adults, $children,
-    $total_price, $new_name, $original_filename,
+    $final_total_price, $discount_amount, $new_name, $original_filename,
     $status, $payment_status
 );
 
 if ($stmt->execute()) {
+    // Increment uses_count jika kupon berjaya digunakan
+    if ($coupon_code !== null) {
+        $up_stmt = $conn->prepare("UPDATE coupons SET uses_count = uses_count + 1 WHERE code = ?");
+        $up_stmt->bind_param("s", $coupon_code);
+        $up_stmt->execute();
+        $up_stmt->close();
+    }
     header("Location: my_profile.php?msg=BookingSuccess");
     exit();
 } else {

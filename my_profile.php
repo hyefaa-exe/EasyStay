@@ -1220,6 +1220,10 @@ $bookings = $stmt_b->get_result();
                         <div class="info-row"><span class="info-label"><?= __('home_checkout') ?></span><span class="info-val"><?= date('d M Y', strtotime($row['checkout_date'])) ?></span></div>
                         <div class="info-row"><span class="info-label"><?= __('pkg_guests') ?></span><span class="info-val"><?= $row['adults'] ?> <?= __('profile_details_adults') ?>, <?= $row['children'] ?> <?= __('profile_details_children') ?></span></div>
                         <div class="info-row"><span class="info-label"><?= __('pkg_price_label') ?></span><span class="info-val text-warning">RM <?= number_format($row['total_price'], 2) ?></span></div>
+                        <?php if (!empty($row['coupon_code'])): ?>
+                            <div class="info-row"><span class="info-label"><?= __('profile_details_coupon') ?></span><span class="info-val font-weight-bold text-success"><?= htmlspecialchars($row['coupon_code']) ?></span></div>
+                            <div class="info-row"><span class="info-label"><?= __('profile_details_discount') ?></span><span class="info-val text-danger">- RM <?= number_format($row['discount_amount'], 2) ?></span></div>
+                        <?php endif; ?>
                         <div class="info-row"><span class="info-label">Status</span><span class="info-val"><?= __('status_' . strtolower($row['status'])) ?></span></div>
 
                         <div class="mt-3 bg-light p-3 rounded">
